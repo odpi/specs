@@ -1,4 +1,4 @@
-### Status: draft
+### Status: 2015-xx-08 draft
 
 Objective
 =========
@@ -91,28 +91,34 @@ Applications on Unix platforms need to understand the base specification of some
 
 -   **Java:** ODP Platforms SHOULD support both JRE 7 and JRE 8 runtime environments (64-bit only). ODP Applications SHOULD work in at least one of these, and SHOULD be clear when they don’t support both.
 
-<!-- -->
-
 -   **Shell scripts:** ODP Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.
 
 Compliance
 ----------
 
-In order to location common resources, some commonly set configuration details are necessary:
+In order to location common resources, some commonly set configuration details are necessary. 
+
+-   All environment variables MUST be set on all nodes.
 
 -   An ODP Platform MUST set the JAVA\_HOME.
 
 -   ODP Platforms MUST have all of the base Apache Hadoop components installed.
 
+-   ODP Platforms MUST pass the Big Top smoke tests.
+
+-   ODP Platforms MUST NOT change public APIs, where an API is defined as either a Java API or a REST API.
+
 -   An ODP Platform MUST keep the same basic directory layout and content as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.
 
--   An ODP Platform MUST set the $\*\_HOME and $\*\_LIB\_JAR\_DIR environment variables for Apache Hadoop as defined in [*this document*](https://raw.githubusercontent.com/apache/hadoop/trunk/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example). This enables applications the capability to locate where the various Apache Hadoop components are located (binaries and Java JAR files).
+-   An ODP Platform MUST set the HADOOP\_COMMON\_HOME, HADOOP\_HDFS\_HOME, HADOOP\_MAPRED\_HOME, and HADOOP\_YARN\_HOME to dictate where the base directory of that component is located.  HADOOP\_COMMON\_LIB\_JARS\_DIR, HDFS\_LIB\_JARS\_DIR, MAPRED\_LIB\_JARS\_DIR, and YARN\_LIB\_JARS\_DIR MUST be set to dictate where the jars are located relative to its associated \_HOME variable.  This enables applications the capability to locate where the various Apache Hadoop components are located (binaries and Java JAR files).  The content of these LIB\_JARS\_DIR directories MUST be the same as the ODP Reference Implementation and the Apache Hadoop distribution.
 
 -   “$\*\_HOME/bin” MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.
 
 -   An ODP Platform MUST set the HADOOP\_CONF\_DIR environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in \*\_HOME/etc/hadoop.
 
 -   It MUST be possible to determine key Hadoop configuration values by using “${HADOOP\_HDFS\_HOME}/bin/hdfs getconf” so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
+
+-   The native compression codecs for gzip and snappy MUST be available and enabled by default.
 
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODP Platform implementation SHOULD NOT get in the way: at most, they SHOULD care about the version of Java and and Bash and nothing else.
 
@@ -124,20 +130,22 @@ Requirements we’d like to push upstream from a compatibility perspective:
 
 Best practices for ODP Platforms:
 
--   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the nodemanager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports makes security extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.
+-   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the nodemanager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers.
 
 Compatibility
 -------------
 
 OPD Compatible Applications must follow these guidelines:
 
--   Applications needed a different version of Java other than the one pointed to by JAVA\_HOME, MUST NOT change the ODP Platform’s JAVA\_HOME setting. Instead, they SHOULD set it appropriately for their specific code as appropriate.
+-   Applications that need a different version of Java other than the one pointed to by JAVA\_HOME, MUST NOT change the ODP Platform’s JAVA\_HOME setting. Instead, they SHOULD set it appropriately for their specific code as appropriate.
 
 -   Applications SHOULD get the Java version via ${JAVA\_HOME}/bin/java -version or via Java system property detection.
 
 -   Applications SHOULD use ${HADOOP\_CONF\_DIR} or ${\*\_HOME}/etc/hadoop as the location of the configuration directory.
 
--   Applications SHOULD use the REST interfaces in lieu of direct RPC calls. See note above about using REST and Client Libraries vs direct access to RPC.
+-   Applications SHOULD use the REST interfaces in lieu of direct RPC calls. See note above about using REST and Client Libraries vs direct access to RPC. Applications SHOULD use stable interfaces when possible. Interfaces marked as evolving interfaces MAY be used however they are not preferred.
+
+-   Applications SHOULD NOT use traditionally human consumable interfaces such as log file output or shell command output.
 
 -   YARN applications SHOULD use the Web App proxy to surface their UIs to users, rather than asking users to connect directly to the Application Manager.
 
@@ -152,8 +160,6 @@ OPD Compatible Applications must follow these guidelines:
 -   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use “hadoop fs” commands instead of “hdfs dfs” commands. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
 
 -   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via “${HADOOP\_YARN\_HOME}/bin/yarn jar”
-
--   -   TODO: say something about where apps should put their own configuration settings (best practice?)
 
 -   TODO: log4j
 
