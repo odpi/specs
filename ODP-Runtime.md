@@ -98,19 +98,26 @@ Compliance
 
 In order to location common resources, some commonly set configuration details are necessary. 
 
--   All environment variables MUST be set on all nodes.
+-   All environment variables discussed in this section MUST be set on all nodes.
+> Comment (SCG): We need to discuss the scope of these variables. Are they automatically available to every user that logs into the machine, or is there a standard location in which an "-env.sh" script can be found to set the environment variables?
 
 -   An ODP Platform MUST set the JAVA\_HOME.
+> Comment (SCG): We had discussed this being available via the "hadoop" script, is this requiring it to be set globally? 
 
 -   ODP Platforms MUST have all of the base Apache Hadoop components installed.
 
 -   ODP Platforms MUST pass the Big Top smoke tests.
 
--   ODP Platforms MUST NOT change public APIs, where an API is defined as either a Java API or a REST API.
+-   ODP Platforms MUST NOT change public API signatures (parameters, object names, or return values), where an API is defined as either a Java API or a REST API.
+> Comment (SCG): There are multiple classes of "public".  There is the java public keyword, but there is also the ASF @public annotation designator.  Which one do we want to refer to here?
+
+-  ODP Platforms MAY change the implementation of a public API for the purposes of resolving issues, provided the changes do not change the documented behavior of the API. 
 
 -   An ODP Platform MUST keep the same basic directory layout and content as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.
+> Comment (SCG): A clarifying example here would be useful
 
 -   An ODP Platform MUST set the HADOOP\_COMMON\_HOME, HADOOP\_HDFS\_HOME, HADOOP\_MAPRED\_HOME, and HADOOP\_YARN\_HOME to dictate where the base directory of that component is located.  HADOOP\_COMMON\_LIB\_JARS\_DIR, HDFS\_LIB\_JARS\_DIR, MAPRED\_LIB\_JARS\_DIR, and YARN\_LIB\_JARS\_DIR MUST be set to dictate where the jars are located relative to its associated \_HOME variable.  This enables applications the capability to locate where the various Apache Hadoop components are located (binaries and Java JAR files).  The content of these LIB\_JARS\_DIR directories MUST be the same as the ODP Reference Implementation and the Apache Hadoop distribution.
+> Comment (SCG): Are there exceptions to be added here? I don't know enough about how extensions are plugged into hadoop, but would a vendor be allowed to have additional jars in some cases?  New compression algorithms? New scheduling algorithms? 
 
 -   “$\*\_HOME/bin” MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.
 
@@ -131,6 +138,8 @@ Requirements we’d like to push upstream from a compatibility perspective:
 Best practices for ODP Platforms:
 
 -   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the nodemanager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers.
+-   For other components not covered by this specification, ODP Platforms SHOULD set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.  
+
 
 Compatibility
 -------------
