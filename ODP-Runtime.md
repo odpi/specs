@@ -115,6 +115,8 @@ In order to location common resources, some commonly set configuration details a
 
 -   ODP Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
+-   ODP Platforms MUST NOT modify version strings output by Hadoop components, such as those displayed in log files, or returnd via public API's.
+
 -   An ODP Platform MUST keep the same basic directory layout and content as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.
 > Comment (SCG): A clarifying example here would be useful
 
@@ -144,6 +146,12 @@ This enables applications the capability to locate where the various Apache Hado
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODP Platform implementation SHOULD NOT get in the way: at most, they SHOULD care about the version of Java and and Bash and nothing else.
 
 -   ODP Platforms MUST define the APPS log4j appender to allow for ISV and user applications a common definition to log output. The actual definition, location of output, cycling requirements, etc of this appender is not defined by this specification and is ODP Platform or user- defined. [TODO: File a JIRA.]
+> Comment (SCG): How does an ISV pick up this log4j definition? 
+
+-   ODP Platforms MUST define either LOG_BASE_DIR or *_LOG_DIR
+  -  LOG_BASE_DIR indicates the default directory in which all components will log their output.  If defined, the structure of this directory must be LOG_BASE_DIR/*component* where *component* is the name of the hadoop component for which the log files are defined.  These are: hdfs, mapred, yarn.
+  -  *_LOG_DIR is an environment variable that points directly to the logging directory for a given component.  If this environment variable is not set, then the component's log files are to be assumed to be contained in the LOG_BASE_DIR directory structure (see aove).
+> Comment (SCG) I know this will be contentious, but may be we can use it as a basis for discussion, then refine into something more usable. 
 
 Requirements we’d like to push upstream from a compatibility perspective:
 
