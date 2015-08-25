@@ -1,4 +1,4 @@
-### Status: 2015-xx-08 draft
+### Status: Draft
 
 Objective
 =========
@@ -16,27 +16,33 @@ The goal of this document is to define the interface between ODP-compliant Apach
 Technical Context
 =================
 
-At this time, the ODP specification is a source-code specification: compliance is specified as shipping a platform built from a specific set of source artifacts. The exact source artifacts change with each ODP version, and thus are specified outside the scope of this document. That said, this document was written in the context of Apache Hadoop 2.x and may have to evolve as Hadoop itself evolves.
+At this time, the ODP specification is a source-code specification: compliance is specified as shipping a platform built from a specific set of source artifacts. The exact source artifacts change with each ODP version, and thus are specified outside the scope of this document. That said, this document was written in the context of Apache Hadoop 2.7 with an eye towards future versions. It may and likely will have to evolve as Hadoop itself evolves.
 
-While the ODP spec is source-based, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops applications from calling private interfaces). These degrees of freedom that interfere with the goal of “test once, run everywhere” (TONE) The goal of this spec is to close enough of those freedoms to achieve TONE.
-
-The following component diagram describes the components of an Apache Hadoop cluster compliant to this specification:
-
-The blue components in this diagram are the containers that host Application Code (the “Client Host” of a Hadoop cluster is sometimes called the “gateway” or “edge node”). The primary goal of this document is to specify the runtime environment of those containers, i.e., the interface between the platform and the software running on the platform.
-
-The green boxes represent components of the Hadoop cluster that Application Code interacts with (directly). However, the term “interact” here needs to be defined very carefully:
-
-> Application Code may directly access the REST interfaces of the green boxes, but they may not directly access the RPC or other non-REST interfaces. Rather, compatible Application Code must use the Hadoop client libraries or command-line tools to access the non-REST interfaces. Given this definition of “interact,” Application Code should not access the gray components, through RPC interfaces, REST interfaces, or even through client libraries or command-line tools. These components are internal to Hadoop.
+While the ODP spec is source-based, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops applications from calling private interfaces). These degrees of freedom interfere with the goal of “test once, run everywhere” (TONE). The goal of this spec is to close enough of those freedoms to achieve TONE.
 
 Hadoop Build Specifications
 ===========================
 
-As mentioned above, the ODP spec is a source-based specification. It was also mentioned above that degrees of freedom in the deployment and configuration of Hadoop interfere with the objective of TONE. It turns out that this troublesome configuration issues start all the way back to the build process. To help achieve TONE, ODP-compliant Hadoop platforms MUST conform to the following build specifications.
+To help achieve TONE, ODP-compliant Hadoop platforms MUST conform to the following build specifications.
 
 Hadoop Version Specifications
 -----------------------------
 
-For this version of the specification, an ODP Platform Apache Hadoop distribution MUST be a descendent of the Apache Hadoop 2.7 branch. Future versions of this specification MAY change the base version.
+-   ODP Platforms MUST be a descendent of the Apache Hadoop 2.7 branch.
+
+Hadoop Patch Specifications
+---------------------------
+
+While ODP can be more prescriptive when it comes to the source-code and release-timing of major and minor releases, platform providers need more flexibility in dealing with patch releases.  In particular, to deal with urgent security or availability problems for their customers, providers need to be able to do just about anything to triage an emergency situation.  Even after an emergency is dealt with, some customers and/or vendors are very conservative about change-management and providers need flexibility to work with such customers.
+
+-   ODP platform providers have full flexibility to release fixes to customers who are facing urgent security or availability issues.  Once operations are restored to normal, however, these emergency fixes MUST eventually be replaced with more permanent patches.
+
+-   ODP platform providers MAY release patched versions of ODP major or minor releases, but in doing so MUST follow strict guidelines:
+
+    -   The source of all patches MUST be available publicly (see below).  The spirit of any patch MUST be to deal with major security, availability, compatibility, or correctness issues.  Patches MUST be 100% backward compatible (as defined by Hadoop’s compatibility guidelines) and MUST NOT be used to add features of any kind.
+  
+    -   ODP MUST itself issue official patch releases to the reference specification to deal with (very) major security, availability, or correctness issues.
+
 
 Minimum Native build specifications
 -----------------------------------
@@ -82,7 +88,6 @@ The native libraries of Hadoop have historically been a particular point of pain
 Runtime Environment for Application Code
 ========================================
 
-As mentioned above, the primary goal of this specification is to specify the runtime environments of the blue-boxes of Figure 1 -- the containers of Application Code.
 
 Minimum Versions
 ----------------
@@ -108,18 +113,27 @@ In order to location common resources, some commonly set configuration details a
 
 -   ODP Platforms MUST pass the Big Top smoke tests.
 
--   ODP Platforms MUST NOT change public API signatures (parameters, object names, or return values), where an API is defined as either a Java API or a REST API.
-> Comment (SCG): There are multiple classes of "public".  There is the java public keyword, but there is also the ASF @public annotation designator.  Which one do we want to refer to here?
-
--  ODP Platforms MAY change the implementation of a public API for the purposes of resolving issues, provided the changes do not change the documented behavior of the API. 
+-   ODP Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
 -   An ODP Platform MUST keep the same basic directory layout and content as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.
 > Comment (SCG): A clarifying example here would be useful
 
--   An ODP Platform MUST set the HADOOP\_COMMON\_HOME, HADOOP\_HDFS\_HOME, HADOOP\_MAPRED\_HOME, and HADOOP\_YARN\_HOME to dictate where the base directory of that component is located.  HADOOP\_COMMON\_LIB\_JARS\_DIR, HDFS\_LIB\_JARS\_DIR, MAPRED\_LIB\_JARS\_DIR, and YARN\_LIB\_JARS\_DIR MUST be set to dictate where the jars are located relative to its associated \_HOME variable.  This enables applications the capability to locate where the various Apache Hadoop components are located (binaries and Java JAR files).  The content of these LIB\_JARS\_DIR directories MUST be the same as the ODP Reference Implementation and the Apache Hadoop distribution.
+-   An ODP Platform MUST set the HADOOP\_COMMON\_HOME, HADOOP\_HDFS\_HOME, HADOOP\_MAPRED\_HOME, and HADOOP\_YARN\_HOME to an absolute directory of that component's location.  HADOOP\_COMMON\_LIB\_JARS\_DIR, HDFS\_LIB\_JARS\_DIR, MAPRED\_LIB\_JARS\_DIR, and YARN\_LIB\_JARS\_DIR MUST be set the relative directory to the jars of that associated component's \_HOME variable. (See [*this document*](https://github.com/apache/hadoop/blob/0bc15cb6e60dc60885234e01dec1c7cb4557a926/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example) for related Apache Hadoop documentation.) For example:
+
+```bash
+HADOOP_COMMON_HOME="/usr/lib/hadoop-common"
+HADOOP_COMMON_LIB_JARS_DIR="share/hadoop/common/lib"
+```
+
+This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files).  The content of these LIB\_JARS\_DIR directories MUST be the same as the ODP Reference Implementation and the Apache Hadoop distribution.
+
 > Comment (SCG): Are there exceptions to be added here? I don't know enough about how extensions are plugged into hadoop, but would a vendor be allowed to have additional jars in some cases?  New compression algorithms? New scheduling algorithms? 
 
--   “$\*\_HOME/bin” MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.
+-   The location of the tools jar and other miscalleneous should be set to the HADOOP\_TOOLS\_PATH environment variable.  Unlike the other  LIB\_JARS\_DIR environment variables, this MUST be an absolute path and MAY contain additional content. The entire directory SHOULD NOT, by default, be included in the default hadoop class path.  Individual jars MAY be specified, however. [TODO: Update HADOOP-10787.]
+
+-   HADOOP\_COMMON\_HOME/bin, HADOOP\_HDFS\_HOME/bin, HADOOP\_MAPRED\_HOME/bin, and HADOOP\_YARN\_HOME/bin MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
+
+-   HADOOP\_COMMON\_LIB\_JARS\_DIR, HDFS\_LIB\_JARS\_DIR, MAPRED\_LIB\_JARS\_DIR, and YARN\_LIB\_JARS\_DIR MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
 
 -   An ODP Platform MUST set the HADOOP\_CONF\_DIR environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in \*\_HOME/etc/hadoop.
 
@@ -129,7 +143,7 @@ In order to location common resources, some commonly set configuration details a
 
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODP Platform implementation SHOULD NOT get in the way: at most, they SHOULD care about the version of Java and and Bash and nothing else.
 
--   TODO: say something about default configuration values: Nodemanager environment, YARN app class path
+-   ODP Platforms MUST define the APPS log4j appender to allow for ISV and user applications a common definition to log output. The actual definition, location of output, cycling requirements, etc of this appender is not defined by this specification and is ODP Platform or user- defined. [TODO: File a JIRA.]
 
 Requirements we’d like to push upstream from a compatibility perspective:
 
@@ -137,9 +151,9 @@ Requirements we’d like to push upstream from a compatibility perspective:
 
 Best practices for ODP Platforms:
 
--   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the nodemanager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers.
--   For other components not covered by this specification, ODP Platforms SHOULD set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.  
+-   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
+-   For other components not covered by this specification, ODP Platforms SHOULD set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.  
 
 Compatibility
 -------------
@@ -152,7 +166,7 @@ OPD Compatible Applications must follow these guidelines:
 
 -   Applications SHOULD use ${HADOOP\_CONF\_DIR} or ${\*\_HOME}/etc/hadoop as the location of the configuration directory.
 
--   Applications SHOULD use the REST interfaces in lieu of direct RPC calls. See note above about using REST and Client Libraries vs direct access to RPC. Applications SHOULD use stable interfaces when possible. Interfaces marked as evolving interfaces MAY be used however they are not preferred.
+-   Applications SHOULD use the REST interfaces in lieu of direct RPC calls. Applications MUST use the Hadoop client libraries or command-line tools to access the non-REST interfaces.  Applications SHOULD use stable interfaces when possible. Interfaces marked as evolving interfaces MAY be used however they are not preferred.
 
 -   Applications SHOULD NOT use traditionally human consumable interfaces such as log file output or shell command output.
 
@@ -160,17 +174,15 @@ OPD Compatible Applications must follow these guidelines:
 
 -   Applications SHOULD use the Java client libraries or “$HADOOP\_HDFS\_HOME/bin/hdfs getconf” to obtain configuration information, rather than reading config files directly. This includes getting the YARN Resource Manager address and port information.
 
--   Applications SHOULD only use the HADOOP\_CLASSPATH environment variable hook (2.x) or the shellprofile.d infrastructure (3.x) to manipulate the content of the Java classpath. Applications SHOULD NOT inject themselves into the classpath other than manipulation of this environment variable.
+-   Applications SHOULD only use the HADOOP\_CLASSPATH environment variable hook (2.x) or the shellprofile.d infrastructure (3.x) to manipulate the runtime content of the Java classpath. Applications SHOULD NOT inject themselves into the classpath other than manipulation of this environment variable.
 
--   Applications SHOULD obtain the Java classpath via the “${HADOOP\_COMMON\_HOME}/bin/hadoop classpath” command.
+-   Applications SHOULD obtain the Java classpath via the “${HADOOP\_COMMON\_HOME}/bin/hadoop classpath” command with the understanding that users and platforms may add or upgrade objects in that classpath.
 
 -   Applications SHOULD obtain the version of a specific Apache Hadoop component via the appropriate “$\*\_HOME/bin/cmd version” command.
 
 -   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use “hadoop fs” commands instead of “hdfs dfs” commands. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
 
 -   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via “${HADOOP\_YARN\_HOME}/bin/yarn jar”
-
--   TODO: log4j
 
 Best practices for compatible apps to be portable and operator friendly:
 
