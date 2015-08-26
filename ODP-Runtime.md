@@ -42,12 +42,16 @@ While ODP can be more prescriptive when it comes to the source-code and release-
     -   The source of all patches MUST be available publicly (see below).  The spirit of any patch MUST be to deal with major security, availability, compatibility, or correctness issues.  Patches MUST be 100% backward compatible (as defined by Hadoop’s compatibility guidelines) and MUST NOT be used to add features of any kind.
   
     -   ODP MUST itself issue official patch releases to the reference specification to deal with (very) major security, availability, or correctness issues.
+> Comment (AFG) Do we want to bind ourselves to this?  I can see having a mechanism to publish addendums or updates to a spec version if a major issue is found.
+
 
 
 Minimum Native build specifications
 -----------------------------------
 
 The native libraries of Hadoop have historically been a particular point of pain for ISVs. The specifications in this subsection should reduce that pain. These options guarantee a minimum set of basic functionalities that MUST be available for each of these components, including Apache Hadoop native operating system resources required for enabling Kerberos, many Java/OS performance and functionality enhancements, and the GZip and Snappy codec compression libraries. ODP Platforms MAY enable other features such as file system encryption, however they are considered optional and not part of the base specification.
+
+> Comment (AFG) The use of -Pnative on windows actually breaks things.  Windows has its own way of handling this with a separate maven profile, native-win.  This is triggered automatically.
 
 ### Common
 
@@ -70,6 +74,7 @@ The native libraries of Hadoop have historically been a particular point of pain
 -   hadoop-yarn-project MUST be built with:
 
     -   -Pnative = build and include container-executor
+> Comment (AFG) the container-executor does not build on windows.
 
 ### MapReduce
 
@@ -84,6 +89,8 @@ The native libraries of Hadoop have historically been a particular point of pain
 -   hadoop-tools-poject MUST be built with:
 
     -   -Pnative = enable pipes support
+> Comment (AFG) Why?  This does not work on windows.  Are you aware of people using this?
+
 
 Runtime Environment for Application Code
 ========================================
@@ -112,6 +119,7 @@ In order to location common resources, some commonly set configuration details a
 -   ODP Platforms MUST have all of the base Apache Hadoop components installed.
 
 -   ODP Platforms MUST pass the Big Top smoke tests.
+> Comment (AFG) I assume this means the ODP specific Big Top tests rather than generic Apache Big Top ones.  This should be made explicit.
 
 -   ODP Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
@@ -130,10 +138,14 @@ HADOOP_COMMON_LIB_JARS_DIR="share/hadoop/common/lib"
 This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files).  The content of these LIB\_JARS\_DIR directories MUST be the same as the ODP Reference Implementation and the Apache Hadoop distribution.
 
 > Comment (SCG): Are there exceptions to be added here? I don't know enough about how extensions are plugged into hadoop, but would a vendor be allowed to have additional jars in some cases?  New compression algorithms? New scheduling algorithms? 
+> Comment (AFG): I propose we change the text here.  Rather than say "The content of these LIB\_JARS\_DIR directories MUST be the same as the ODP Reference Implementation and the Apache Hadoop distribution." I propose we change it to say "All jars present in the ODP Reference Implementation and the Apache Hadoop Distribution MUST be in the LIB\_JARS\_DIR.  Extra jars SHOULD NOT be in LIB\_JARS\_DIR".  Right now Hortonworks puts the WASB and S3 jars and dependencies in there to improve user user experience.  We need time to get those moved to the HADOOP_TOOLS_PATH as recommended in the next paragraph.
+
 
 -   The location of the tools jar and other miscalleneous should be set to the HADOOP\_TOOLS\_PATH environment variable.  Unlike the other  LIB\_JARS\_DIR environment variables, this MUST be an absolute path and MAY contain additional content. The entire directory SHOULD NOT, by default, be included in the default hadoop class path.  Individual jars MAY be specified, however. [TODO: Update HADOOP-10787.]
 
 -   HADOOP\_COMMON\_HOME/bin, HADOOP\_HDFS\_HOME/bin, HADOOP\_MAPRED\_HOME/bin, and HADOOP\_YARN\_HOME/bin MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
+> Comment (AFG), Same as under the lib dirs I propose we move this to MUST have all the same files, SHOULD NOT have any extras.
+> Comment (AFG) The binary names are different on windows than *nix.  I am not clear if that causes an issue with the above paragraph or not.
 
 -   HADOOP\_COMMON\_LIB\_JARS\_DIR, HDFS\_LIB\_JARS\_DIR, MAPRED\_LIB\_JARS\_DIR, and YARN\_LIB\_JARS\_DIR MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
 
@@ -152,6 +164,7 @@ This enables applications the capability to locate where the various Apache Hado
   -  LOG_BASE_DIR indicates the default directory in which all components will log their output.  If defined, the structure of this directory must be LOG_BASE_DIR/*component* where *component* is the name of the hadoop component for which the log files are defined.  These are: hdfs, mapred, yarn.
   -  *_LOG_DIR is an environment variable that points directly to the logging directory for a given component.  If this environment variable is not set, then the component's log files are to be assumed to be contained in the LOG_BASE_DIR directory structure (see aove).
 > Comment (SCG) I know this will be contentious, but may be we can use it as a basis for discussion, then refine into something more usable. 
+> Comment (AFG) Looking at Hadoop 2.x it seems to use HADOOP_LOG_DIR as the default that all go back to if *_LOG_DIR is not set, rather than LOG_BASE_DIR.
 
 Requirements we’d like to push upstream from a compatibility perspective:
 
@@ -162,6 +175,7 @@ Best practices for ODP Platforms:
 -   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
 -   For other components not covered by this specification, ODP Platforms SHOULD set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.  
+> Comment (AFG) I do not see how we can specify this for components not in this spec.
 
 Compatibility
 -------------
