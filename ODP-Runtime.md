@@ -122,7 +122,7 @@ Applications on Unix platforms need to understand the base specification of some
 Compliance
 ----------
 
-In order to location common resources, some commonly set configuration details are necessary. 
+In order to locate common resources, some commonly set configuration details are necessary. 
 
 -   All environment variables discussed in this section MUST be set on all nodes.
 > Comment (SCG): We need to discuss the scope of these variables. Are they automatically available to every user that logs into the machine, or is there a standard location in which an "-env.sh" script can be found to set the environment variables?
