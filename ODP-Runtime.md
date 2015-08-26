@@ -1,4 +1,18 @@
-### Status: Draft
+ODP Technical Working Group
+
+ODP Runtime Specification: 1.0
+
+Date of Publication: 2015-xx-08 
+
+Status: Draft
+
+
+---
+
+Abstract
+========
+
+Specifications covering ODP Platforms based upon Apache Hadoop 2.7 and related branches. Compatibility guidelines for pplications running on ODP Platforms.
 
 Objective
 =========
