@@ -2,7 +2,7 @@ ODP Technical Working Group
 
 ODP Runtime Specification: 1.0
 
-Date of Publication: 2015-xx-08 
+Date of Publication: 2015-09-xx
 
 Status: Draft
 
@@ -12,7 +12,7 @@ Status: Draft
 Abstract
 ========
 
-Specifications covering ODP Platforms based upon Apache Hadoop 2.7 and related branches. Compatibility guidelines for pplications running on ODP Platforms.
+Specifications covering ODP Platforms based upon Apache Hadoop 2.7 and related branches. Compatibility guidelines for applications running on ODP Platforms.
 
 Objective
 =========
@@ -26,6 +26,7 @@ Objectives of the ODP TWG is to achieve the following:
 3.  **For Hadoop platform providers:** compliance guidelines that enable ODP-compatible software to run successfully on their solutions. But the guidelines must allow providers to patch their customers in an expeditious manner, to deal with emergencies.
 
 The goal of this document is to define the interface between ODP-compliant Apache Hadoop Runtime Services (such as HDFS) and ODP-compatible applications that achieves the above goal. This interface in turn can be used by ISVs to properly build their software, and will be used as the basis of a compliance test suite that can be used by ODP-compliant platform providers to test compliance.
+
 
 Technical Context
 =================
@@ -42,22 +43,22 @@ To help achieve TONE, ODP-compliant Hadoop platforms MUST conform to the followi
 Hadoop Version Specifications
 -----------------------------
 
--   ODP Platforms MUST be a descendent of the Apache Hadoop 2.7 branch.
+-   For this version of the specification, ODP Platforms MUST be a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
+
+-   The Apache components in an ODP reference release MUST have their source be 100% committed to an Apache source tree.
 
 Hadoop Patch Specifications
 ---------------------------
 
-While ODP can be more prescriptive when it comes to the source-code and release-timing of major and minor releases, platform providers need more flexibility in dealing with patch releases.  In particular, to deal with urgent security or availability problems for their customers, providers need to be able to do just about anything to triage an emergency situation.  Even after an emergency is dealt with, some customers and/or vendors are very conservative about change-management and providers need flexibility to work with such customers.
+While ODP can be more prescriptive when it comes to the source-code and release-timing of major and minor releases of Apache components, platform providers need more flexibility in dealing with patch releases.  In particular, to deal with urgent security or availability problems for their customers, providers need to be able to do just about anything to triage an emergency situation.  Even after an emergency is dealt with, some customers and/or vendors are very conservative about change-management and providers need flexibility to work with such customers.
 
--   ODP platform providers have full flexibility to release fixes to customers who are facing urgent security or availability issues.  Once operations are restored to normal, however, these emergency fixes MUST eventually be replaced with more permanent patches.
+-   ODP platform providers have full flexibility to release fixes to customers who are facing urgent security or availability issues.  Once operations are restored to normal, however, these emergency fixes MUST eventually be replaced with more permanent patches that comply with the specifications listed here.
 
--   ODP platform providers MAY release patched versions of ODP major or minor releases, but in doing so MUST follow strict guidelines:
+-   Patches to Apache components MUST have the source available to the Apache community, posted via the project-specific bug-tracking system (like JIRA).  The vendor SHOULD make reasonable efforts to get the patch committed.
 
-    -   The source of all patches MUST be available publicly (see below).  The spirit of any patch MUST be to deal with major security, availability, compatibility, or correctness issues.  Patches MUST be 100% backward compatible (as defined by Hadoop’s compatibility guidelines) and MUST NOT be used to add features of any kind.
-  
-    -   ODP MUST itself issue official patch releases to the reference specification to deal with (very) major security, availability, or correctness issues.
-> Comment (AFG) Do we want to bind ourselves to this?  I can see having a mechanism to publish addendums or updates to a spec version if a major issue is found.
+-   Patches to Apache components MUST be to deal with major security, availability, compatibility, or correctness issues.  Patches MUST be 100% backward compatible (as defined by Apache Hadoop's compatibility guidelines) and MUST NOT be used to add features of any kind.
 
+- ODP MUST itself issue official patch releases to the reference release to deal with very major security, availability, or correctness issues.
 
 
 Minimum Native build specifications
@@ -65,45 +66,41 @@ Minimum Native build specifications
 
 The native libraries of Hadoop have historically been a particular point of pain for ISVs. The specifications in this subsection should reduce that pain. These options guarantee a minimum set of basic functionalities that MUST be available for each of these components, including Apache Hadoop native operating system resources required for enabling Kerberos, many Java/OS performance and functionality enhancements, and the GZip and Snappy codec compression libraries. ODP Platforms MAY enable other features such as file system encryption, however they are considered optional and not part of the base specification.
 
-> Comment (AFG) The use of -Pnative on windows actually breaks things.  Windows has its own way of handling this with a separate maven profile, native-win.  This is triggered automatically.
-
 ### Common
 
 -   hadoop-common-project MUST be built with:
 
-    -   -Pnative = build libhadoop.so, which also enables ZLib/gzip compression codec
+    -   `-Pnative` or `-Pnative-win` = build `libhadoop.so`, which also enables ZLib/gzip compression codec
 
-    -   -Drequire.snappy = enables Snappy compression
+    -   `-Drequire.snappy` = enables Snappy compression
 
 ### HDFS
 
 -   hadoop-hdfs-project MUST be built with:
 
-    -   -Pnative = enable libhdfs.so
+    -   `-Pnative` or `-Pnative-win` = enable `libhdfs.so`
 
-    -   -Drequire.libwebhdfs = builds the native WebHDFS shared library (libwebhdfs.so)
+    -   `-Drequire.libwebhdfs` = builds the native WebHDFS shared library (`libwebhdfs.so`)
 
 ### YARN
 
 -   hadoop-yarn-project MUST be built with:
 
-    -   -Pnative = build and include container-executor
-> Comment (AFG) the container-executor does not build on windows.
+    -   `-Pnative` or `-Pnative-win` = build and include an appropriate container executor
 
 ### MapReduce
 
 -   hadoop-mapreduce-project MUST be built with:
 
-    -   -Pnative = MapReduce client native task support
+    -   `-Pnative` or `-Pnative-win` = MapReduce client native task support
 
-    -   -Drequire.snappy = enable Snappy support in the MapReduce native client
+    -   `-Drequire.snappy` = enable Snappy support in the MapReduce native client
 
 ### Tools
 
--   hadoop-tools-poject MUST be built with:
+-   On non-Windows, hadoop-tools-poject MUST be built with:
 
-    -   -Pnative = enable pipes support
-> Comment (AFG) Why?  This does not work on windows.  Are you aware of people using this?
+    -   `-Pnative` = enable pipes support
 
 
 Runtime Environment for Application Code
@@ -124,61 +121,54 @@ Compliance
 
 In order to locate common resources, some commonly set configuration details are necessary. 
 
--   All environment variables discussed in this section MUST be set on all nodes.
-> Comment (SCG): We need to discuss the scope of these variables. Are they automatically available to every user that logs into the machine, or is there a standard location in which an "-env.sh" script can be found to set the environment variables?
-
--   An ODP Platform MUST set the JAVA\_HOME.
-> Comment (SCG): We had discussed this being available via the "hadoop" script, is this requiring it to be set globally? 
+-   An ODP Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
 
 -   ODP Platforms MUST have all of the base Apache Hadoop components installed.
 
--   ODP Platforms MUST pass the Big Top smoke tests.
-> Comment (AFG) I assume this means the ODP specific Big Top tests rather than generic Apache Big Top ones.  This should be made explicit.
+-   ODP Platforms MUST pass the Apache Big Top 1.0.0 Hadoop smoke tests.
 
 -   ODP Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
--   ODP Platforms MUST NOT modify version strings output by Hadoop components, such as those displayed in log files, or returnd via public API's.
+-   ODP Platforms MUST modify the version string output by Hadoop components, such as those displayed in log files, or returned via public API's such that they contain `-(vendor string)` where `(vendor string)` is an appropriate entry for the ODP Platform vendor in the output.
 
--   An ODP Platform MUST keep the same basic directory layout and content as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.
-> Comment (SCG): A clarifying example here would be useful
+-   An ODP Platform MUST keep the same basic directory layout and content as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.  For example, if Apache Hadoop YARN's package distribution contains a share directory with content, then that share directory with the equivalent content must be preset.
 
--   An ODP Platform MUST set the HADOOP\_COMMON\_HOME, HADOOP\_HDFS\_HOME, HADOOP\_MAPRED\_HOME, and HADOOP\_YARN\_HOME to an absolute directory of that component's location.  HADOOP\_COMMON\_LIB\_JARS\_DIR, HDFS\_LIB\_JARS\_DIR, MAPRED\_LIB\_JARS\_DIR, and YARN\_LIB\_JARS\_DIR MUST be set the relative directory to the jars of that associated component's \_HOME variable. (See [*this document*](https://github.com/apache/hadoop/blob/0bc15cb6e60dc60885234e01dec1c7cb4557a926/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example) for related Apache Hadoop documentation.) For example:
+-   An ODP Platform MUST set the `HADOOP_COMMON_HOME`, `HADOOP_HDFS_HOME`, `HADOOP_MAPRED_HOME`, and `HADOOP_YARN_HOME` to an absolute directory of that component's location.  `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST be set the relative directory to the jars of that associated component's `_HOME` variable. (See [*this document*](https://github.com/apache/hadoop/blob/0bc15cb6e60dc60885234e01dec1c7cb4557a926/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example) for related Apache Hadoop documentation.) For example:
 
 ```bash
 HADOOP_COMMON_HOME="/usr/lib/hadoop-common"
 HADOOP_COMMON_LIB_JARS_DIR="share/hadoop/common/lib"
 ```
 
-This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files).  The content of these LIB\_JARS\_DIR directories MUST be the same as the ODP Reference Implementation and the Apache Hadoop distribution.
+This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files).  The content of these `LIB_JARS_DIR` directories SHOULD be the same as the ODP Reference Implementation and the Apache Hadoop distribution of the appropriate platform.  In a future release, this will become a MUST.
 
-> Comment (SCG): Are there exceptions to be added here? I don't know enough about how extensions are plugged into hadoop, but would a vendor be allowed to have additional jars in some cases?  New compression algorithms? New scheduling algorithms? 
-> Comment (AFG): I propose we change the text here.  Rather than say "The content of these LIB\_JARS\_DIR directories MUST be the same as the ODP Reference Implementation and the Apache Hadoop distribution." I propose we change it to say "All jars present in the ODP Reference Implementation and the Apache Hadoop Distribution MUST be in the LIB\_JARS\_DIR.  Extra jars SHOULD NOT be in LIB\_JARS\_DIR".  Right now Hortonworks puts the WASB and S3 jars and dependencies in there to improve user user experience.  We need time to get those moved to the HADOOP_TOOLS_PATH as recommended in the next paragraph.
+-   The location of the tools jar and other miscellaneous should be set to the `HADOOP_TOOLS_PATH` environment variable.  Unlike the other  `LIB_JARS_DIR` environment variables, this MUST be an absolute path and MAY contain additional content. The entire directory SHOULD NOT, by default, be included in the default hadoop class path.  Individual jars MAY be specified, however. [**TODO: Update HADOOP-10787.**]
 
+-   `HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` SHOULD contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution of the appropriate platform, with exceptions granted for bug fixes.  In future versions of this spec, this will become a MUST. Therefore, there MUST NOT be any additional content in order to avoid potential future conflicts. 
 
--   The location of the tools jar and other miscalleneous should be set to the HADOOP\_TOOLS\_PATH environment variable.  Unlike the other  LIB\_JARS\_DIR environment variables, this MUST be an absolute path and MAY contain additional content. The entire directory SHOULD NOT, by default, be included in the default hadoop class path.  Individual jars MAY be specified, however. [TODO: Update HADOOP-10787.]
+-   `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
 
--   HADOOP\_COMMON\_HOME/bin, HADOOP\_HDFS\_HOME/bin, HADOOP\_MAPRED\_HOME/bin, and HADOOP\_YARN\_HOME/bin MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
-> Comment (AFG), Same as under the lib dirs I propose we move this to MUST have all the same files, SHOULD NOT have any extras.
-> Comment (AFG) The binary names are different on windows than *nix.  I am not clear if that causes an issue with the above paragraph or not.
+-   An ODP Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
--   HADOOP\_COMMON\_LIB\_JARS\_DIR, HDFS\_LIB\_JARS\_DIR, MAPRED\_LIB\_JARS\_DIR, and YARN\_LIB\_JARS\_DIR MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
+-   The `*_HOME`, `*_LIB_JARS_DIR`, `HADOOP_TOOLS_PATH`, `HADOOP_CONF_DIR`, and `JAVA_HOME` environment variables MUST be either explicitly set or readable via running the appropriate bin command with the `envvars` parameter.  In the situation where these variables are not explicitly set, the appropriate commands MUST be available on the path.    For example, `hadoop envvars` would list `HADOOP_COMMON_HOME`, `HADOOP_COMMON_LIB_JARS_DIR`, `JAVA_HOME`, `HADOOP_CONF_DIR`, and `HADOOP_TOOLS_PATH` as such:
 
--   An ODP Platform MUST set the HADOOP\_CONF\_DIR environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in \*\_HOME/etc/hadoop.
+```bash
+$ hadoop envvars
+HADOOP_COMMON_HOME='/opt/hadoop'
+HADOOP_COMMON_LIB_JARS_DIR='share/hadoop/common/lib'
+JAVA_HOME='/usr/local/jdk1.8.0_45'
+HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
+```
 
--   It MUST be possible to determine key Hadoop configuration values by using “${HADOOP\_HDFS\_HOME}/bin/hdfs getconf” so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
+[**TODO: HADOOP-12366 **]
+
+-   It MUST be possible to determine key Hadoop configuration values by using `${HADOOP_HDFS_HOME}/bin/hdfs getconf` so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
 
 -   The native compression codecs for gzip and snappy MUST be available and enabled by default.
 
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODP Platform implementation SHOULD NOT get in the way: at most, they SHOULD care about the version of Java and and Bash and nothing else.
 
--   ODP Platforms MUST define the APPS log4j appender to allow for ISV and user applications a common definition to log output. The actual definition, location of output, cycling requirements, etc of this appender is not defined by this specification and is ODP Platform or user- defined. [TODO: File a JIRA.]
-> Comment (SCG): How does an ISV pick up this log4j definition? 
-
--   ODP Platforms MUST define either LOG_BASE_DIR or *_LOG_DIR
-  -  LOG_BASE_DIR indicates the default directory in which all components will log their output.  If defined, the structure of this directory must be LOG_BASE_DIR/*component* where *component* is the name of the hadoop component for which the log files are defined.  These are: hdfs, mapred, yarn.
-  -  *_LOG_DIR is an environment variable that points directly to the logging directory for a given component.  If this environment variable is not set, then the component's log files are to be assumed to be contained in the LOG_BASE_DIR directory structure (see aove).
-> Comment (SCG) I know this will be contentious, but may be we can use it as a basis for discussion, then refine into something more usable. 
-> Comment (AFG) Looking at Hadoop 2.x it seems to use HADOOP_LOG_DIR as the default that all go back to if *_LOG_DIR is not set, rather than LOG_BASE_DIR.
+-   ODP Platforms MUST define the APPS log4j appender to allow for ISV and user applications a common definition to log output. The actual definition, location of output, cycling requirements, etc of this appender is not defined by this specification and is ODP Platform or user- defined. [**TODO: File a JIRA.**]
 
 Requirements we’d like to push upstream from a compatibility perspective:
 
@@ -188,19 +178,18 @@ Best practices for ODP Platforms:
 
 -   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
--   For other components not covered by this specification, ODP Platforms SHOULD set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.  
-> Comment (AFG) I do not see how we can specify this for components not in this spec.
+-   In the future, this spec MAY require other components not covered by this specification, set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.  
 
 Compatibility
 -------------
 
 OPD Compatible Applications must follow these guidelines:
 
--   Applications that need a different version of Java other than the one pointed to by JAVA\_HOME, MUST NOT change the ODP Platform’s JAVA\_HOME setting. Instead, they SHOULD set it appropriately for their specific code as appropriate.
+-   Applications that need a different version of Java other than the one pointed to by `JAVA_HOME`, MUST NOT change the ODP Platform’s `JAVA_HOME` setting. Instead, they SHOULD set it appropriately for their specific code as appropriate.
 
--   Applications SHOULD get the Java version via ${JAVA\_HOME}/bin/java -version or via Java system property detection.
+-   Applications SHOULD get the Java version via `${JAVA_HOME}/bin/java` -version or via Java system property detection.
 
--   Applications SHOULD use ${HADOOP\_CONF\_DIR} or ${\*\_HOME}/etc/hadoop as the location of the configuration directory.
+-   Applications SHOULD use `${HADOOP_CONF_DIR}` or `${*_HOME}/etc/hadoop` as the location of the configuration directory.
 
 -   Applications SHOULD use the REST interfaces in lieu of direct RPC calls. Applications MUST use the Hadoop client libraries or command-line tools to access the non-REST interfaces.  Applications SHOULD use stable interfaces when possible. Interfaces marked as evolving interfaces MAY be used however they are not preferred.
 
@@ -208,17 +197,21 @@ OPD Compatible Applications must follow these guidelines:
 
 -   YARN applications SHOULD use the Web App proxy to surface their UIs to users, rather than asking users to connect directly to the Application Manager.
 
--   Applications SHOULD use the Java client libraries or “$HADOOP\_HDFS\_HOME/bin/hdfs getconf” to obtain configuration information, rather than reading config files directly. This includes getting the YARN Resource Manager address and port information.
+-   Applications SHOULD use the Java client libraries or `${HADOOP_HDFS_HOME}/bin/hdfs getconf` to obtain configuration information, rather than reading config files directly. This includes getting the YARN Resource Manager address and port information.
 
--   Applications SHOULD only use the HADOOP\_CLASSPATH environment variable hook (2.x) or the shellprofile.d infrastructure (3.x) to manipulate the runtime content of the Java classpath. Applications SHOULD NOT inject themselves into the classpath other than manipulation of this environment variable.
+-   Applications SHOULD NOT depend upon the following configuration entries, as they are known to be node specific, private to a service, security-sensitive, or otherwise problematic:
 
--   Applications SHOULD obtain the Java classpath via the “${HADOOP\_COMMON\_HOME}/bin/hadoop classpath” command with the understanding that users and platforms may add or upgrade objects in that classpath.
+**TODO: blacklist**
 
--   Applications SHOULD obtain the version of a specific Apache Hadoop component via the appropriate “$\*\_HOME/bin/cmd version” command.
+-   Applications SHOULD only use the `HADOOP_CLASSPATH` environment variable hook (2.x) or the shellprofile.d infrastructure (3.x) to manipulate the runtime content of the Java classpath. Applications SHOULD NOT inject themselves into the classpath other than manipulation of this environment variable.
 
--   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use “hadoop fs” commands instead of “hdfs dfs” commands. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
+-   Applications SHOULD obtain the Java classpath via the `${HADOOP_COMMON_HOME}/bin/hadoop classpath` command with the understanding that users and platforms may add or upgrade objects in that classpath.
 
--   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via “${HADOOP\_YARN\_HOME}/bin/yarn jar”
+-   Applications SHOULD obtain the version of a specific Apache Hadoop component via the appropriate `$_HOME/bin/cmd version` command.
+
+-   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use `hadoop fs` commands instead of `hdfs dfs` commands. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
+
+-   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
 
 Best practices for compatible apps to be portable and operator friendly:
 
@@ -241,14 +234,14 @@ Glossary
 
 -   **Component** - A *service* is comprised of one or more components. For example, HDFS has three components: NameNode, Secondary NameNode, and DataNode. A single component may be installed across multiple nodes in the cluster, such as in the case of the HDFS data node.
 
--   **Distribution** -
+-   **Distribution** - A collection of components.
 
--   **ISV vendor**
+-   **ISV vendor** - Individual or company that created an ISV application.
 
--   **ISV application**
+-   **ISV application** - Non-ODP application or process that runs on top of or beside an ODP platform.
 
--   **ODP Runtime**
+-   **ODP Runtime** - ODP specification and platforms geared towards holistic management.
 
--   **ODP Core**
+-   **ODP Core** - ODP specification and platforms geared towards components outside of any management requirements.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
