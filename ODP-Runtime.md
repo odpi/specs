@@ -116,12 +116,58 @@ Applications on Unix platforms need to understand the base specification of some
 
 -   **Shell scripts:** ODP Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.
 
+Environment Variables
+---------------------
+
+Apache Hadoop uses several critical environment variables to determine the Java class path and location of configuration information.  As a result, they become the glue that holds together not only Hadoop itself but also anything that connects to it. (See [*this document*](https://github.com/apache/hadoop/blob/0bc15cb6e60dc60885234e01dec1c7cb4557a926/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example) for related Apache Hadoop documentation.)
+
+In order to fulfil the goals of this specification, the discovery and content of several key environment variables are covered. This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files) in an ODP Platform consistent way.
+
+The following environment variables are noted by this spec:
+
+| Environment Variable | Type | Description |
+|:---------------------|:-----|:------------|
+| JAVA_HOME            | Absolute Dir  | Location of Java |
+| HADOOP_COMMON_HOME   | Absolute Dir  | Home directory of the Apache Hadoop 'common' component |
+| HADOOP_COMMON_DIR    | Relevant Dir  | Apache Hadoop common jars |
+| HADOOP_COMMON_LIB_JARS_DIR | Relevant Dir | Apache Hadoop common jar dependencies |
+| HADOOP_CONF_DIR | Absolute Dir | Location of Apache Hadoop configuration files |
+| HADOOP_HDFS_HOME   | Absolute Dir  | Home directory of the Apache Hadoop HDFS component |
+| HDFS_DIR    | Relevant Dir  | Apache Hadoop HDFS jars |
+| HDFS_LIB_JARS_DIR | Relevant Dir | Additional Apache Hadoop HDFS jar dependencies |
+| HADOOP_YARN_HOME   | Absolute Dir  | Home directory of the Apache Hadoop YARN component |
+| YARN_DIR    | Relevant Dir  | Apache Hadoop YARN jars |
+| YARN_LIB_JARS_DIR | Relevant Dir | Additional Apache Hadoop YARN jar dependencies |
+| HADOOP_MAPRED_HOME   | Absolute Dir  | Home directory of the Apache Hadoop MapReduce component |
+| MAPRED_DIR    | Relevant Dir  | Apache Hadoop MapReduce jars |
+| MAPRED_LIB_JARS_DIR | Relevant Dir | Additional Apache Hadoop MapReduce jar dependencies |
+| HADOOP_TOOLS_PATH | Class Path | Supplemental Apache Hadoop jars for extra functionality |
+
+
+-   The content of the `*_DIR` directories SHOULD be the same as the ODP Reference Implementation and the Apache Hadoop distribution of the appropriate platform.  In a future release, this will become a MUST.
+
+-   [**Relevant JIRA: HADOOP-12366**] All previously named environment variables mentioned in this section MUST be either explicitly set or readable via running the appropriate bin command with the `envvars` parameter.  In the situation where these variables are not explicitly set, the appropriate commands MUST be available on the path.    For example, `hadoop envvars` should provide output similar to the following:
+
+```bash
+$ hadoop envvars
+HADOOP_COMMON_HOME='/opt/hadoop'
+HADOOP_COMMON_DIR='share/hadoop/common'
+HADOOP_COMMON_LIB_JARS_DIR='share/hadoop/common/lib'
+HADOOP_CONF_DIR='/etc/hadoop'
+JAVA_HOME='/usr/local/jdk1.8.0_45'
+HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
+```
+
+-   An ODP Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
+
+-   An ODP Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
+
+-   [**Relevant JIRA: HADOOP-10787.**] The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with Apache Hadoop and the reference implementation. The entire directory SHOULD NOT, by default, be included in the default hadoop class path.  Individual jars MAY be specified, however. 
+
 Compliance
 ----------
 
 In order to locate common resources, some commonly set configuration details are necessary. 
-
--   An ODP Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
 
 -   ODP Platforms MUST have all of the base Apache Hadoop components installed.
 
@@ -129,38 +175,13 @@ In order to locate common resources, some commonly set configuration details are
 
 -   ODP Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
--   ODP Platforms MUST modify the version string output by Hadoop components, such as those displayed in log files, or returned via public API's such that they contain `-(vendor string)` where `(vendor string)` is an appropriate entry for the ODP Platform vendor in the output.
+-   ODP Platforms MUST modify the version string output by Hadoop components, such as those displayed in log files, or returned via public API's such that they contain `-(vendor string)` where `(vendor string)` matches the regular expression [A-Za-z_0-9]+ and appropriately identifies the ODP Platform vendor in the output.
 
--   An ODP Platform MUST keep the same basic directory layout and content as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.  For example, if Apache Hadoop YARN's package distribution contains a share directory with content, then that share directory with the equivalent content must be preset.
+-   An ODP Platform MUST keep the same basic directory layout with regards to directory and filenames as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.  For example, if Apache Hadoop YARN's package distribution contains a libexec directory with content, then that libexec directory with the equivalent content must be preset.  Additionally:
 
--   An ODP Platform MUST set the `HADOOP_COMMON_HOME`, `HADOOP_HDFS_HOME`, `HADOOP_MAPRED_HOME`, and `HADOOP_YARN_HOME` to an absolute directory of that component's location.  `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST be set the relative directory to the jars of that associated component's `_HOME` variable. (See [*this document*](https://github.com/apache/hadoop/blob/0bc15cb6e60dc60885234e01dec1c7cb4557a926/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example) for related Apache Hadoop documentation.) For example:
+    -   `HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` SHOULD contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution of the appropriate platform, with exceptions granted for bug fixes.  In future versions of this spec, this will become a MUST. Therefore, there MUST NOT be any additional content in order to avoid potential future conflicts. 
 
-```bash
-HADOOP_COMMON_HOME="/usr/lib/hadoop-common"
-HADOOP_COMMON_LIB_JARS_DIR="share/hadoop/common/lib"
-```
-
-This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files).  The content of these `LIB_JARS_DIR` directories SHOULD be the same as the ODP Reference Implementation and the Apache Hadoop distribution of the appropriate platform.  In a future release, this will become a MUST.
-
--   The location of the tools jar and other miscellaneous should be set to the `HADOOP_TOOLS_PATH` environment variable.  Unlike the other  `LIB_JARS_DIR` environment variables, this MUST be an absolute path and MAY contain additional content. The entire directory SHOULD NOT, by default, be included in the default hadoop class path.  Individual jars MAY be specified, however. [**TODO: Update HADOOP-10787.**]
-
--   `HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` SHOULD contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution of the appropriate platform, with exceptions granted for bug fixes.  In future versions of this spec, this will become a MUST. Therefore, there MUST NOT be any additional content in order to avoid potential future conflicts. 
-
--   `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
-
--   An ODP Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
-
--   The `*_HOME`, `*_LIB_JARS_DIR`, `HADOOP_TOOLS_PATH`, `HADOOP_CONF_DIR`, and `JAVA_HOME` environment variables MUST be either explicitly set or readable via running the appropriate bin command with the `envvars` parameter.  In the situation where these variables are not explicitly set, the appropriate commands MUST be available on the path.    For example, `hadoop envvars` would list `HADOOP_COMMON_HOME`, `HADOOP_COMMON_LIB_JARS_DIR`, `JAVA_HOME`, `HADOOP_CONF_DIR`, and `HADOOP_TOOLS_PATH` as such:
-
-```bash
-$ hadoop envvars
-HADOOP_COMMON_HOME='/opt/hadoop'
-HADOOP_COMMON_LIB_JARS_DIR='share/hadoop/common/lib'
-JAVA_HOME='/usr/local/jdk1.8.0_45'
-HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
-```
-
-[**TODO: HADOOP-12366 **]
+    -   `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables that they contain in the ODP Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
 
 -   It MUST be possible to determine key Hadoop configuration values by using `${HADOOP_HDFS_HOME}/bin/hdfs getconf` so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
 
@@ -170,6 +191,10 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 
 -   ODP Platforms MUST define the APPS log4j appender to allow for ISV and user applications a common definition to log output. The actual definition, location of output, cycling requirements, etc of this appender is not defined by this specification and is ODP Platform or user- defined. [**TODO: File a JIRA.**]
 
+-   ODP Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are defined as:
+
+[**TODO: blacklist**]
+
 Requirements we’d like to push upstream from a compatibility perspective:
 
 -   Don’t assume GNU userland -- POSIX please -- to increase cross-platform compatibility.
@@ -178,7 +203,7 @@ Best practices for ODP Platforms:
 
 -   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
--   In the future, this spec MAY require other components not covered by this specification, set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.  
+-   In the future, this spec MAY require other components not covered by this specification, set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
 
 Compatibility
 -------------
