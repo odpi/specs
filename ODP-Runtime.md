@@ -98,7 +98,7 @@ The native libraries of Hadoop have historically been a particular point of pain
 
 ### Tools
 
--   On non-Windows, hadoop-tools-poject MUST be built with:
+-   On non-Windows, hadoop-tools-project MUST be built with:
 
     -   `-Pnative` = enable pipes support
 
@@ -129,18 +129,18 @@ The following environment variables are noted by this spec:
 |:---------------------|:-----|:------------|
 | JAVA_HOME            | Absolute Dir  | Location of Java |
 | HADOOP_COMMON_HOME   | Absolute Dir  | Home directory of the Apache Hadoop 'common' component |
-| HADOOP_COMMON_DIR    | Relevant Dir  | Apache Hadoop common jars |
-| HADOOP_COMMON_LIB_JARS_DIR | Relevant Dir | Apache Hadoop common jar dependencies |
+| HADOOP_COMMON_DIR    | Relative Dir  | Apache Hadoop common jars |
+| HADOOP_COMMON_LIB_JARS_DIR | Relative Dir | Apache Hadoop common jar dependencies |
 | HADOOP_CONF_DIR | Absolute Dir | Location of Apache Hadoop configuration files |
 | HADOOP_HDFS_HOME   | Absolute Dir  | Home directory of the Apache Hadoop HDFS component |
-| HDFS_DIR    | Relevant Dir  | Apache Hadoop HDFS jars |
-| HDFS_LIB_JARS_DIR | Relevant Dir | Additional Apache Hadoop HDFS jar dependencies |
+| HDFS_DIR    | Relative Dir  | Apache Hadoop HDFS jars |
+| HDFS_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop HDFS jar dependencies |
 | HADOOP_YARN_HOME   | Absolute Dir  | Home directory of the Apache Hadoop YARN component |
-| YARN_DIR    | Relevant Dir  | Apache Hadoop YARN jars |
-| YARN_LIB_JARS_DIR | Relevant Dir | Additional Apache Hadoop YARN jar dependencies |
+| YARN_DIR    | Relative Dir  | Apache Hadoop YARN jars |
+| YARN_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop YARN jar dependencies |
 | HADOOP_MAPRED_HOME   | Absolute Dir  | Home directory of the Apache Hadoop MapReduce component |
-| MAPRED_DIR    | Relevant Dir  | Apache Hadoop MapReduce jars |
-| MAPRED_LIB_JARS_DIR | Relevant Dir | Additional Apache Hadoop MapReduce jar dependencies |
+| MAPRED_DIR    | Relative Dir  | Apache Hadoop MapReduce jars |
+| MAPRED_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop MapReduce jar dependencies |
 | HADOOP_TOOLS_PATH | Class Path | Supplemental Apache Hadoop jars for extra functionality |
 
 
@@ -162,12 +162,10 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 
 -   An ODP Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
--   [**Relevant JIRA: HADOOP-10787.**] The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with Apache Hadoop and the reference implementation. The entire directory SHOULD NOT, by default, be included in the default hadoop class path.  Individual jars MAY be specified, however. 
+-   [**Relevant JIRA: HADOOP-10787.**] The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with Apache Hadoop and the reference implementation. The entire directory SHOULD NOT be included in the default hadoop class path.  Individual jars MAY be specified.
 
 Compliance
 ----------
-
-In order to locate common resources, some commonly set configuration details are necessary. 
 
 -   ODP Platforms MUST have all of the base Apache Hadoop components installed.
 
@@ -203,14 +201,15 @@ Best practices for ODP Platforms:
 
 -   ODP Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
--   In the future, this spec MAY require other components not covered by this specification, set the environment variable *component*_HOME to specify the location in which the component is installed and *component*_CONF_DIR to indicate the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
+-   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
 
 Compatibility
 -------------
 
 OPD Compatible Applications must follow these guidelines:
 
--   Applications that need a different version of Java other than the one pointed to by `JAVA_HOME`, MUST NOT change the ODP Platform’s `JAVA_HOME` setting. Instead, they SHOULD set it appropriately for their specific code as appropriate.
+-   Applications that need a different version of Java MUST NOT change the ODP Platform’s `JAVA_HOME` setting. Instead, they SHOULD set it appropriately for their specific code in an appropriate way (either own startup scripts,
+custom-to-the-application configuration file, etc) that does impact the ODP Platform.
 
 -   Applications SHOULD get the Java version via `${JAVA_HOME}/bin/java` -version or via Java system property detection.
 
@@ -255,7 +254,7 @@ Best practices for compatible apps to be portable and operator friendly:
 Glossary
 ========
 
--   **Service** - A *service* refers to a software package that is installable within the Hadoop stack. A service can be a be comprised of one or more *components* (such as a NameNode, DataNode, etc.) or may be as simple as a single library.
+-   **Service** - A *service* refers to a software package that is installable within the Hadoop stack. A service can be comprised of one or more *components* (such as a NameNode, DataNode, etc.) or may be as simple as a single library.
 
 -   **Component** - A *service* is comprised of one or more components. For example, HDFS has three components: NameNode, Secondary NameNode, and DataNode. A single component may be installed across multiple nodes in the cluster, such as in the case of the HDFS data node.
 
