@@ -80,8 +80,6 @@ The native libraries of Hadoop have historically been a particular point of pain
 
     -   `-Pnative` or `-Pnative-win` = enable `libhdfs.so`
 
-    -   `-Drequire.libwebhdfs` = builds the native WebHDFS shared library (`libwebhdfs.so`)
-
 ### YARN
 
 -   hadoop-yarn-project MUST be built with:
@@ -95,13 +93,6 @@ The native libraries of Hadoop have historically been a particular point of pain
     -   `-Pnative` or `-Pnative-win` = MapReduce client native task support
 
     -   `-Drequire.snappy` = enable Snappy support in the MapReduce native client
-
-### Tools
-
--   On non-Windows, hadoop-tools-project MUST be built with:
-
-    -   `-Pnative` = enable pipes support
-
 
 Runtime Environment for Application Code
 ========================================
