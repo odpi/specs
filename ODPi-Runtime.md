@@ -70,29 +70,29 @@ The native libraries of Hadoop have historically been a particular point of pain
 
 -   hadoop-common-project MUST be built with:
 
-    -   `-Pnative` or `-Pnative-win` = build `libhadoop.so`, which also enables ZLib/gzip compression codec
+    -   `-Pnative` or `-Pnative-win`   (build `libhadoop.so`, which also enables ZLib/gzip compression codec)
 
-    -   `-Drequire.snappy` = enables Snappy compression
+    -   `-Drequire.snappy`             (enable Snappy compression)
 
 ### HDFS
 
 -   hadoop-hdfs-project MUST be built with:
 
-    -   `-Pnative` or `-Pnative-win` = enable `libhdfs.so`
+    -   `-Pnative` or `-Pnative-win`   (enable `libhdfs.so`)
 
 ### YARN
 
 -   hadoop-yarn-project MUST be built with:
 
-    -   `-Pnative` or `-Pnative-win` = build and include an appropriate container executor
+    -   `-Pnative` or `-Pnative-win`   (build and include an appropriate container executor)
 
 ### MapReduce
 
 -   hadoop-mapreduce-project MUST be built with:
 
-    -   `-Pnative` or `-Pnative-win` = MapReduce client native task support
+    -   `-Pnative` or `-Pnative-win`   (MapReduce client native task support)
 
-    -   `-Drequire.snappy` = enable Snappy support in the MapReduce native client
+    -   `-Drequire.snappy`             (enable Snappy support in the MapReduce native client)
 
 Runtime Environment for Application Code
 ========================================
@@ -176,9 +176,9 @@ Compliance
 
 -   The native compression codecs for gzip and snappy MUST be available and enabled by default.
 
--   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODPi Platform implementation SHOULD NOT get in the way: at most, they SHOULD care about the version of Java and and Bash and nothing else.
+-   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODPi Platform implementation SHOULD NOT get in the way: at most, the implementation SHOULD only care about the version of Java and Bash, and nothing else.
 
--   ODPi Platforms MUST define the APPS log4j appender to allow for ISV and user applications a common definition to log output. The actual definition, location of output, cycling requirements, etc of this appender is not defined by this specification and is ODPi Platform or user- defined. [**TODO: File a JIRA.**]
+-   ODPi Platforms MUST define the APPS log4j appender to provide ISV and user applications a common definition to log output. The actual definition, location of output, cycling requirements, etc of this appender is not defined by this specification and is ODPi Platform or user- defined. [**TODO: File a JIRA.**]
 
 -   ODPi Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are defined as:
 
@@ -197,10 +197,10 @@ Best practices for ODPi Platforms:
 Compatibility
 -------------
 
-OPD Compatible Applications must follow these guidelines:
+OPDi Compatible Applications must follow these guidelines:
 
 -   Applications that need a different version of Java MUST NOT change the ODPi Platform’s `JAVA_HOME` setting. Instead, they SHOULD set it appropriately for their specific code in an appropriate way (either own startup scripts,
-custom-to-the-application configuration file, etc) that does impact the ODPi Platform.
+custom-to-the-application configuration file, etc) that does not impact the ODPi Platform.
 
 -   Applications SHOULD get the Java version via `${JAVA_HOME}/bin/java` -version or via Java system property detection.
 
