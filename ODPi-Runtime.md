@@ -105,7 +105,7 @@ Applications on Unix platforms need to understand the base specification of some
 
 -   **Java:** ODPi Platforms SHOULD support both JRE 7 and JRE 8 runtime environments (64-bit only). ODPi Applications SHOULD work in at least one of these, and SHOULD be clear when they don’t support both.
 
--   **Shell scripts:** ODPi Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.
+-   **Shell scripts:** On Unix and Unix-like systems, ODPi Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, OPDi platforms and Applications SHOULD use Microsoft batch or PowerShell.
 
 Environment Variables
 ---------------------
@@ -235,6 +235,8 @@ Best practices for compatible apps to be portable and operator friendly:
 -   Applications SHOULD NOT assume that Linux is being used.
 
 -   Applications SHOULD NOT assume that an Oracle JRE is being used.
+
+-   Applciations SHOULD include both Microsoft batch or PowerShell as well as Unix-compatible shell scripts.
 
 -   Applications SHOULD NOT install their own dependent packages (e.g., Ruby, Python, Apache Web Server) unless absolutely necessary. They SHOULD list them as system requirements and let the operator install them.
 
