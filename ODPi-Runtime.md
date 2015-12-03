@@ -2,9 +2,9 @@ ODPi Technical Working Group
 
 ODPi Runtime Specification: 1.0
 
-Date of Publication: 2015-09-xx
+Date of Publication: 2015-12-xx
 
-Status: Draft
+Status: Proposal
 
 
 ---
@@ -137,7 +137,7 @@ The following environment variables are noted by this spec:
 
 -   The content of the `*_DIR` directories SHOULD be the same as the ODPi Reference Implementation and the Apache Hadoop distribution of the appropriate platform.  In a future release, this will become a MUST.
 
--   [**Relevant JIRA: HADOOP-12366**] All previously named environment variables mentioned in this section MUST be either explicitly set or readable via running the appropriate bin command with the `envvars` parameter.  In the situation where these variables are not explicitly set, the appropriate commands MUST be available on the path.    For example, `hadoop envvars` should provide output similar to the following:
+-   All previously named environment variables mentioned in this section MUST be either explicitly set or readable via running the appropriate bin command with the `envvars` parameter.  In the situation where these variables are not explicitly set, the appropriate commands MUST be available on the path.    For example, `hadoop envvars` should provide output similar to the following:
 
 ```bash
 $ hadoop envvars
@@ -153,7 +153,7 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 
 -   An ODPi Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
--   [**Relevant JIRA: HADOOP-10787.**] The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with Apache Hadoop and the reference implementation. The entire directory SHOULD NOT be included in the default hadoop class path.  Individual jars MAY be specified.
+-   The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with Apache Hadoop and the reference implementation. The entire directory SHOULD NOT be included in the default hadoop class path.  Individual jars MAY be specified.
 
 Compliance
 ----------
