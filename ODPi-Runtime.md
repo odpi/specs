@@ -197,7 +197,7 @@ Best practices for ODPi Platforms:
 
 -   **[HADOOP_NORDMPORTS]** ODPi Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
--   **[SITEXML_VARS]** ODPi Platforms SHOULD NOT use variables for values inside sitexml properties which a client must resolve and replace. This requirement assists application integrators by not requiring them to modify sitexmls before they are functional.
+-   **[SITEXML_VARS]** ODPi Platforms SHOULD NOT use variables for values inside sitexml properties which a client must resolve and replace. This requirement assists application integrators by not requiring modification of sitexmls to make them functional.
 
 -   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
 
