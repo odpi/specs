@@ -156,7 +156,7 @@ JAVA_HOME='/usr/local/jdk1.8.0_45'
 HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 ```
 
--   **[HADOOP_EJH2]** An ODPi Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
+-   **[HADOOP_EJH1]** An ODPi Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
 
 -   **[HADOOP_EJH2]** An ODPi Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
