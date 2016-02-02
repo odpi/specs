@@ -2,9 +2,9 @@ ODPi Technical Working Group
 
 ODPi Runtime Specification: 1.0
 
-Date of Publication: 2015-12-xx
+Date of Publication: 2016-01-22
 
-Status: Proposal
+Status: Draft
 
 
 ---
@@ -185,9 +185,7 @@ Compliance
 
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODPi Platform implementation SHOULD NOT get in the way: at most, the implementation SHOULD only care about the version of Java and Bash, and nothing else.
 
--   **[HADOOP_DISTCONF]**  ODPi Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are defined as:
-
-[**TODO: blacklist**]
+-   ODPi Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are listed in Appendix A.
 
 Requirements we’d like to push upstream from a compatibility perspective:
 
@@ -219,9 +217,7 @@ custom-to-the-application configuration file, etc) that does not impact the ODPi
 
 -   Applications SHOULD use the Java client libraries or `${HADOOP_HDFS_HOME}/bin/hdfs getconf` to obtain configuration information, rather than reading config files directly. This includes getting the YARN Resource Manager address and port information.
 
--   Applications SHOULD NOT depend upon the following configuration entries, as they are known to be node specific, private to a service, security-sensitive, or otherwise problematic:
-
-**TODO: blacklist**
+-   Applications SHOULD NOT depend upon the configuration entries listed in Appendix A, as they are known to be node specific, private to a service, security-sensitive, or otherwise problematic.
 
 -   Applications SHOULD only use the `HADOOP_CLASSPATH` environment variable hook (2.x) or the shellprofile.d infrastructure (3.x) to manipulate the runtime content of the Java classpath. Applications SHOULD NOT inject themselves into the classpath other than manipulation of this environment variable.
 
@@ -265,3 +261,358 @@ Glossary
 -   **ODPi Runtime** - ODPi specification and platforms geared towards holistic management.
 
 -   **ODPi Core** - ODPi specification and platforms geared towards components outside of any management requirements.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
+
+Appendix A, Hadoop Configuration Values Not Shared
+==================================================
+The following Hadoop configuration values need not be shared by a compliant distribution and should not be depended on by an application:
+
+| Configuration Value | Reason for Not Sharing |
+|:--------------------|:-----------------------|
+| dfs.block.access.key.update.interval | internal |
+| dfs.block.invalidate.limit | internal |
+| dfs.block.local-path-access.user | internal |
+| dfs.block.misreplication.processing.limit | internal |
+| dfs.block.replicator.classname | internal |
+| dfs.block.scanner.volume.bytes.per.second | internal |
+| dfs.blockreport.initialDelay | internal |
+| dfs.blockreport.intervalMsec | internal |
+| dfs.blockreport.split.threshold | internal |
+| dfs.cachereport.intervalMsec | internal |
+| dfs.cluster.administrators | internal |
+| dfs.content-summary.limit | internal |
+| dfs.content-summary.sleep-microsec | internal |
+| dfs.corruptfilesreturned.max | internal |
+| dfs.datanode.available-space-volume-choosing-policy.balanced-space-preference-fraction | internal |
+| dfs.datanode.available-space-volume-choosing-policy.balanced-space-threshold | internal |
+| dfs.datanode.balance.bandwidthPerSec | internal |
+| dfs.datanode.balance.max.concurrent.moves | internal |
+| dfs.datanode.block.id.layout.upgrade.threads | internal |
+| dfs.datanode.cache.revocation.polling.ms | internal |
+| dfs.datanode.cache.revocation.timeout.ms | internal |
+| dfs.datanode.data.dir | internal |
+| dfs.datanode.data.dir.perm | internal |
+| dfs.datanode.directoryscan.interval | internal |
+| dfs.datanode.directoryscan.threads | internal |
+| dfs.datanode.dns.interface | internal |
+| dfs.datanode.dns.nameserver | internal |
+| dfs.datanode.drop.cache.behind.reads | internal |
+| dfs.datanode.drop.cache.behind.writes | internal |
+| dfs.datanode.du.reserved | internal |
+| dfs.datanode.duplicate.replica.deletion | internal |
+| dfs.datanode.failed.volumes.tolerated | internal |
+| dfs.datanode.fsdataset.factory | internal |
+| dfs.datanode.fsdataset.volume.choosing.policy | internal |
+| dfs.datanode.fsdatasetcache.max.threads.per.volume | internal |
+| dfs.datanode.handler.count | internal |
+| dfs.datanode.hdfs-blocks-metadata.enabled | internal |
+| dfs.datanode.keytab.file | security |
+| dfs.datanode.lazywriter.interval.sec | internal |
+| dfs.datanode.network.counts.cache.max.size | internal |
+| dfs.datanode.oob.timeout-ms | internal |
+| dfs.datanode.ram.disk.low.watermark.bytes | internal |
+| dfs.datanode.ram.disk.low.watermark.percent | internal |
+| dfs.datanode.ram.disk.replica.tracker | internal |
+| dfs.datanode.readahead.bytes | internal |
+| dfs.datanode.restart.replica.expiration | internal |
+| dfs.datanode.scan.period.hours | internal |
+| dfs.datanode.shared.file.descriptor.paths | internal |
+| dfs.datanode.slow.io.warning.threshold.ms | internal |
+| dfs.datanode.socket.reuse.keepalive | internal |
+| dfs.datanode.socket.write.timeout | internal |
+| dfs.datanode.startup | internal |
+| dfs.datanode.sync.behind.writes | internal |
+| dfs.datanode.sync.behind.writes.in.background | internal |
+| dfs.datanode.synconclose | internal |
+| dfs.datanode.transferTo.allowed | internal |
+| dfs.datanode.use.datanode.hostname | internal |
+| dfs.datanode.xceiver.stop.timeout.millis | internal |
+| dfs.ha.fencing.ssh.private-key-files | security |
+| dfs.ha.log-roll.period | internal |
+| dfs.ha.log-roll.rpc.timeout | internal |
+| dfs.ha.standby.checkpoints | internal |
+| dfs.ha.tail-edits.period | internal |
+| dfs.ha.zkfc.port | internal |
+| dfs.heartbeat.interval | internal |
+| dfs.https.server.keystore.resource | internal |
+| dfs.image.compress | internal |
+| dfs.image.compression.codec | internal |
+| dfs.image.transfer.bandwidthPerSec | internal |
+| dfs.image.transfer.chunksize | internal |
+| dfs.image.transfer.timeout | internal |
+| dfs.journalnode.edits.dir | internal |
+| dfs.journalnode.http-address | internal |
+| dfs.journalnode.https-address | internal |
+| dfs.journalnode.keytab.file | security |
+| dfs.metrics.percentiles.intervals | internal |
+| dfs.metrics.session-id | internal |
+| dfs.namenode.accesstime.precision | internal |
+| dfs.namenode.audit.log.async | internal |
+| dfs.namenode.audit.log.token.tracking.id | internal |
+| dfs.namenode.audit.loggers | internal |
+| dfs.namenode.avoid.read.stale.datanode | internal |
+| dfs.namenode.avoid.write.stale.datanode | internal |
+| dfs.namenode.blocks.per.postponedblocks.rescan | internal |
+| dfs.namenode.checkpoint.check.period | internal |
+| dfs.namenode.checkpoint.dir | internal |
+| dfs.namenode.checkpoint.edits.dir | internal |
+| dfs.namenode.checkpoint.max-retries | internal |
+| dfs.namenode.checkpoint.period | internal |
+| dfs.namenode.checkpoint.txns | internal |
+| dfs.namenode.datanode.registration.ip-hostname-check | internal |
+| dfs.namenode.decommission.blocks.per.interval | internal |
+| dfs.namenode.decommission.interval | internal |
+| dfs.namenode.decommission.max.concurrent.tracked.nodes | internal |
+| dfs.namenode.delegation.key.update-interval | internal |
+| dfs.namenode.delegation.token.max-lifetime | internal |
+| dfs.namenode.delegation.token.renew-interval | internal |
+| dfs.namenode.edit.log.autoroll.check.interval.ms | internal |
+| dfs.namenode.edit.log.autoroll.multiplier.threshold | internal |
+| dfs.namenode.edits.dir | internal |
+| dfs.namenode.edits.dir.minimum | internal |
+| dfs.namenode.edits.dir.required | internal |
+| dfs.namenode.edits.journal-plugin | internal |
+| dfs.namenode.edits.journal-plugin.qjournal | internal |
+| dfs.namenode.edits.noeditlogchannelflush | internal |
+| dfs.namenode.enable.retrycache | internal |
+| dfs.namenode.handler.count | internal |
+| dfs.namenode.heartbeat.recheck-interval | internal |
+| dfs.namenode.inode.attributes.provider.class | internal |
+| dfs.namenode.inotify.max.events.per.rpc | internal |
+| dfs.namenode.invalidate.work.pct.per.iteration | internal |
+| dfs.namenode.keytab.file | internal |
+| dfs.namenode.lazypersist.file.scrub.interval.sec | internal |
+| dfs.namenode.legacy-oiv-image.dir | internal |
+| dfs.namenode.list.cache.directives.num.responses | internal |
+| dfs.namenode.list.cache.pools.num.responses | internal |
+| dfs.namenode.list.encryption.zones.num.responses | internal |
+| dfs.namenode.max-num-blocks-to-log | internal |
+| dfs.namenode.max.extra.edits.segments.retained | internal |
+| dfs.namenode.max.objects | internal |
+| dfs.namenode.name.cache.threshold | internal |
+| dfs.namenode.name.dir | internal |
+| dfs.namenode.name.dir.restore | internal |
+| dfs.namenode.num.checkpoints.retained | internal |
+| dfs.namenode.num.extra.edits.retained | internal |
+| dfs.namenode.path.based.cache.block.map.allocation.percent | internal |
+| dfs.namenode.path.based.cache.refresh.interval.ms | internal |
+| dfs.namenode.path.based.cache.retry.interval.ms | internal |
+| dfs.namenode.reject-unresolved-dn-topology-mapping | internal |
+| dfs.namenode.replication.considerLoad | internal |
+| dfs.namenode.replication.interval | internal |
+| dfs.namenode.replication.max-streams | internal |
+| dfs.namenode.replication.max-streams-hard-limit | internal |
+| dfs.namenode.replication.min | internal |
+| dfs.namenode.replication.pending.timeout-sec | internal |
+| dfs.namenode.replication.work.multiplier.per.iteration | internal |
+| dfs.namenode.replqueue.threshold-pct | internal |
+| dfs.namenode.resource.check.interval | internal |
+| dfs.namenode.resource.checked.volumes | internal |
+| dfs.namenode.resource.checked.volumes.minimum | internal |
+| dfs.namenode.resource.du.reserved | internal |
+| dfs.namenode.retrycache.expirytime.millis | internal |
+| dfs.namenode.retrycache.heap.percent | internal |
+| dfs.namenode.rpc-bind-host | internal |
+| dfs.namenode.safemode.extension | internal |
+| dfs.namenode.service.handler.count | internal |
+| dfs.namenode.servicerpc-bind-host | internal |
+| dfs.namenode.shared.edits.dir | internal |
+| dfs.namenode.stale.datanode.interval | internal |
+| dfs.namenode.stale.datanode.minimum.interval | internal |
+| dfs.namenode.startup | internal |
+| dfs.namenode.startup.delay.block.deletion.sec | internal |
+| dfs.namenode.support.allow.format | internal |
+| dfs.namenode.tolerate.heartbeat.multiplier | internal |
+| dfs.namenode.top.enabled | internal |
+| dfs.namenode.top.num.users | internal |
+| dfs.namenode.top.window.num.buckets | internal |
+| dfs.namenode.top.windows.minutes | internal |
+| dfs.namenode.write.stale.datanode.ratio | internal |
+| dfs.namenode.xattrs.enabled | internal |
+| dfs.permissions.superusergroup | internal |
+| dfs.pipeline.ecn | internal |
+| dfs.qjournal.accept-recovery.timeout.ms | internal |
+| dfs.qjournal.finalize-segment.timeout.ms | internal |
+| dfs.qjournal.get-journal-state.timeout.ms | internal |
+| dfs.qjournal.new-epoch.timeout.ms | internal |
+| dfs.qjournal.prepare-recovery.timeout.ms | internal |
+| dfs.qjournal.queued-edits.limit.mb | internal |
+| dfs.qjournal.select-input-streams.timeout.ms | internal |
+| dfs.qjournal.start-segment.timeout.ms | internal |
+| dfs.qjournal.write-txns.timeout.ms | internal |
+| dfs.quota.by.storage.type.enabled | internal |
+| dfs.secondary.namenode.keytab.file | security |
+| dfs.web.authentication.kerberos.keytab | security |
+| fs.df.interval | internal |
+| fs.du.interval | internal |
+| ha.failover-controller.active-standby-elector.zk.op.retries | internal |
+| ha.health-monitor.check-interval.ms | internal |
+| ha.health-monitor.connect-retry-interval.ms | internal |
+| ha.health-monitor.rpc-timeout.ms | internal |
+| ha.health-monitor.sleep-after-disconnect.ms | internal |
+| ha.zookeeper.acl | security |
+| ha.zookeeper.auth | security |
+| ha.zookeeper.parent-znode | internal |
+| ha.zookeeper.quorum | internal |
+| ha.zookeeper.session-timeout.ms | internal |
+| hadoop.htrace.spanreceiver.classes | internal |
+| hadoop.http.authentication.cookie.domain | internal |
+| hadoop.http.authentication.kerberos.keytab | security |
+| hadoop.http.authentication.signature.secret.file | security |
+| hadoop.http.authentication.token.validity | internal |
+| hadoop.http.authentication.type | internal |
+| hadoop.http.cross-origin.allowed-headers | internal |
+| hadoop.http.cross-origin.allowed-methods | internal |
+| hadoop.http.cross-origin.allowed-origins | internal |
+| hadoop.http.filter.initializers | internal |
+| hadoop.http.staticuser.user | internal |
+| hadoop.jetty.logs.serve.aliases | internal |
+| hadoop.security.group.mapping | internal |
+| hadoop.security.group.mapping.ldap.base | security |
+| hadoop.security.group.mapping.ldap.bind.password.file | security |
+| hadoop.security.group.mapping.ldap.bind.user | security |
+| hadoop.security.group.mapping.ldap.directory.search.timeout | security |
+| hadoop.security.group.mapping.ldap.search.attr.group.name | security |
+| hadoop.security.group.mapping.ldap.search.attr.member | security |
+| hadoop.security.group.mapping.ldap.search.filter.group | security |
+| hadoop.security.group.mapping.ldap.search.filter.user | security |
+| hadoop.security.group.mapping.ldap.ssl | security |
+| hadoop.security.group.mapping.ldap.ssl.keystore | security |
+| hadoop.security.group.mapping.ldap.ssl.keystore.password.file | security |
+| hadoop.security.group.mapping.ldap.url | security |
+| hadoop.security.group.mapping.provider.* | security |
+| hadoop.security.group.mapping.providers | security |
+| hadoop.security.groups.cache.secs | security |
+| hadoop.security.groups.cache.warn.after.ms | security |
+| hadoop.security.groups.negative-cache.secs | security |
+| hadoop.security.impersonation.provider.class | security |
+| hadoop.security.instrumentation.requires.admin | security |
+| ipc*.backoff.enable | internal |
+| ipc.*.callqueue.impl | internal |
+| ipc.*.identity-provider.impl | internal |
+| ipc.maximum.data.length | internal |
+| mapreduce.jobhistory.admin.acl | security |
+| mapreduce.jobhistory.client.thread-count | internal |
+| mapreduce.jobhistory.datestring.cache.size | internal |
+| mapreduce.jobhistory.joblist.cache.size | internal |
+| mapreduce.jobhistory.keytab | security |
+| mapreduce.jobhistory.loadedjobs.cache.size | internal |
+| mapreduce.jobhistory.move.interval-ms | internal |
+| mapreduce.jobhistory.move.thread-count | internal |
+| mapreduce.jobhistory.recovery.enable | internal |
+| mapreduce.jobhistory.recovery.store.class | internal |
+| mapreduce.jobhistory.recovery.store.leveldb.path | internal |
+| mapreduce.jobhistory.store.class | internal |
+| net.topology.configured.node.mapping | internal |
+| net.topology.dependency.script.file.name | internal |
+| net.topology.impl | internal |
+| net.topology.node.switch.mapping.impl | internal |
+| net.topology.script.file.name | internal |
+| net.topology.script.number.args | internal |
+| net.topology.table.file.name | internal |
+| nfs.keytab.file | security |
+| rpc.metrics.percentiles.intervals | internal |
+| rpc.metrics.quantile.enable | internal |
+| security.applicationhistory.protocol.acl | security |
+| security.client.datanode.protocol.acl | security |
+| security.client.protocol.acl | security |
+| security.datanode.protocol.acl | security |
+| security.get.user.mappings.protocol.acl | security |
+| security.ha.service.protocol.acl | security |
+| security.inter.datanode.protocol.acl | security |
+| security.namenode.protocol.acl | security |
+| security.qjournal.service.protocol.acl | security |
+| security.refresh.callqueue.protocol.acl | security |
+| security.refresh.generic.protocol.acl | security |
+| security.refresh.policy.protocol.acl | security |
+| security.refresh.user.mappings.protocol.acl | security |
+| security.service.authorization.default.acl | security |
+| security.service.authorization.default.acl.blocked | security |
+| security.trace.protocol.acl | security |
+| security.zkfc.protocol.acl | security |
+| ssl.server.keystore.* | security |
+| ssl.server.truststore.* | security |
+| yarn.admin.acl | security |
+| yarn.am.blacklisting.disable-failure-threshold | internal |
+| yarn.am.blacklisting.enabled | internal |
+| yarn.authorization-provider | internal |
+| yarn.client.nodemanager-client-async.thread-pool-max-size | internal |
+| yarn.nodemanager.admin-env | internal |
+| yarn.nodemanager.amrmproxy.client.thread-count | internal |
+| yarn.nodemanager.amrmproxy.interceptor-class.pipeline | internal |
+| yarn.nodemanager.container-executor.class | internal |
+| yarn.nodemanager.container-manager.thread-count | internal |
+| yarn.nodemanager.container-monitor.process-tree.class | internal |
+| yarn.nodemanager.container-monitor.procfs-tree.smaps-based-rss.enabled | internal |
+| yarn.nodemanager.container-monitor.resource-calculator.class | internal |
+| yarn.nodemanager.delete.thread-count | internal |
+| yarn.nodemanager.health-checker.script.opts | internal |
+| yarn.nodemanager.health-checker.script.path | internal |
+| yarn.nodemanager.keytab | security |
+| yarn.nodemanager.linux-container-executor.resources-handler.class | internal |
+| yarn.nodemanager.localizer.cache.cleanup.interval-ms | internal |
+| yarn.nodemanager.localizer.cache.target-size-mb | internal |
+| yarn.nodemanager.localizer.client.thread-count | internal |
+| yarn.nodemanager.localizer.fetch.thread-count | internal |
+| yarn.nodemanager.log-aggregation.policy.class | internal |
+| yarn.nodemanager.log.deletion-threads-count | internal |
+| yarn.nodemanager.node-labels.provider.script.opts | internal |
+| yarn.nodemanager.node-labels.provider.script.path | internal |
+| yarn.nodemanager.recovery.dir | internal |
+| yarn.nodemanager.resource-calculator.class | internal |
+| yarn.nodemanager.runtime.linux.docker.privileged-containers.acl | security |
+| yarn.nodemanager.webapp.spnego-keytab-file | security |
+| yarn.resourcemanager.admin.client.thread-count | internal |
+| yarn.resourcemanager.amlauncher.thread-count | internal |
+| yarn.resourcemanager.client.thread-count | internal |
+| yarn.resourcemanager.delegation-token-renewer.thread-count | internal |
+| yarn.resourcemanager.fs.state-store.retry-policy-spec | internal |
+| yarn.resourcemanager.fs.state-store.uri | internal |
+| yarn.resourcemanager.history-writer.multi-threaded-dispatcher.pool-size | internal |
+| yarn.resourcemanager.keytab | security |
+| yarn.resourcemanager.leveldb-state-store.path | internal |
+| yarn.resourcemanager.max-log-aggregation-diagnostics-in-memory | internal |
+| yarn.resourcemanager.nodemanager-connect-retries | internal |
+| yarn.resourcemanager.nodes.exclude-path | internal |
+| yarn.resourcemanager.nodes.include-path | internal |
+| yarn.resourcemanager.reservation-system.class | internal |
+| yarn.resourcemanager.reservation-system.plan.follower | internal |
+| yarn.resourcemanager.reservation-system.planfollower.time-step | internal |
+| yarn.resourcemanager.resource-tracker.client.thread-count | internal |
+| yarn.resourcemanager.rm.container-allocation.expiry-interval-ms | internal |
+| yarn.resourcemanager.scheduler.class | internal |
+| yarn.resourcemanager.scheduler.client.thread-count | internal |
+| yarn.resourcemanager.scheduler.monitor.enable | internal |
+| yarn.resourcemanager.store.class | internal |
+| yarn.resourcemanager.system-metrics-publisher.dispatcher.pool-size | internal |
+| yarn.resourcemanager.system-metrics-publisher.enabled | internal |
+| yarn.resourcemanager.webapp.delegation-token-auth-filter.enabled | internal |
+| yarn.resourcemanager.webapp.spnego-keytab-file | security |
+| yarn.resourcemanager.zk-acl | security |
+| yarn.resourcemanager.zk-state-store.root-node.acl | internal |
+| yarn.scheduler.maximum-allocation-mb | internal |
+| yarn.scheduler.maximum-allocation-vcores | internal |
+| yarn.scheduler.minimum-allocation-mb | internal |
+| yarn.scheduler.minimum-allocation-vcores | internal |
+| yarn.sharedcache.admin.thread-count | internal |
+| yarn.sharedcache.app-checker.class | internal |
+| yarn.sharedcache.client-server.address | internal |
+| yarn.sharedcache.enabled | internal |
+| yarn.sharedcache.nested-level | internal |
+| yarn.sharedcache.nm.uploader.replication.factor | internal |
+| yarn.sharedcache.nm.uploader.thread-count | internal |
+| yarn.sharedcache.root-dir | internal |
+| yarn.sharedcache.store.class | internal |
+| yarn.sharedcache.uploader.server.thread-count | internal |
+| yarn.timeline-service.handler-thread-count | internal |
+| yarn.timeline-service.keytab | security |
+| yarn.timeline-service.leveldb-state-store.path | internal |
+| yarn.timeline-service.leveldb-timeline-store.path | internal |
+| yarn.timeline-service.leveldb-timeline-store.read-cache-size | internal |
+| yarn.timeline-service.leveldb-timeline-store.start-time-read-cache-size | internal |
+| yarn.timeline-service.leveldb-timeline-store.start-time-write-cache-size | internal |
+| yarn.timeline-service.leveldb-timeline-store.ttl-interval-ms | internal |
+| yarn.timeline-service.state-store-class | internal |
+| yarn.timeline-service.store-class | internal |
+| yarn.web-proxy.keytab | internal |
