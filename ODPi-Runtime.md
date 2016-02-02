@@ -181,7 +181,7 @@ Compliance
 
 -   **[HADOOP_GETCONF]** It MUST be possible to determine key Hadoop configuration values by using `${HADOOP_HDFS_HOME}/bin/hdfs getconf` so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
 
--   **[HADOOP_COMPRESSION]** The native compression codecs for gzip and snappy MUST be available and enabled by default.
+-   **[HADOOP_COMPRESSION]** The native compression codecs for gzip and snappy MUST be available.
 
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODPi Platform implementation SHOULD NOT get in the way: at most, the implementation SHOULD only care about the version of Java and Bash, and nothing else.
 
@@ -194,6 +194,8 @@ Requirements we’d like to push upstream from a compatibility perspective:
 Best practices for ODPi Platforms:
 
 -   **[HADOOP_NORDMPORTS]** ODPi Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
+
+-   **[SITEXML_VARS]** ODPi Platforms SHOULD NOT use variables for values inside sitexml properties which a client must resolve and replace. This requirement assists application integrators by not requiring modification of sitexmls to make them functional.
 
 -   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
 
