@@ -96,9 +96,7 @@ The native libraries of Hadoop have historically been a particular point of pain
 
 -   hadoop-mapreduce-project MUST be built with:
 
-    -   **[HADOOP_MNATIVE1]** `-Pnative` or `-Pnative-win`   (MapReduce client native task support)
-
-    -   **[HADOOP_MNATIVE2]** `-Drequire.snappy`             (enable Snappy support in the MapReduce native client)
+    -   **[HADOOP_MNATIVE1]** `-Drequire.snappy`             (enable Snappy support in the MapReduce native client)
 
 Runtime Environment for Application Code
 ========================================
