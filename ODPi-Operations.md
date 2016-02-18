@@ -28,19 +28,19 @@ Ambari supports specification of the repository base URLs only at the stack leve
 
 * Custom service MUST make the packages available via YUM, Zypper, or Apt repositories
 * Custom service MUST make the repository URL available to Ambari in one of the following ways:
-  * Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the stack(s)'s `repoinfo.xml` (see [Apache Ambari wiki](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services))
+  * Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the stack(s)'s `repoinfo.xml` (see [Apache Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services))
   * Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
 
 ###Deploying Custom Service
 For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services) and installed to the appropriate stack definition directory under `/var/lib/ambari-server/resources/stacks/<stack-name>/<stack-version>/services`. `<stack-name>` and `<stack-version>` uniquely identify the stack that is being customized. Ambari needs to be restarted post deployment to recognize the added custom stacks and/or services.
 
 ### Service Definition Requirements
-For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster. Apache Ambari wiki provides additional details on how to write a custom service.
+For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster. The Apache Ambari 2.2.1 specification provides additional details on how to write a custom service.
 
 * A service MUST be named using an alphanumeric string
 * Service name MUST be unique across all services included in the stack
 
-A `metainfo.xml` file is an xml formatted declarative definition of a service. It provides the top level description of service definition. `metainfo.xml` contains one or more section for services with each service containing one or more components. See [Apache Ambari wiki](https://cwiki.apache.org/confluence/display/AMBARI/Writing+metainfo.xml) for details on how to author `metainfo.xml`.
+A `metainfo.xml` file is an xml formatted declarative definition of a service. It provides the top level description of service definition. `metainfo.xml` contains one or more section for services with each service containing one or more components. See [Apache Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Writing+metainfo.xml) for details on how to author `metainfo.xml`.
 
 ```
 <metainfo>
@@ -79,7 +79,7 @@ A `metainfo.xml` file is an xml formatted declarative definition of a service. I
 ```
 
 ### Service Dependency Requirements
-A service definition can describe various dependency requirements with other services, components, and/or configs. The details of how dependencies are specified can be found in [Apache Ambari wiki](https://cwiki.apache.org/confluence/display/AMBARI/Writing+metainfo.xml). This spec covers the naming requirement/expectations for the ODPi runtime components, HDFS, YARN, and ZOOKEEPER. The following table lists the names of such service and component as well as the type of the component.
+A service definition can describe various dependency requirements with other services, components, and/or configs. The details of how dependencies are specified can be found in [Apache Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Writing+metainfo.xml). This spec covers the naming requirement/expectations for the ODPi runtime components, HDFS, YARN, and ZOOKEEPER. The following table lists the names of such service and component as well as the type of the component.
 
 |service|component|type|
 |-------|---------|----|
