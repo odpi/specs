@@ -8,7 +8,7 @@ The Application Installation and Management specification covers requirements an
 This specification covers the Ambari requirements/expectation for applications to be compatible with the [ODPi Runtime Spec](https://github.com/odpi/specs/blob/master/ODPi-Runtime.md).
 
 ## Ambari Version
-The specification is based on Ambari 2.2.0.0.
+The specification is based on Ambari 2.2.1.0.
 
 ## Ambari Runtime Environment Specification
 Any Ambari user can assume the following for the runtime environment.
@@ -21,25 +21,90 @@ Any Ambari user can assume the following for the runtime environment.
 ### Packaging Requirements
 Ambari supports installation of services via rpm and debian packages only. It is expected that the packages are available at runtime via well-known repository solution such as YUM, Zypper, Apt.
 
-* Custom service SHOULD be deployable on the following operating systems:  CentOS/Red Hat 6 and 7, Ubuntu 12 and 14, Debian 7, and SLES 11.  It SHOULD be made clear when not all of these operating systems are supported.
+* Custom service artifacts MUST be deployable via YUM, Zypper, or Apt
 
 ### Repository URL Specification
 Ambari supports specification of the repository base URLs only at the stack level.
 
 * Custom service MUST make the packages available via YUM, Zypper, or Apt repositories
 * Custom service MUST make the repository URL available to Ambari in one of the following ways:
-  * Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the stack(s)'s `repoinfo.xml` 
+  * Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the stack(s)'s `repoinfo.xml` (see [Apache Ambari wiki](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services))
   * Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
 
-### Service Definition Requirements
-For Ambari to recognize a custom service definition it needs to be developed per Ambari 2.2.0 specification and installed to the appropriate stack definition directory under `/var/lib/ambari-server/resources/stacks/`*stack-name*`/`*stack-version*`/services`.  Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster.
+###Deploying Custom Service
+For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services) and installed to the appropriate stack definition directory under `/var/lib/ambari-server/resources/stacks/<stack-name>/<stack-version>/services`. `<stack-name>` and `<stack-version>` uniquely identify the stack that is being customized. Ambari needs to be restarted post deployment to recognize the added custom stacks and/or services.
 
-* Service MUST include the `metainfo.xml` as required by Ambari
-* Service MUST include the implementation of the following commands for each non-client component: install, configure, start, stop, status, and security_status
-* Service MUST include the implementation of the following commands for each client component: install, configure
+### Service Definition Requirements
+For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster. Apache Ambari wiki provides additional details on how to write a custom service.
+
+* A service MUST be named using an alphanumeric string
+* Service name MUST be unique across all services included in the stack
+
+A `metainfo.xml` file is an xml formatted declarative definition of a service. It provides the top level description of service definition. `metainfo.xml` contains one or more section for services with each service containing one or more components. See [Apache Ambari wiki](https://cwiki.apache.org/confluence/display/AMBARI/Writing+metainfo.xml) for details on how to author `metainfo.xml`.
+
+```
+<metainfo>
+  <schemaVersion>2.0</schemaVersion>
+  <services>
+    <service>
+      <name>MyService</name>
+      ...
+      <components>
+        <component>
+          <name>MyComponent</name>
+          ...
+```
+
+* A component MUST be named using an alphanumeric string
+* Component name MUST be unique across all components in the stack
+* A component MUST be identified as `MASTER`, `SLAVE`, or `CLIENT`
+* A component MAY include a cardinality specifying minimum and maximum number of instances for deployment
+* Service MUST include the implementation of the following commands for each non-client component: `install`, `configure`, `start`, `stop`, `status`, and `security_status`
+* Service MUST include the implementation of the following commands for each client component: `install`, `configure`
 * Service MUST use Python based scripts to provide the implementation of its lifecycle commands
 * The Python scripts MUST be compatible with both Python 2.6 and 2.7
-* Service MUST specify <versionAdvertised>false</versionAdvertised> in `metainfo.xml`.  This ensures that adding Custom Service does not break Rolling Upgrade and Express Upgrade features.
+* Service MUST specify `<versionAdvertised>false</versionAdvertised>` in `metainfo.xml`.  This ensures that adding Custom Service does not break Rolling Upgrade and Express Upgrade features.
+
+```
+<component>
+  <name>MyComponent</name>
+  <category>SLAVE</category>
+  <cardinality>1+</cardinality>     
+  <versionAdvertised>false</versionAdvertised>
+    <commandScript>
+    <script>scripts/hbase_regionserver.py</script>
+    <scriptType>PYTHON</scriptType>
+  </commandScript>
+</component>
+```
+
+### Service Dependency Requirements
+A service definition can describe various dependency requirements with other services, components, and/or configs. The details of how dependencies are specified can be found in [Apache Ambari wiki](https://cwiki.apache.org/confluence/display/AMBARI/Writing+metainfo.xml). This spec covers the naming requirement/expectations for the ODPi runtime components, HDFS, YARN, and ZOOKEEPER. The following table lists the names of such service and component as well as the type of the component.
+
+|service|component|type|
+|-------|---------|----|
+|HDFS|DATANODE|SLAVE|
+||NAMENODE|MASTER|
+||SECONDARY_NAMENODE|MASTER|
+||HDFS_CLIENT|CLIENT|
+||JOURNALNODE|SLAVE|
+||ZKFC|SLAVE|
+|YARN|NODEMANAGER|SLAVE|
+||RESOURCEMANAGER|MASTER|
+||YARN_CLIENT|CLIENT|
+||APP_TIMELINE_SERVER|MASTER|
+|ZOOKEEPER|ZOOKEEPER_SERVER|MASTER|
+||ZOOKEEPER_CLIENT|CLIENT|
+
+* A custom application MAY not use any of the reserved service and component names above for its own service or components being defined
+* A custom application MAY use any of the reserved service and component names above to specify dependencies
+
+### Creating Custom Stack
+A custom stack is a set of service definitions grouped for deployment/management. A custom stack may include services that are part of ODPi and zero or more custom service definitions.
+
+When including ODPi services (`HDFS`, `YARN`, `ZOOKEEPER`) into a custom stack, they MUST be inherited from the `common-services` defined in the management infrastructure.
+
+`common-services` is a folder that contains a set of service definitions that can be shared across different stacks. Including services that are derived from services within common-service folder ensures that runtime behavior and management operations are uniform across all stacks
 
 ### Role Command Order
 Role command order allows Ambari to be aware of the start order of a custom service if the start of any of its component or service check needs other services to be started.
@@ -50,7 +115,7 @@ Role command order allows Ambari to be aware of the start order of a custom serv
 ### Kerberos
 If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application SHOULD provide a "Kerberos descriptor" metadata file (`kerberos.json`) in its service definition.  This is optional, but if this is omitted, it puts the burden on the end user for performing Kerberos principal generation, Kerberos keytab generation and distribution, etc.
 
-If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application MUST explicitly invoke Kerberos authentication calls (i.e., kinit invocations) in its Service Definition scripts.  
+If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application MUST explicitly invoke Kerberos authentication calls (i.e., `kinit` invocations) in its Service Definition scripts.  
 
 ## Monitoring
 ### Metrics Monitoring
@@ -123,4 +188,4 @@ What a custom service can expect to do so that it can seamlessly plug-in into th
 This is done via stack advisor, but this exists at the stack level, so there’s no good story around exposing this to applications (though we have a similar situation with role command order).
 
 ### Dashboard Customization
-As of Ambari 2.2.0.0, an application-specific, custom dashboard cannot be created unless you modify ambari-web code, though some elements such as widgets are declarative and do not require code changes.
+As of Ambari 2.2.1.0, an application-specific, custom dashboard cannot be created unless you modify ambari-web code, though some elements such as widgets are declarative and do not require code changes.
