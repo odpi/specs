@@ -2,9 +2,9 @@ ODPi Technical Working Group
 
 ODPi Runtime Specification: 1.0
 
-Date of Publication: 2015-12-xx
+Date of Publication: 2016-01-22
 
-Status: Proposal
+Status: Draft
 
 
 ---
@@ -181,7 +181,7 @@ Compliance
 
 -   **[HADOOP_GETCONF]** It MUST be possible to determine key Hadoop configuration values by using `${HADOOP_HDFS_HOME}/bin/hdfs getconf` so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
 
--   **[HADOOP_COMPRESSION]** The native compression codecs for gzip and snappy MUST be available and enabled by default.
+-   **[HADOOP_COMPRESSION]** The native compression codecs for gzip and snappy MUST be available.
 
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODPi Platform implementation SHOULD NOT get in the way: at most, the implementation SHOULD only care about the version of Java and Bash, and nothing else.
 
