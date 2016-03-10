@@ -51,7 +51,7 @@ Hadoop Version Specifications
 
 -   **[HADOOP_VERSION]** For this version of the specification, ODPi Platforms MUST be a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
 
--   **[HADOOP_COMMIT]** The Apache components in an ODPi reference release MUST have their source be 100% committed to an Apache source tree.
+-   The Apache components in an ODPi reference release MUST have their source be 100% committed to an Apache source tree.
 
 Hadoop Patch Specifications
 ---------------------------
