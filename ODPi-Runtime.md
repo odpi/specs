@@ -156,7 +156,7 @@ JAVA_HOME='/usr/local/jdk1.8.0_45'
 HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 ```
 
--   **[HADOOP_EJH2]** An ODPi Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
+-   **[HADOOP_EJH1]** An ODPi Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
 
 -   **[HADOOP_EJH2]** An ODPi Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
@@ -180,9 +180,9 @@ Compliance
     -   **[HADOOP_DIRSTRUCT_MAPREDUCE]** Contents of HADOOP_MAPRED_HOME should match the reference implementation.
     -   **[HADOOP_DIRSTRUCT_YARN]** Contents of HADOOP_YARN_HOME should match the reference implementation.
 
-    -   **[HADOOP_BINCONTENT]**`HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` SHOULD contain the same binaries and executables that they contain in the ODPi Reference Implementation and the Apache Hadoop distribution of the appropriate platform, with exceptions granted for bug fixes.  In future versions of this spec, this will become a MUST. Therefore, there MUST NOT be any additional content in order to avoid potential future conflicts.
+    -   **[HADOOP_BINCONTENT]**`HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` SHOULD contain the same binaries and executables (to match the name and the version of a file) that they contain in the ODPi Reference Implementation and the Apache Hadoop distribution of the appropriate platform, with exceptions granted for bug fixes.  In future versions of this spec, this will become a MUST. Therefore, there MUST NOT be any additional content in order to avoid potential future conflicts.
 
-    -   **[HADOOP_LIBJARSCONTENT]** `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables that they contain in the ODPi Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
+    -   **[HADOOP_LIBJARSCONTENT]** `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables (to match the name and the version of a file) that they contain in the ODPi Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There MUST NOT be any additional content in order to avoid potential future conflicts.
 
 -   **[HADOOP_GETCONF]** It MUST be possible to determine key Hadoop configuration values by using `${HADOOP_HDFS_HOME}/bin/hdfs getconf` so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
 
