@@ -619,3 +619,6 @@ The following Hadoop configuration values need not be shared by a compliant dist
 | yarn.timeline-service.state-store-class | internal |
 | yarn.timeline-service.store-class | internal |
 | yarn.web-proxy.keytab | internal |
+
+
+This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/legalcode)
