@@ -39,7 +39,9 @@ Specification Format
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
 
-Each entry will having a designation in order to pinpoint which parts of the specification are in violation during certification.
+Each entry will have a designation (free text in square brackets) in order to pinpoint which parts of the specification are in violation during certification.
+
+The designation [TEST_ENVIRONMENT] is reserved for entries that are defining constraints on the environment in which ODPi-compliant Hadoop platforms are expected to run. The output of the reference implementation validation testsuite is expected to capture enough information to identify whether the test execution environment conforms to the specification.
 
 Hadoop Build Specifications
 ===========================
@@ -107,9 +109,9 @@ Minimum Versions
 
 Applications on Unix platforms need to understand the base specification of some key components of which they write software. Two of those components are the Java runtime environment and the shell environment.
 
--   **[ODPi_JRE]** **Java:** ODPi Platforms SHOULD support both JRE 7 and JRE 8 runtime environments (64-bit only). ODPi Applications SHOULD work in at least one of these, and SHOULD be clear when they don’t support both.
+-   **[TEST_ENVIRONMENT]** **Java:** ODPi Platforms SHOULD support both JRE 7 and JRE 8 runtime environments (64-bit only). ODPi Applications SHOULD work in at least one of these, and SHOULD be clear when they don’t support both.
 
--   **[ODPi_SCRIPT]**  **Shell scripts:** On Unix and Unix-like systems, ODPi Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, OPDi platforms and Applications SHOULD use Microsoft batch or PowerShell.
+-   **[TEST_ENVIRONMENT]**  **Shell scripts:** On Unix and Unix-like systems, ODPi Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, OPDi platforms and Applications SHOULD use Microsoft batch or PowerShell.
 
 
 Environment Variables
@@ -167,7 +169,7 @@ Compliance
 
 -   **[HADOOP_BIGTOP]** ODPi Platforms MUST pass the Apache Big Top 1.0.0 Hadoop smoke tests.
 
--   **[HADOOP_API]** ODPi Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
+-   **[TEST_ENVIRONMENT]** ODPi Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
 -   **[HADOOP_PLATVER]** ODPi Platforms MUST modify the version string output by Hadoop components, such as those displayed in log files, or returned via public API's such that they contain `-(vendor string)` where `(vendor string)` matches the regular expression [A-Za-z_0-9]+ and appropriately identifies the ODPi Platform vendor in the output.
 
