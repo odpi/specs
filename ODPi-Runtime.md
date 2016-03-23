@@ -111,7 +111,7 @@ Applications on Unix platforms need to understand the base specification of some
 
 -   **[TEST_ENVIRONMENT]** **Java:** ODPi Platforms SHOULD support both JRE 7 and JRE 8 runtime environments (64-bit only). ODPi Applications SHOULD work in at least one of these, and SHOULD be clear when they don’t support both.
 
--   **[TEST_ENVIRONMENT]**  **Shell scripts:** On Unix and Unix-like systems, ODPi Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, OPDi platforms and Applications SHOULD use Microsoft batch or PowerShell.
+-   **[TEST_ENVIRONMENT]**  **Shell scripts:** On Unix and Unix-like systems, ODPi Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, ODPi platforms and Applications SHOULD use Microsoft batch or PowerShell.
 
 
 Environment Variables
@@ -207,7 +207,7 @@ Best practices for ODPi Platforms:
 Compatibility
 -------------
 
-OPDi Compatible Applications must follow these guidelines:
+ODPi Compatible Applications must follow these guidelines:
 
 -   Applications that need a different version of Java MUST NOT change the ODPi Platform’s `JAVA_HOME` setting. Instead, they SHOULD set it appropriately for their specific code in an appropriate way (either own startup scripts,
 custom-to-the-application configuration file, etc) that does not impact the ODPi Platform.
