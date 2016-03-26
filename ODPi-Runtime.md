@@ -4,7 +4,7 @@ ODPi Runtime Specification: 1.0
 
 Date of Publication: 2016-01-22
 
-Status: Release Candidate
+Status: Final
 
 
 ---
