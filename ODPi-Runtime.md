@@ -2,9 +2,9 @@ ODPi Technical Working Group
 
 ODPi Runtime Specification: 1.0
 
-Date of Publication: 2016-01-22
+Date of Publication: 2016-03-28
 
-Status: Release Candidate
+Status: Final
 
 
 ---
