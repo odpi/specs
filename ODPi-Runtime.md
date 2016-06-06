@@ -2,7 +2,7 @@ ODPi Technical Working Group
 
 ODPi Runtime Specification: 1.0.1
 
-Date of Publication: 2016-03-28
+Date of Publication: 2016-06-06
 
 Status: Release Candidate
 
@@ -190,9 +190,7 @@ Compliance
 
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODPi Platform implementation SHOULD NOT get in the way: at most, the implementation SHOULD only care about the version of Java and Bash, and nothing else.
 
--   **[HADOOP_DISTCONF]**  ODPi Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are defined as:
-
-[**TODO: blacklist**]
+-   ODPi Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are listed in Appendix A.
 
 Requirements we’d like to push upstream from a compatibility perspective:
 
@@ -224,9 +222,7 @@ custom-to-the-application configuration file, etc) that does not impact the ODPi
 
 -   Applications SHOULD use the Java client libraries or `${HADOOP_HDFS_HOME}/bin/hdfs getconf` to obtain configuration information, rather than reading config files directly. This includes getting the YARN Resource Manager address and port information.
 
--   Applications SHOULD NOT depend upon the following configuration entries, as they are known to be node specific, private to a service, security-sensitive, or otherwise problematic:
-
-**TODO: blacklist**
+-   Applications SHOULD NOT depend upon the configuration entries listed in Appendix A, as they are known to be node specific, private to a service, security-sensitive, or otherwise problematic.
 
 -   Applications SHOULD only use the `HADOOP_CLASSPATH` environment variable hook (2.x) or the shellprofile.d infrastructure (3.x) to manipulate the runtime content of the Java classpath. Applications SHOULD NOT inject themselves into the classpath other than manipulation of this environment variable.
 
