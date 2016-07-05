@@ -1,10 +1,10 @@
 ODPi Technical Working Group
 
-ODPi Runtime Specification: 1.0
+ODPi Runtime Specification: 1.1
 
-Date of Publication: 2016-03-28
+Date of Publication:
 
-Status: Final
+Status: Draft
 
 
 ---
@@ -12,7 +12,19 @@ Status: Final
 Abstract
 ========
 
-Specifications covering ODPi Platforms based upon Apache Hadoop 2.7 and related branches. Compatibility guidelines for applications running on ODPi Platforms.
+Specifications covering ODPi Platforms based upon Apache Hadoop 2.7 and Apache Hive 1.2. Compatibility guidelines for applications running on ODPi Platforms.
+
+Included Projects
+=================
+This specification covers:
+* Apache Hadoop 2.7, including all maintenance releases
+* Apache Hive 1.2, including all maintenance releases
+
+Maintenance releases indicate bug fix releases connected to the indicated minor release.  For example, at the time of this writing the Hive 1.2 line has one maintenace release. Hive 1.2.1.
+
+Terms
+=====
+To maximize clarity this specification uses the following terms:
 
 Objective
 =========
@@ -30,6 +42,8 @@ The goal of this document is to define the interface between ODPi-compliant Apac
 Technical Context
 =================
 
+**This section no longer seems to be true.  This is not a source-code spec, it is a mix of source code and test.  Not sure what we should do with this section.**
+
 At this time, the ODPi specification is a source-code specification: compliance is specified as shipping a platform built from a specific set of source artifacts. The exact source artifacts change with each ODPi version, and thus are specified outside the scope of this document. That said, this document was written in the context of Apache Hadoop 2.7 with an eye towards future versions. It may and likely will have to evolve as Hadoop itself evolves.
 
 While the ODPi spec is source-based, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops applications from calling private interfaces). These degrees of freedom interfere with the goal of “test once, run everywhere” (TONE). The goal of this spec is to close enough of those freedoms to achieve TONE.
@@ -43,19 +57,21 @@ Each entry will have a designation (free text in square brackets) in order to pi
 
 The designation [TEST_ENVIRONMENT] is reserved for entries that are defining constraints on the environment in which ODPi-compliant Hadoop platforms are expected to run. The output of the reference implementation validation testsuite is expected to capture enough information to identify whether the test execution environment conforms to the specification.
 
-Hadoop Build Specifications
+Build Specifications
 ===========================
 
-To help achieve TONE, ODPi-compliant Hadoop platforms MUST conform to the following build specifications.
+To help achieve TONE, ODPi-compliant platforms MUST conform to the following build specifications.
 
-Hadoop Version Specifications
+Version Specifications
 -----------------------------
 
--   **[HADOOP_VERSION]** For this version of the specification, ODPi Platforms MUST be a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
+-   **[HADOOP_VERSION]** For this version of the specification, ODPi Platforms MUST include a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
+
+-   **[HIVE_VERSION]** For this version of the specification, ODPi Platforms MUST include a descendent of Apache Hive 1.2.  Future versions MAY increase the base Apache Hive version.
 
 -   The Apache components in an ODPi reference release MUST have their source be 100% committed to an Apache source tree.
 
-Hadoop Patch Specifications
+Patch Specifications
 ---------------------------
 
 While ODPi can be more prescriptive when it comes to the source-code and release-timing of major and minor releases of Apache components, platform providers need more flexibility in dealing with patch releases.  In particular, to deal with urgent security or availability problems for their customers, providers need to be able to do just about anything to triage an emergency situation.  Even after an emergency is dealt with, some customers and/or vendors are very conservative about change-management and providers need flexibility to work with such customers.
@@ -165,6 +181,8 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 Compliance
 ----------
 
+### Hadoop Compliance
+
 -   **[HADOOP_SUBPROJS]** ODPi Platforms MUST have all of the base Apache Hadoop components installed.
 
 -   **[HADOOP_BIGTOP]** ODPi Platforms MUST pass the Apache Big Top 1.0.0 Hadoop smoke tests.
@@ -201,6 +219,15 @@ Best practices for ODPi Platforms:
 -   ODPi Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
 -   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
+
+### Hive Compliance
+
+* **[HIVE_SQL]** ODPi Platforms MUST provide SQL that is compatible with the reference version of Hive's SQL.  All valid statements in the reference version should produce the same results in the ODPi Platform.  The ODPi Platform MAY include additional SQL that is not yet supported in the reference version of Hive, subject to other requirements in this document.
+* **[HIVE_JDBC]** ODPi Platforms MUST include HiveServer2 and support all of the same JDBC functionality as the reference version of Hive.  All methods implemented in the reference version's JDBC client must be implemented and have the same signature in the ODPi Platform.  The ODPi Platform MAY implement additional JDBC methods that are not yet supported in the reference version of Hive, subject to other requirements of this document.
+* **[HIVE_CLI]** ODPi Platforms MAY include the `bin/hive` command line script.  If the platform includes the CLI it MUST accept all of the same arguments as the reference version.
+* **[HIVE_BEELINE]** ODPi Platforms MUST include the `bin/beeline` command line script.  The platform MUST accept all of the same arguments as the reference version.
+* **[HIVE_THRIFT]** ODPi Platforms MAY allow applications to connect to the Hive Metastore Thrift server via the thrift interface.  If the platform allows this it MUST accept all of the same thrift method calls as the reference version.
+
 
 Compatibility
 -------------
@@ -262,6 +289,8 @@ Glossary
 -   **ISV vendor** - Individual or company that created an ISV application.
 
 -   **ISV application** - Non-ODPi application or process that runs on top of or beside an ODPi platform.
+
+-   **ODPi Platform** - A distribution of software that includes all of the required components and is compliant with this specification
 
 -   **ODPi Runtime** - ODPi specification and platforms geared towards holistic management.
 
@@ -624,3 +653,19 @@ The following Hadoop configuration values need not be shared by a compliant dist
 
 
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/legalcode)
+
+# Open Questions and Notes
+1. Should this be part of this spec or a separate one?  I assert it should be part of this one.  Otherwise we are going to have a proliferation of specs with confusion about what ones people are
+compliant with.
+2. What version of Hive should we specify.  I argued for 1.2 as it is the most recent stable version.  There have been many patches added since 1.2, but no 1.3 release has been made.  Hive 2.0
+is out (as is 2.1) but these are not considered stable versions, and are not projected to be stable until end of 2016.  Given this I assume it will be well into 2017 before many distributors
+and users are ready for 2.x.
+3. I did not put anything in the environment variable section because the only environment variable of importance in Hive is `HIVE_HOME`.  And Hive has not mechanism equivalent to `envvars` to
+find it, and you would need to know where `$HIVE_HOME/bin/hive` was to call envvars if it did, so it doesn't seem that there is any value in including it.
+4. HIVE_SQL is obviously not completely testable, but I believe we can write a few queries that will hit 80% of the functionality and call it good.
+5. HIVE_CLI I set the CLI at MAY be included, because the Hive community is on record as planning to deprecate it in the future.  
+6. I made HIVE_THRIFT MAY because some distributions may wish to either run without a metastore server running, or they may wish to lock down the thrift interface for security reasons.
+7. I haven't said anything about Hive configuration.  There are a couple of areas where it might make sense to do so:
+  * Hive has a complex set of whitelists and hidden values to prevent users from modifying values they shouldn't when they connect (e.g., keep them from turning off security in the system).  We could give recommendations here, but in general the exact values set in these will be distribution and installation specific, so I'm not sure how much value there is.
+  * We could give a list of values applications should not set or depend on (in the same way we did for Hadoop).  I could see this being useful.
+
