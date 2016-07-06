@@ -20,11 +20,7 @@ This specification covers:
 * Apache Hadoop 2.7, including all maintenance releases
 * Apache Hive 1.2, including all maintenance releases
 
-Maintenance releases indicate bug fix releases connected to the indicated minor release.  For example, at the time of this writing the Hive 1.2 line has one maintenace release. Hive 1.2.1.
-
-Terms
-=====
-To maximize clarity this specification uses the following terms:
+Maintenance releases indicate bug fix releases connected to the indicated minor release.  For example, at the time of this writing the Hive 1.2 line has one maintenance release. Hive 1.2.1.
 
 Objective
 =========
@@ -224,7 +220,7 @@ Best practices for ODPi Platforms:
 
 * **[HIVE_SQL]** ODPi Platforms MUST provide SQL that is compatible with the reference version of Hive's SQL.  All valid statements in the reference version should produce the same results in the ODPi Platform.  The ODPi Platform MAY include additional SQL that is not yet supported in the reference version of Hive, subject to other requirements in this document.
 * **[HIVE_JDBC]** ODPi Platforms MUST include HiveServer2 and support all of the same JDBC functionality as the reference version of Hive.  All methods implemented in the reference version's JDBC client must be implemented and have the same signature in the ODPi Platform.  The ODPi Platform MAY implement additional JDBC methods that are not yet supported in the reference version of Hive, subject to other requirements of this document.
-* **[HIVE_CLI]** ODPi Platforms MAY include the `bin/hive` command line script.  If the platform includes the CLI it MUST accept all of the same arguments as the reference version.
+* **[HIVE_CLI]** ODPi Platforms MAY include the `bin/hive` command line interface.  If the platform includes the CLI it MUST accept all of the same arguments as the reference version.
 * **[HIVE_BEELINE]** ODPi Platforms MUST include the `bin/beeline` command line script.  The platform MUST accept all of the same arguments as the reference version.
 * **[HIVE_THRIFT]** ODPi Platforms MAY allow applications to connect to the Hive Metastore Thrift server via the thrift interface.  If the platform allows this it MUST accept all of the same thrift method calls as the reference version.
 
@@ -261,6 +257,8 @@ custom-to-the-application configuration file, etc) that does not impact the ODPi
 
 -   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
 
+-   Applications SHOULD use JDBC, ODBC, or SQL to determine the structure of metadata rather than directly querying the metastore thrift interface whenever possible.
+
 Best practices for compatible apps to be portable and operator friendly:
 
 -   Applications SHOULD NOT assume that an Intel processor is being used.
@@ -290,7 +288,7 @@ Glossary
 
 -   **ISV application** - Non-ODPi application or process that runs on top of or beside an ODPi platform.
 
--   **ODPi Platform** - A distribution of software that includes all of the required components and is compliant with this specification
+-   **ODPi Platform** - A distribution of software that includes all of the required components and is compliant with this specification.
 
 -   **ODPi Runtime** - ODPi specification and platforms geared towards holistic management.
 
@@ -657,12 +655,12 @@ This work is licensed under a [Creative Commons Attribution 4.0 International Li
 # Open Questions and Notes
 1. Should this be part of this spec or a separate one?  I assert it should be part of this one.  Otherwise we are going to have a proliferation of specs with confusion about what ones people are
 compliant with.
-2. What version of Hive should we specify.  I argued for 1.2 as it is the most recent stable version.  There have been many patches added since 1.2, but no 1.3 release has been made.  Hive 2.0
+2. What version of Hive should we specify?  I argue for 1.2 as it is the most recent stable version.  There have been many patches added since 1.2, but no 1.3 release has been made.  Hive 2.0
 is out (as is 2.1) but these are not considered stable versions, and are not projected to be stable until end of 2016.  Given this I assume it will be well into 2017 before many distributors
 and users are ready for 2.x.
-3. I did not put anything in the environment variable section because the only environment variable of importance in Hive is `HIVE_HOME`.  And Hive has not mechanism equivalent to `envvars` to
+3. I did not put anything in the environment variable section because the only environment variable of importance in Hive is `HIVE_HOME`.  And Hive has no mechanism equivalent to `envvars` to
 find it, and you would need to know where `$HIVE_HOME/bin/hive` was to call envvars if it did, so it doesn't seem that there is any value in including it.
-4. HIVE_SQL is obviously not completely testable, but I believe we can write a few queries that will hit 80% of the functionality and call it good.
+4. HIVE_SQL is obviously not completely testable, but I believe we can write a ~20 queries that will hit 80% of the functionality and call it good.
 5. HIVE_CLI I set the CLI at MAY be included, because the Hive community is on record as planning to deprecate it in the future.  
 6. I made HIVE_THRIFT MAY because some distributions may wish to either run without a metastore server running, or they may wish to lock down the thrift interface for security reasons.
 7. I haven't said anything about Hive configuration.  There are a couple of areas where it might make sense to do so:
