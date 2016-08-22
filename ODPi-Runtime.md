@@ -224,6 +224,7 @@ Apache Hive 1.2 is taken as the reference version for this version of ODPi speci
 * **[HIVE_CLI]** ODPi Platforms MAY include the `bin/hive` command line interface.  If the platform includes the CLI it MUST accept all of the same arguments as the reference version.
 * **[HIVE_BEELINE]** ODPi Platforms MUST include the `bin/beeline` command line script.  The platform MUST accept all of the same arguments as the reference version.
 * **[HIVE_THRIFT]** ODPi Platforms MAY allow applications to connect to the Hive Metastore Thrift server via the thrift interface.  If the platform allows this it MUST accept all of the same thrift method calls as the reference version.
+* **[HIVE_SECURITY]** ODPi Platforms MUST support Hive security.  This includes the SQL Standard Authorization included in Apache Hive 1.2 as well as the ability to plug in third party security managers such as Apache Ranger and Apache Sentry.
 
 
 Compatibility
@@ -275,6 +276,8 @@ Best practices for compatible apps to be portable and operator friendly:
 -   Similarly, applications SHOULD NOT ship with “fat jars” that include Hadoop Java libraries. They SHOULD pick them up from their runtime environment.
 
 -   In order to avoid conflicting with other services, applications SHOULD use distributed cache as much as possible to distribute execution objects to compute nodes. Pre-installation SHOULD be avoided as much as possible.
+
+-   Hive allows users to set some configuration values as part of their Hive session, via the *set* command.  Applications SHOULD only depend on setting those values that Hive by default allows users to set.  These values are listed in Appendix B.
 
 Glossary
 ========
@@ -650,18 +653,110 @@ The following Hadoop configuration values need not be shared by a compliant dist
 | yarn.timeline-service.store-class | internal |
 | yarn.web-proxy.keytab | internal |
 
+Appendix B, Hive Configuration Values to be White Listed
+========================================================
+The following values should be settable by Hive users in their Hive sessions.  Values ending in .* indicate all configuration values with the matching prefix.  This list is taken from the
+default set of white listed values in Apache Hive 1.2.
+
+| Configuration Value |
+|:--------------------|
+| hive.analyze.stmt.collect.partlevel.stats |
+| hive.auto.* |
+| hive.autogen.columnalias.prefix.includefuncname |
+| hive.autogen.columnalias.prefix.label |
+| hive.cache.expr.evaluation |
+| hive.cbo.* |
+| hive.client.stats.counters |
+| hive.compat |
+| hive.compute.query.using.stats |
+| hive.convert.* |
+| hive.counters.group.name |
+| hive.default.fileformat.managed |
+| hive.display.partition.cols.separately |
+| hive.enforce.bucketing |
+| hive.enforce.bucketmapjoin |
+| hive.enforce.sorting |
+| hive.enforce.sortmergebucketmapjoin |
+| hive.error.on.empty.partition |
+| hive.exec.*.dynamic.partitions.* |
+| hive.exec.check.crossproducts |
+| hive.exec.compress.* |
+| hive.exec.concatenate.check.index |
+| hive.exec.default.partition.name |
+| hive.exec.drop.ignorenonexistent |
+| hive.exec.dynamic.partition* |
+| hive.exec.infer.* |
+| hive.exec.job.debug.capture.stacktraces |
+| hive.exec.job.debug.timeout |
+| hive.exec.max.created.files |
+| hive.exec.mode.local.* |
+| hive.exec.orc.* |
+| hive.exec.reducers.bytes.per.reducer |
+| hive.exec.reducers.max |
+| hive.exec.rowoffset |
+| hive.exec.show.job.failure.debug.info |
+| hive.exec.tasklog.debug.timeout |
+| hive.execution.engine |
+| hive.exim.uri.scheme.whitelist |
+| hive.explain.* |
+| hive.fetch.task.* |
+| hive.file.max.footer |
+| hive.groupby.skewindata |
+| hive.hashtable.initialCapacity |
+| hive.hashtable.loadfactor |
+| hive.hbase.* |
+| hive.ignore.mapjoin.hint |
+| hive.index.* |
+| hive.index.* |
+| hive.insert.into.multilevel.dirs |
+| hive.intermediate.* |
+| hive.join.* |
+| hive.limit.* |
+| hive.limit.row.max.size |
+| hive.localize.resource.num.wait.attempts |
+| hive.log.* |
+| hive.map.aggr |
+| hive.mapjoin.* |
+| hive.mapred.mode |
+| hive.mapred.supports.subdirectories |
+| hive.merge.* |
+| hive.multi.insert.move.tasks.share.dependencies |
+| hive.optimize.* |
+| hive.orc.* |
+| hive.outerjoin.* |
+| hive.output.file.extension |
+| hive.parquet.* |
+| hive.ppd.* |
+| hive.prewarm.* |
+| hive.reorder.nway.joins |
+| hive.resultset.use.unique.column.names |
+| hive.server2.logging.operation.level |
+| hive.server2.proxy.user |
+| hive.skewjoin.* |
+| hive.smbjoin.* |
+| hive.stats.* |
+| hive.support.quoted.identifiers |
+| hive.support.sql11.reserved.keywords |
+| hive.tez.* |
+| hive.variable.substitute |
+| hive.variable.substitute.depth |
+| hive.vectorized.* |
+| mapred.map.* |
+| mapred.output.compression.codec |
+| mapred.reduce.* |
+| mapreduce.input.fileinputformat.split.minsize |
+| mapreduce.job.queuename |
+| mapreduce.job.reduce.slowstart.completedmaps |
+| mapreduce.map.* |
+| mapreduce.reduce.* |
+| tez.am.* |
+| tez.queue.name |
+| tez.runtime.* |
+| tez.task.* |
 
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/legalcode)
 
 # Open Questions and Notes
-1. Should this be part of this spec or a separate one?  I assert it should be part of this one.  Otherwise we are going to have a proliferation of specs with confusion about what ones people are compliant with.
-2. I made a significant policy shift here and did not specify a version of Hive.  Rather I specified compatibility with a version of Hive.  This will significantly increase our test load, but I believe it makes the spec more useful, flexible, and future proof.
-3. I did not put anything in the environment variable section because the only environment variable of importance in Hive is `HIVE_HOME`.  And Hive has no mechanism equivalent to `envvars` to find it, and you would need to know where `$HIVE_HOME/bin/hive` was to call envvars if it did, so it doesn't seem that there is any value in including it.
-4. HIVE_SQL is obviously not completely testable, but I believe we can write a ~20 queries that will hit 80% of the functionality and call it good.
-5. HIVE_CLI I set the CLI at MAY be included, because the Hive community is on record as planning to deprecate it in the future.  
-6. I made HIVE_THRIFT MAY because some distributions may wish to either run without a metastore server running, or they may wish to lock down the thrift interface for security reasons.
-7. I haven't said anything about Hive configuration.  There are a couple of areas where it might make sense to do so:
-  * Hive has a complex set of whitelists and hidden values to prevent users from modifying values they shouldn't when they connect (e.g., keep them from turning off security in the system).  We could give recommendations here, but in general the exact values set in these will be distribution and installation specific, so I'm not sure how much value there is.
-  * We could give a list of values applications should not set or depend on (in the same way we did for Hadoop).  I could see this being useful.
-8. How is "test once run anywhere" given the acronym TONE?  It should be TORA.  
+1. Should we include HCatalog and/or WebHCat?  Alan votes no for 2 reasons: a) they are not universally used, especially WebHCat; 2) I want to limit the scope of our initial changes to make it easier to complete the work in time.  We can expand it later if users indicate we should.
+2. In the last meeting we discussed whether there was a directory service that applications could use to find Hive's JDBC endpoint.  Two possibilities were mentioned:  Ambari and YARN's new services.  I talked with Vinod (who manages the YARN team for Hortonworks) and he indicated that what they are building today would only work if HiveServer2 was running as a YARN application, though they are open to extending it to work for other services as we are not the first to ask for it.  (As a side note running HiveServer2 on YARN might be a very good idea anyway.) However, none of this will be available until Hadoop 3.0.  There is a solution on the Ambari side, but given that it's part of Ambari I propose we leave it in the operations spec and not cover it here.
 
