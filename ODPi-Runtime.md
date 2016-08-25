@@ -224,7 +224,12 @@ Apache Hive 1.2 is taken as the reference version for this version of ODPi speci
 * **[HIVE_CLI]** ODPi Platforms MAY include the `bin/hive` command line interface.  If the platform includes the CLI it MUST accept all of the same arguments as the reference version.
 * **[HIVE_BEELINE]** ODPi Platforms MUST include the `bin/beeline` command line script.  The platform MUST accept all of the same arguments as the reference version.
 * **[HIVE_THRIFT]** ODPi Platforms MAY allow applications to connect to the Hive Metastore Thrift server via the thrift interface.  If the platform allows this it MUST accept all of the same thrift method calls as the reference version.
-* **[HIVE_SECURITY]** ODPi Platforms MUST support Hive security.  This includes the SQL Standard Authorization included in Apache Hive 1.2 as well as the ability to plug in third party security managers such as Apache Ranger and Apache Sentry.
+* **[HIVE_HCAT_MR]** ODPi Platforms MAY support the `HCatInputFormat` and `HCatOutputFormat` APIs for using the Hive metastore with Hadoop MapReduce.  If these APIs are supported then they MUST be runtime compatible with the reference version.
+* **[HIVE_HCAT_RDRWRTR]** OPDi Platforms MAY support the `HCatReader` and `HCatWriter` APIs.  If these APIs are supported then they MUST be runtime compatible with the reference version.
+
+#### Requirements Relevant to Hive Covered Elsewhere
+It is important for applications to be able to find the Hive ODBC/JDBC endpoint on a cluster.  Discoverability of services in the ODPi Platform is covered in the Operations Specification, in
+the section titled Discoverability.
 
 
 Compatibility
@@ -755,8 +760,3 @@ default set of white listed values in Apache Hive 1.2.
 | tez.task.* |
 
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/legalcode)
-
-# Open Questions and Notes
-1. Should we include HCatalog and/or WebHCat?  Alan votes no for 2 reasons: a) they are not universally used, especially WebHCat; 2) I want to limit the scope of our initial changes to make it easier to complete the work in time.  We can expand it later if users indicate we should.
-2. In the last meeting we discussed whether there was a directory service that applications could use to find Hive's JDBC endpoint.  Two possibilities were mentioned:  Ambari and YARN's new services.  I talked with Vinod (who manages the YARN team for Hortonworks) and he indicated that what they are building today would only work if HiveServer2 was running as a YARN application, though they are open to extending it to work for other services as we are not the first to ask for it.  (As a side note running HiveServer2 on YARN might be a very good idea anyway.) However, none of this will be available until Hadoop 3.0.  There is a solution on the Ambari side, but given that it's part of Ambari I propose we leave it in the operations spec and not cover it here.
-
