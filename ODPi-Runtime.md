@@ -224,12 +224,10 @@ Apache Hive 1.2 is taken as the reference version for this version of ODPi speci
 * **[HIVE_CLI]** ODPi Platforms MAY include the `bin/hive` command line interface.  If the platform includes the CLI it MUST accept all of the same arguments as the reference version.
 * **[HIVE_BEELINE]** ODPi Platforms MUST include the `bin/beeline` command line script.  The platform MUST accept all of the same arguments as the reference version.
 * **[HIVE_THRIFT]** ODPi Platforms MAY allow applications to connect to the Hive Metastore Thrift server via the thrift interface.  If the platform allows this it MUST accept all of the same thrift method calls as the reference version.
-* **[HIVE_HCAT_MR]** ODPi Platforms MAY support the `HCatInputFormat` and `HCatOutputFormat` APIs for using the Hive metastore with Hadoop MapReduce.  If these APIs are supported then they MUST be runtime compatible with the reference version.
-* **[HIVE_HCAT_RDRWRTR]** OPDi Platforms MAY support the `HCatReader` and `HCatWriter` APIs.  If these APIs are supported then they MUST be runtime compatible with the reference version.
+* **[HIVE_HCATALOG]** ODPi Platforms MAY support HCatalog.  If they do they MUST support the `HCatInputFormat`, `HCatOutputFormat`, `HCatReader`, and `HCatWriter` APIs and they MUST be binary compatible with the reference version.
 
 #### Requirements Relevant to Hive Covered Elsewhere
-It is important for applications to be able to find the Hive ODBC/JDBC endpoint on a cluster.  Discoverability of services in the ODPi Platform is covered in the Operations Specification, in
-the section titled Discoverability.
+It is important for applications to be able to find the Hive ODBC/JDBC endpoint on a cluster.  Discoverability of services in the ODPi Platform is covered in the Operations Specification, in the section titled Discoverability.
 
 
 Compatibility
