@@ -1,6 +1,6 @@
 ODPi Technical Working Group
 
-ODPi Runtime Specification: 1.1
+ODPi Runtime Specification: 2.0
 
 Date of Publication:
 
@@ -262,7 +262,7 @@ custom-to-the-application configuration file, etc) that does not impact the ODPi
 
 -   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
 
--   Applications SHOULD use JDBC, ODBC, or SQL to determine the structure of metadata rather than directly querying the metastore thrift interface whenever possible.
+-   Applications SHOULD use JDBC, ODBC, or SQL to determine the structure of Hive metadata rather than directly querying Hive's metastore thrift interface whenever possible.
 
 Best practices for compatible apps to be portable and operator friendly:
 
