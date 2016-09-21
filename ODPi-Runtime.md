@@ -16,6 +16,7 @@ Included Projects
 =================
 This specification covers:
 * Apache Hadoop® 2.7, including all maintenance releases.
+* Apache Hadoop® 2.7, compatible filesystems (HCFS).
 * Apache Hive™.
 
 Maintenance releases indicate bug fix releases connected to the indicated minor release.  For example, at the time of this writing the Hadoop 2.7 line has two maintenance releases, 2.7.1 and 2.7.2.  Thus versions 2.7.0, 2.7.1, and 2.7.2 all satisfy this specification.
@@ -211,6 +212,19 @@ Best practices for Platforms:
 -   Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
 -   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
+
+### HCFS (Hadoop-compatible filesystem) Compliance
+
+ODPi Platforms MAY include alternative filesystem implementations compatible with Apache Hadoop (HCFS). Even if they do, ODPi Platforms MUST still include Apache Hadoop HDFS as a viable choice. HCFS implementations MUST follow the guidelines laid out in the Hadoop FileSystem API Definition available as part of compliant Apache Hadoop release and also available [*online*](https://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/filesystem/index.html). ODPi Platform providers MAY include results of compliance testing with HCFS implementations in the submission presented to ODPi. These results MUST at least include execution of tests created in accordance with guidelines provided by "Testing with the Filesystem specification" section of the Hadoop FileSystem API Definition. ISV vendors SHOULD NOT be expected to provide test results with HCFS implementations when certifying their ODPi interoperability. 
+
+The following requirements provide guidance around best practices of integrating HCFS implementations with the rest of ODPi Platforms:
+
+* **[HCFS_CLI]** Hadoop CLI tools MAY have different output when working with HCFS implementations 
+* **[HCFS_INTEGRATION1]** First piece of Matt's doc goes here
+* **[HCFS_INTEGRATION2]** Second piece of Matt's doc goes here
+
+#### Requirements Relevant to HCFS Covered Elsewhere
+It is important for HCFS implementations to be able to seamlessly integrate with tools covered by Operations Specification. Note that from a standpoint of an Operations Specification HCFS implementation is yet another instance of a generic service. All of the provisions laid out by Operations Specification will apply to an HCFS implementation when it comes to installation, configuration, monitoring, upgrades and decomissioning. 
 
 ### Hive Compliance
 
