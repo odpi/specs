@@ -109,7 +109,8 @@ Minimum Versions
 
 Applications on Unix platforms need to understand the base specification of some key components of which they write software. Two of those components are the Java runtime environment and the shell environment.
 
--   **[TEST_ENVIRONMENT]** **Java:** ODPi Platforms SHOULD support both JRE 7 and JRE 8 runtime environments (64-bit only). ODPi Applications SHOULD work in at least one of these, and SHOULD be clear when they don’t support both.
+-   **[TEST_ENVIRONMENT]** **Java:** ODPi Platforms SHOULD provide jars that are JDK 1.7 bytecode compatible, thus allowing them to run in both JRE 7 and JRE 8 runtime environments.  Only
+support for 64-bit environments is required.  ODPi Applications SHOULD work in at least one of JRE 7 or JRE 8, and SHOULD be clear when they don’t support both.
 
 -   **[TEST_ENVIRONMENT]**  **Shell scripts:** On Unix and Unix-like systems, ODPi Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, ODPi platforms and Applications SHOULD use Microsoft batch or PowerShell.
 
