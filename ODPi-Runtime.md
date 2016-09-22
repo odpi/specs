@@ -1,10 +1,10 @@
 ODPi Technical Working Group
 
-ODPi Runtime Specification: 1.0.1
+ODPi Runtime Specification: 2.0
 
-Date of Publication: 2016-06-07
+Date of Publication:
 
-Status: Final
+Status: Draft
 
 
 ---
@@ -12,7 +12,15 @@ Status: Final
 Abstract
 ========
 
-Specifications covering ODPi Platforms based upon Apache Hadoop 2.7 and related branches. Compatibility guidelines for applications running on ODPi Platforms.
+Specifications covering ODPi Platforms based upon Apache Hadoop and Apache Hive. Compatibility guidelines for applications running on ODPi Platforms.
+
+Included Projects
+=================
+This specification covers:
+* Apache Hadoop 2.7, including all maintenance releases.
+* Apache Hive.
+
+Maintenance releases indicate bug fix releases connected to the indicated minor release.  For example, at the time of this writing the Hadoop 2.7 line has two maintenance releases, 2.7.1 and 2.7.2.  Thus versions 2.7.0, 2.7.1, and 2.7.2 all satisfy this specification.
 
 Objective
 =========
@@ -30,9 +38,12 @@ The goal of this document is to define the interface between ODPi-compliant Apac
 Technical Context
 =================
 
-At this time, the ODPi specification is a source-code specification: compliance is specified as shipping a platform built from a specific set of source artifacts. The exact source artifacts change with each ODPi version, and thus are specified outside the scope of this document. That said, this document was written in the context of Apache Hadoop 2.7 with an eye towards future versions. It may and likely will have to evolve as Hadoop itself evolves.
+At this time the ODPi specification is strongly based on the source-code of the underlying Apache projects.  Part of compliance is specified as shipping a platform built from a specific line of Apache Hadoop, namely 2.7.  It is expected that the Apache Hadoop version the spec is based on will evolve as both Apache Hadoop and this specification evolve.
 
-While the ODPi spec is source-based, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops applications from calling private interfaces). These degrees of freedom interfere with the goal of “test once, run everywhere” (TONE). The goal of this spec is to close enough of those freedoms to achieve TONE.
+Even with a source code based specification, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops applications from calling private interfaces). These degrees of freedom interfere with the goal of “test once, run everywhere” (TONE). The goal of this spec is to close enough of those freedoms to achieve TONE.
+
+The source code approach is not followed in the same way for Apache Hive.  Instead a set of interfaces that are deemed to be important for applications and users are specified to be fully compatible with Apache Hive 1.2.
+
 
 Specification Format
 ====================
@@ -43,19 +54,19 @@ Each entry will have a designation (free text in square brackets) in order to pi
 
 The designation [TEST_ENVIRONMENT] is reserved for entries that are defining constraints on the environment in which ODPi-compliant Hadoop platforms are expected to run. The output of the reference implementation validation testsuite is expected to capture enough information to identify whether the test execution environment conforms to the specification.
 
-Hadoop Build Specifications
+Build Specifications
 ===========================
 
-To help achieve TONE, ODPi-compliant Hadoop platforms MUST conform to the following build specifications.
+To help achieve TONE, ODPi-compliant platforms MUST conform to the following build specifications.
 
-Hadoop Version Specifications
+Version Specifications
 -----------------------------
 
--   **[HADOOP_VERSION]** For this version of the specification, ODPi Platforms MUST be a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
+-   **[HADOOP_VERSION]** For this version of the specification, ODPi Platforms MUST include a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
 
 -   The Apache components in an ODPi reference release MUST have their source be 100% committed to an Apache source tree.
 
-Hadoop Patch Specifications
+Patch Specifications
 ---------------------------
 
 While ODPi can be more prescriptive when it comes to the source-code and release-timing of major and minor releases of Apache components, platform providers need more flexibility in dealing with patch releases.  In particular, to deal with urgent security or availability problems for their customers, providers need to be able to do just about anything to triage an emergency situation.  Even after an emergency is dealt with, some customers and/or vendors are very conservative about change-management and providers need flexibility to work with such customers.
@@ -166,6 +177,8 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 Compliance
 ----------
 
+### Hadoop Compliance
+
 -   **[HADOOP_SUBPROJS]** ODPi Platforms MUST have all of the base Apache Hadoop components installed.
 
 -   **[HADOOP_BIGTOP]** ODPi Platforms MUST pass the Apache Big Top 1.0.0 Hadoop smoke tests.
@@ -203,6 +216,21 @@ Best practices for ODPi Platforms:
 
 -   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
 
+### Hive Compliance
+
+Apache Hive 1.2 is taken as the reference version for this version of ODPi specification.  This does not mean that ODPi Platforms must include Apache Hive 1.2.  Rather it means that Apache Hive 1.2 is the reference that all ODPi Platforms will be tested against.
+
+* **[HIVE_SQL]** ODPi Platforms MUST provide SQL that is compatible with the reference version of Hive's SQL.  All valid statements in the reference version should produce the same results in the ODPi Platform.  The ODPi Platform MAY include additional SQL that is not supported in the reference version of Hive, subject to other requirements in this document.
+* **[HIVE_JDBC]** ODPi Platforms MUST include access via JDBC and support all of the same JDBC functionality as the reference version of Hive.  All methods implemented in the reference version's JDBC client must be implemented and have the same signature in the ODPi Platform.  The ODPi Platform MAY implement additional JDBC methods that are not supported in the reference version of Hive, subject to other requirements of this document.
+* **[HIVE_CLI]** ODPi Platforms MAY include the `bin/hive` command line interface.  If the platform includes the CLI it MUST accept all of the same arguments as the reference version.
+* **[HIVE_BEELINE]** ODPi Platforms MUST include the `bin/beeline` command line script.  The platform MUST accept all of the same arguments as the reference version.
+* **[HIVE_THRIFT]** ODPi Platforms MAY allow applications to connect to the Hive Metastore Thrift server via the thrift interface.  If the platform allows this it MUST accept all of the same thrift method calls as the reference version.
+* **[HIVE_HCATALOG]** ODPi Platforms MAY support HCatalog.  If they do they MUST support the `HCatInputFormat`, `HCatOutputFormat`, `HCatReader`, and `HCatWriter` APIs and they MUST be binary compatible with the reference version.
+
+#### Requirements Relevant to Hive Covered Elsewhere
+It is important for applications to be able to find the Hive ODBC/JDBC endpoint on a cluster.  Discoverability of services in the ODPi Platform is covered in the Operations Specification, in the section titled Discoverability.
+
+
 Compatibility
 -------------
 
@@ -235,6 +263,8 @@ custom-to-the-application configuration file, etc) that does not impact the ODPi
 
 -   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
 
+-   Applications SHOULD use JDBC, ODBC, or SQL to determine the structure of Hive metadata rather than directly querying Hive's metastore thrift interface whenever possible.
+
 Best practices for compatible apps to be portable and operator friendly:
 
 -   Applications SHOULD NOT assume that an Intel processor is being used.
@@ -251,6 +281,8 @@ Best practices for compatible apps to be portable and operator friendly:
 
 -   In order to avoid conflicting with other services, applications SHOULD use distributed cache as much as possible to distribute execution objects to compute nodes. Pre-installation SHOULD be avoided as much as possible.
 
+-   Hive allows users to set some configuration values as part of their Hive session, via the *set* command.  Applications SHOULD only depend on setting those values that Hive by default allows users to set.  These values are listed in Appendix B.
+
 Glossary
 ========
 
@@ -263,6 +295,8 @@ Glossary
 -   **ISV vendor** - Individual or company that created an ISV application.
 
 -   **ISV application** - Non-ODPi application or process that runs on top of or beside an ODPi platform.
+
+-   **ODPi Platform** - A distribution of software that includes all of the required components and is compliant with this specification.
 
 -   **ODPi Runtime** - ODPi specification and platforms geared towards holistic management.
 
@@ -623,5 +657,105 @@ The following Hadoop configuration values need not be shared by a compliant dist
 | yarn.timeline-service.store-class | internal |
 | yarn.web-proxy.keytab | internal |
 
+Appendix B, Hive Configuration Values to be White Listed
+========================================================
+The following values should be settable by Hive users in their Hive sessions.  Values ending in .* indicate all configuration values with the matching prefix.  This list is taken from the
+default set of white listed values in Apache Hive 1.2.
+
+| Configuration Value |
+|:--------------------|
+| hive.analyze.stmt.collect.partlevel.stats |
+| hive.auto.* |
+| hive.autogen.columnalias.prefix.includefuncname |
+| hive.autogen.columnalias.prefix.label |
+| hive.cache.expr.evaluation |
+| hive.cbo.* |
+| hive.client.stats.counters |
+| hive.compat |
+| hive.compute.query.using.stats |
+| hive.convert.* |
+| hive.counters.group.name |
+| hive.default.fileformat.managed |
+| hive.display.partition.cols.separately |
+| hive.enforce.bucketing |
+| hive.enforce.bucketmapjoin |
+| hive.enforce.sorting |
+| hive.enforce.sortmergebucketmapjoin |
+| hive.error.on.empty.partition |
+| hive.exec.*.dynamic.partitions.* |
+| hive.exec.check.crossproducts |
+| hive.exec.compress.* |
+| hive.exec.concatenate.check.index |
+| hive.exec.default.partition.name |
+| hive.exec.drop.ignorenonexistent |
+| hive.exec.dynamic.partition* |
+| hive.exec.infer.* |
+| hive.exec.job.debug.capture.stacktraces |
+| hive.exec.job.debug.timeout |
+| hive.exec.max.created.files |
+| hive.exec.mode.local.* |
+| hive.exec.orc.* |
+| hive.exec.reducers.bytes.per.reducer |
+| hive.exec.reducers.max |
+| hive.exec.rowoffset |
+| hive.exec.show.job.failure.debug.info |
+| hive.exec.tasklog.debug.timeout |
+| hive.execution.engine |
+| hive.exim.uri.scheme.whitelist |
+| hive.explain.* |
+| hive.fetch.task.* |
+| hive.file.max.footer |
+| hive.groupby.skewindata |
+| hive.hashtable.initialCapacity |
+| hive.hashtable.loadfactor |
+| hive.hbase.* |
+| hive.ignore.mapjoin.hint |
+| hive.index.* |
+| hive.index.* |
+| hive.insert.into.multilevel.dirs |
+| hive.intermediate.* |
+| hive.join.* |
+| hive.limit.* |
+| hive.limit.row.max.size |
+| hive.localize.resource.num.wait.attempts |
+| hive.log.* |
+| hive.map.aggr |
+| hive.mapjoin.* |
+| hive.mapred.mode |
+| hive.mapred.supports.subdirectories |
+| hive.merge.* |
+| hive.multi.insert.move.tasks.share.dependencies |
+| hive.optimize.* |
+| hive.orc.* |
+| hive.outerjoin.* |
+| hive.output.file.extension |
+| hive.parquet.* |
+| hive.ppd.* |
+| hive.prewarm.* |
+| hive.reorder.nway.joins |
+| hive.resultset.use.unique.column.names |
+| hive.server2.logging.operation.level |
+| hive.server2.proxy.user |
+| hive.skewjoin.* |
+| hive.smbjoin.* |
+| hive.stats.* |
+| hive.support.quoted.identifiers |
+| hive.support.sql11.reserved.keywords |
+| hive.tez.* |
+| hive.variable.substitute |
+| hive.variable.substitute.depth |
+| hive.vectorized.* |
+| mapred.map.* |
+| mapred.output.compression.codec |
+| mapred.reduce.* |
+| mapreduce.input.fileinputformat.split.minsize |
+| mapreduce.job.queuename |
+| mapreduce.job.reduce.slowstart.completedmaps |
+| mapreduce.map.* |
+| mapreduce.reduce.* |
+| tez.am.* |
+| tez.queue.name |
+| tez.runtime.* |
+| tez.task.* |
 
 This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/legalcode)
