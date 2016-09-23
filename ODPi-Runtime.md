@@ -118,6 +118,7 @@ Minimum Versions
 
 Applications on Unix platforms need to understand the base specification of some key components of which they write software. Two of those components are the Java runtime environment and the shell environment.
 
+-   **[TEST_ENVIRONMENT]** **OS:** ODPi Platforms SHOULD be clear what operating systems are supported.
 -   **[TEST_ENVIRONMENT]** **Java:**  Platforms SHOULD provide jars that are JDK 1.7 bytecode compatible, thus allowing them to run in both JRE 7 and JRE 8 runtime environments.  64-bit environments MUST be supported. Applications SHOULD work in at least one of JRE 7 or JRE 8, and SHOULD be clear when they don’t support both.
 
 -   **[TEST_ENVIRONMENT]**  **Shell scripts:** On Unix and Unix-like systems, Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, Platforms and Applications SHOULD use Microsoft batch or PowerShell.
@@ -170,6 +171,8 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 -   **[HADOOP_EJH2]** A Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to the Platform's configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
 -   **[HADOOP_TOOLS]** The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with the Reference Platform. The entire directory SHOULD NOT be included in the default Hadoop class path.  Individual jars MAY be specified.
+
+-   **[HADOOP_USERS]** ODPi Platform can OPTIONALLY define a set of user ids and group ids that correspond to a set of running services. The list of user and group ids if defined SHOULD be clearly stated. E.g. The user id, hdfs, and group id,hadoop, is used for the HDFS service.
 
 Compliance
 ----------
@@ -268,7 +271,7 @@ Applications must follow these guidelines:
 
 -   Applications SHOULD obtain the version of a specific Hadoop component via the appropriate `$_HOME/bin/cmd version` command.
 
--   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use `hadoop fs` commands instead of `hdfs dfs` commands. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
+-   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use `hadoop fs` commands instead of `hdfs dfs` commands. The applications SHOULD use Hadoop FileSystem interface to interact with the distributed file system. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
 
 -   Applications SHOULD either launch via the Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
 
@@ -291,6 +294,20 @@ Best practices for compatible apps to be portable and operator friendly:
 -   In order to avoid conflicting with other services, Applications SHOULD use distributed cache as much as possible to distribute execution objects to compute nodes. Pre-installation SHOULD be avoided as much as possible.
 
 -   Hive allows users to set some configuration values as part of their Hive session, via the *set* command.  Applications SHOULD only depend on setting those values that Hive by default allows users to set.  These values are listed in Appendix B.
+
+-   Applications SHOULD define APIs and behaviors explicitly in the FileSystem class instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class. Defining API specification in the HDFS class is considered optional usage in HCFS distributed file system.
+
+-   ODPi Platforms MAY define optional storage tiers functions that can be implemented by different solutions. 
+
+-   ODPi Platforms SHOULD provide error handling for applications invoking HDFS specific APIs that are not included in the FileSystem Class.
+
+-   ODPi Platforms SHOULD be compatible with POSIX ACL and POSIX permissions.
+
+-   ODPi Platforms SHOULD handle user impersonation permissions accordingly. 
+
+-   ODPi Platform can OPTIONALLY support security mechanism to encrypt RPC data.
+
+-   ODPi Platform can OPTIONALLY support authentication mechanism to verify user access.
 
 Glossary
 ========
