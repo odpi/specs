@@ -1,191 +1,223 @@
-# ODPi Application Installation and Management Specification
-## Abstract
-This specification outlines the requirements for ODPi-compliant applications to be installed, managed, and monitored by Ambari and the guarantees that consumers, ISVs, and service developers can count on to develop custom applications, etc.
+#ODPi Application Installation and Management Specification
+##Abstract
+This specification outlines the requirements for ODPi-Interoperable applications to be installed, managed, and monitored. It starts with giving a definition of common expectations that are applicable to all Hadoop Management tools and then breaks into subsections describing behaviour and expectations specific to particular Hadoop Management tools. Adherence to the common part of the spec provides guarantees that consumers, ISVs, and service developers can count on to develop custom applications, etc. Tool-specific parts of the spec are meant to be a guidance.
 
-## Objective
-The Application Installation and Management specification covers requirements and guarantees for consumers, ISVs, and service developers while developing custom service specification and views. An application can be a custom service that can be managed by Ambari or a View that can be hosted by Ambari deployments conforming to this spec.
+##Objective
+The Application Installation and Management specification covers requirements and guarantees for consumers, ISVs, and service developers while packaging their Hadoop application that provide custom service specifications and views. An application can further rely on functionality provided by a particular implementation of a Hadoop Management tool. Currently this specification only covers those extensions provided by Apache Ambari but we expect to cover other Hadoop Management tools as the spec evolves. All of the tools are expected to provide common set of services that, at runtime, are guaranteed to be compliant with the [ODPi Runtime Specification](https://github.com/odpi/specs/blob/master/ODPi-Runtime.md). 
 
-This specification covers the Ambari requirements/expectation for applications to be compatible with the [ODPi Runtime Spec](https://github.com/odpi/specs/blob/master/ODPi-Runtime.md).
+##Glossary
+###Component
 
-## Ambari Version
-The specification is based on Ambari 2.2.1.0.
+A component is a managed entity. It is installed, configured, upgraded and if it’s a daemon it can be started, stopped, etc. HDFS DataNode is a component.
 
-## Ambari Runtime Environment Specification
-Any Ambari user can assume the following for the runtime environment.
+###Custom Service
 
-* JRE 7 or 8 is REQUIRED for Ambari
-* Python 2.6 or 2.7 is REQUIRED for Ambari
-* JAVA_HOME MUST be explicitly provided to Ambari and it MUST be the same on all hosts managed by Ambari
+A custom service is a service that does not belong to the ODPi core and typically developed to be used against the ODPi runtime. In this spec, a custom service and application are used interchangeably.
 
-## Custom Service Specification
-### Packaging Requirements
-Ambari supports installation of services via rpm and debian packages only. It is expected that the packages are available at runtime via well-known repository solution such as YUM, Zypper, Apt.
+###Cluster
 
-* Custom service artifacts MUST be deployable via YUM, Zypper, or Apt
+A cluster is a collection of hosts and deployed services including ones that are part of ODPi run time or are custom services.
 
-### Repository URL Specification
-Ambari supports specification of the repository base URLs only at the stack level.
+###Host
 
-* Custom service MUST make the packages available via YUM, Zypper, or Apt repositories
-* Custom service MUST make the repository URL available to Ambari in one of the following ways:
-  * Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the stack(s)'s `repoinfo.xml` (see [Apache Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services))
-  * Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
+A host is a machine where components are physically deployed.
 
-###Deploying Custom Service
-For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services) and installed to the appropriate stack definition directory under `/var/lib/ambari-server/resources/stacks/<stack-name>/<stack-version>/services`. `<stack-name>` and `<stack-version>` uniquely identify the stack that is being customized. Ambari needs to be restarted post deployment to recognize the added custom stacks and/or services.
+###Hadoop Management Tool
 
-### Service Definition Requirements
-For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster. The Apache Ambari 2.2.1 specification provides additional details on how to write a custom service.
+A tool that can manage services including the ODPi core services as well as custom services. 
 
-* A service MUST be named using an alphanumeric string
-* Service name MUST be unique across all services included in the stack
+###ODPi Core Services
 
-A `metainfo.xml` file is an xml formatted declarative definition of a service. It provides the top level description of service definition. `metainfo.xml` contains one or more section for services with each service containing one or more components. See [Apache Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Writing+metainfo.xml) for details on how to author `metainfo.xml`.
+The services which are included in the [ODPi Runtime Specification](https://github.com/odpi/specs/blob/master/ODPi-Runtime.md).  Currently this includes HDFS, MAPRED and YARN.
 
-```
+###Service
+
+A service is a collection of components. Operations against the service translates to operations against individual components. HDFS is a service.
+
+###Service Definition
+
+A set of declarative files and scripts that encapsulate the management and monitoring requirements of a service.
+
+###Stack
+
+A stack is a collection of services for a specific version which includes a common release/delivery mechanism. 
+
+###Stack Extension
+
+A stack extension refers to a stack that is being added to another stack.
+
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
+
+##Hadoop Management Tool Specifications
+This section covers the set of requirements expected out of Hadoop Management tools managing services belonging to the ODPi runtime and custom services developed against the core runtime. Later the spec covers details specific to Apache Ambari that are applicable if custom services are being developed for Apache Ambari. 
+
+###Packaging
+A Hadoop Management tool MUST provide a packaging and package delivery mechanism for third-party developers to deliver, install the custom services. There are two parts to a custom service - service definition(s) and service package (files that are installed on disk). Usually, RPM and deb packaging is a good way to package files and can be used by standard installers available on linux platforms. It’s not atypical to see alternate packaging mechanism based on tarball, zip, etc. or even Docker images. A Hadoop Management tool MAY support well-known packaging solution such as RPM or deb packages. 
+
+Service definition MAY be packaged and installed separately from the service package.
+
+####Naming requirements:
+* The naming requirements covers the name of the Services, Components, and Service Packages.
+* A name MUST be valid for use as a file or directory name on the supported platforms
+* A name MUST be unique across all services and components included in the cluster
+* One component MUST be able to refer to another component or service using the unique name
+* Hadoop Management tool MUST use the unique names when displaying or listing services and components.  A service or a component MAY specify a display name and a description
+
+###Runtime Environment Specification
+A Hadoop Management tool MUST specify the JRE versions it supports. It MUST support either JRE 7 or JRE 8 runtime environments (64-bit only).  It SHOULD support both JRE 7 and JRE 8.  Additionally, a Hadoop Management tool SHOULD provide a way for custom services to retrieve JAVA_HOME.
+
+ODPi Applications MUST work in at least one of these runtime environments, and SHOULD be clear when they don’t support both.
+
+###Management Operations
+A Hadoop Management tool MUST have well-defined life-cycle support that the custom services can integrate with. Life-cycle operations are defined at the level of components. User should be able to install and configure any component. If the component is a daemon, it can be started and stopped. In this spec, the focus is to identify the basic set of operations required. 
+
+A Hadoop Management tool 
+* MUST support Install and Configure operations for all components
+
+If the component is a daemon/process then a Hadoop Management tool 
+* MUST support Start, Stop, and ability to query status (up or down). 
+* MAY support Reconfigure, Graceful-Stop, Restart
+* MAY support Upgrade and Downgrade
+* MAY support customer commands
+
+###Hadoop Management Tool Stack
+The Hadoop Management tool MUST either ship a stack with the management tool or provide a mechanism for users to acquire a stack.   The stack MUST include services that are part of ODPi and zero or more custom service definitions.
+
+###Secured Deployment
+A Hadoop Management tool MUST support deployment of secured services using Kerberos. The tool MAY support the deployment of the secured environment such as the availability of KDC server. Once the secured environment is made available to the management too it MUST support creation of keytabs, distribution or the keytabs, and the regeneration of the keytabs.
+
+###Discoverability
+It is critical for users to be able to discover what is deployed and what can be deployed.
+
+The Hadoop Management tool  
+* MUST allow querying of installed service and their components and on which host they are installed
+* MUST allow querying of the latest desired configuration as well as the applied actual configurations
+* MUST allow querying of the current status of all components 
+* MUST allow listing of all hosts available on the cluster and the components that are deployed on the hosts
+* MUST list all services and components that are available but not yet installed
+* MAY list all stacks that are available and MUST list the stack that is installed
+* MAY provide the version of all services that are installed
+
+###Configuration Management
+Configuration management is a critical feature in any management too. An ODPi Hadoop Management tool
+* MUST manage configurations and push configurations to all hosts based on the components deployed on the host
+* MUST support config versioning to allow comparison of config changes
+* MUST report the version of the configuration that is applied to individual components
+* MAY support reverting configurations to a previous version
+* MAY support configuration recommendation and validation
+* MAY support multiple repositories to include the various extra packages that may be required by the services
+
+###Metrics
+A Hadoop Management tool MUST support configurations of services to emit metrics. The emitted metrics can target any user preferred metrics store. Towards that end, a management tool MAY support storage and presentation of the metrics. It MAY also allow emission of metrics to an external store.
+
+###Alerts
+A Hadoop Management tool MUST support configuration of the services to generate alerts and MUST support mechanism to notify users when alerts are generated. It MAY support maintaining alert history for a reasonable time.
+
+##Management Tool Specific
+
+###Ambari
+
+####Glossary
+
+#####Ambari Stack
+
+An Ambari stack is a stack as defined in the general section of the specification (a collection of services for a specific version which includes a common release/delivery mechanism).  Ambari only supports installing a single stack.  If you want to install additional services they must be added to the stack or installed as an extension.
+
+#####Extension
+
+An [extension](https://cwiki.apache.org/confluence/display/AMBARI/Extensions) is a collection of services for a specific version which includes a common release/delivery mechanism.  An extension can only be installed if a specific stack (or specific version of a stack) will be installed with the extension or has already been installed.
+
+#####Management Pack
+
+A [management pack](https://cwiki.apache.org/confluence/display/AMBARI/Management+Packs) is a collection of services packaged as a tarball.  A management pack can be used to ship an Ambari stack, extensions or to add custom services to an Ambari stack.
+
+####Runtime Environment Specification
+In addition to the common runtime environment, any application can assume the following for the runtime environment on each node of the cluster:
+* Python 2.6 or 2.7 is REQUIRED
+* JAVA_HOME MUST be explicitly provided to Ambari (or Ambari can be used to setup Java)
+* JAVA_HOME MUST be the same on all hosts
+
+####Packaging and Repository URLs
+Ambari supports installation of services via RPM and debian packages only. It is expected that the packages are available at runtime via a well-known repository solution such as YUM, Zypper or Apt (depending on the cluster’s operating system).
+
+* Custom services MUST make the packages available via YUM, Zypper, or Apt repositories
+* Custom services MUST make the repository URL available to Ambari in one of the following ways:
+** Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the stacks/<name>/<version>/repos/repoinfo.xml.  Repository URLs would need to be added for each operating system required by the cluster.
+
+<os family="redhat6">
+  <!-- Leave all the existing repos -->
+  <repo>
+    <baseurl>http://<server>/path/to/repo</baseurl>
+    <repoid>YOUR_REPO_ID</repoid>
+    <reponame>YOUR_REPO_NAME</reponame>
+  </repo>
+</os>
+
+Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
+[TODO - need to provide clear instructions on how to add repo URLs]
+[Note: service level repositories will be supported in 2.4.2]
+
+####Service Definition Requirements
+For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.4.0 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster.
+
+In addition to the service definition requirements in the common section above:
+
+* Custom Services MUST specify <versionAdvertised>false</versionAdvertised> in metainfo.xml. This ensures that adding Custom Service does not break the upgrade features.
+* Although it is possible that multiple services can be defined in one metainfo.xml, Services other than YARN/MAPRED MUST be declared in their own metainfo.xml.
+* The Python scripts MUST be compatible with both Python 2.6 and 2.7
+
+####Inheritance
+Inheritance in Ambari reduces duplication between different versions of Stacks, Extensions and Services.  Stacks, Extensions and Services all use the same mechanism to declare their inheritance.  In their corresponding metainfo.xml, a [Stack](https://cwiki.apache.org/confluence/display/AMBARI/How-To+Define+Stacks+and+Services#How-ToDefineStacksandServices-Stack-VersionDescriptor) or [Extension](https://cwiki.apache.org/confluence/display/AMBARI/Extensions#Extensions-ExtensionInheritance) may extend a previous version:
+
+<metainfo>
+    <extends>1.0</extends>
+
+A service can inherit through the stack but may also inherit directly from common-services:
+
 <metainfo>
   <schemaVersion>2.0</schemaVersion>
   <services>
     <service>
-      <name>MyService</name>
-      ...
-      <components>
-        <component>
-          <name>MyComponent</name>
-          ...
-```
+      <name>ZOOKEEPER</name>
+      <version>3.4.5.2.0</version>
+      <extends>common-services/ZOOKEEPER/3.4.5</extends>
 
-* A component MUST be named using an alphanumeric string
-* Component name MUST be unique across all components in the stack
-* A component MUST be identified as `MASTER`, `SLAVE`, or `CLIENT`
-* A component MAY include a cardinality specifying minimum and maximum number of instances for deployment
-* Service MUST include the implementation of the following commands for each non-client component: `install`, `configure`, `start`, `stop`, `status`, and `security_status`
-* Service MUST include the implementation of the following commands for each client component: `install`, `configure`
-* Service MUST use Python based scripts to provide the implementation of its lifecycle commands
-* The Python scripts MUST be compatible with both Python 2.6 and 2.7
-* Service MUST specify `<versionAdvertised>false</versionAdvertised>` in `metainfo.xml`.  This ensures that adding Custom Service does not break Rolling Upgrade and Express Upgrade features.
 
-```
-<component>
-  <name>MyComponent</name>
-  <category>SLAVE</category>
-  <cardinality>1+</cardinality>     
-  <versionAdvertised>false</versionAdvertised>
-    <commandScript>
-    <script>scripts/hbase_regionserver.py</script>
-    <scriptType>PYTHON</scriptType>
-  </commandScript>
-</component>
-```
+When including the following services: HDFS, MAPRED, YARN, HIVE and ZOOKEEPER into a stack, they SHOULD be inherited from the common-services directory defined in Ambari.  In addition, any services, which have definitions in common-services, SHOULD inherit from their common-services definition.
 
-### Service Dependency Requirements
-A service definition can describe various dependency requirements with other services, components, and/or configs. The details of how dependencies are specified can be found in [Apache Ambari 2.2.1 specification](https://cwiki.apache.org/confluence/display/AMBARI/Writing+metainfo.xml). This spec covers the naming requirement/expectations for the ODPi runtime components, HDFS, YARN, and ZOOKEEPER. The following table lists the names of such service and component as well as the type of the component.
+For more information see the [Service Inheritance wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Service+Inheritance).
 
-|service|component|type|
-|-------|---------|----|
-|HDFS|DATANODE|SLAVE|
-||NAMENODE|MASTER|
-||SECONDARY_NAMENODE|MASTER|
-||HDFS_CLIENT|CLIENT|
-||JOURNALNODE|SLAVE|
-||ZKFC|SLAVE|
-|YARN|NODEMANAGER|SLAVE|
-||RESOURCEMANAGER|MASTER|
-||YARN_CLIENT|CLIENT|
-||APP_TIMELINE_SERVER|MASTER|
-|ZOOKEEPER|ZOOKEEPER_SERVER|MASTER|
-||ZOOKEEPER_CLIENT|CLIENT|
+####Creating Stack Versions
+A Hadoop Management Tool when packaging a stack for Ambari should follow the guidelines for [defining stacks](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services) and should make sure to include all mandatory requirements including the [stack properties](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services#DefiningaCustomStackandServices-StackProperties).
 
-* A custom application MAY not use any of the reserved service and component names above for its own service or components being defined
-* A custom application MAY use any of the reserved service and component names above to specify dependencies
+####Recommended Application Packaging
+Each individual Application SHOULD be created as one or more extensions and SHOULD be packaged as a single management pack.
 
-### Creating Custom Stack
-A custom stack is a set of service definitions grouped for deployment/management. A custom stack may include services that are part of ODPi and zero or more custom service definitions.
+For more information see the [Packaging and Installing Custom Services wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Packaging+and+Installing+Custom+Services).
 
-When including ODPi services (`HDFS`, `YARN`, `ZOOKEEPER`) into a custom stack, they MUST be inherited from the `common-services` defined in the management infrastructure.
+####Defining Custom Services
+Each custom service definition MUST be created following the [Ambari guidelines for custom services](https://cwiki.apache.org/confluence/display/AMBARI/Custom+Services).
 
-`common-services` is a folder that contains a set of service definitions that can be shared across different stacks. Including services that are derived from services within common-service folder ensures that runtime behavior and management operations are uniform across all stacks
+####Kerberos
+If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application SHOULD provide a "Kerberos descriptor" metadata file (kerberos.json) in its service definition. This is optional, but if this is omitted, it puts the burden on the end user for performing Kerberos principal generation, Kerberos keytab generation and distribution, etc.
 
-### Role Command Order
-Role command order allows Ambari to be aware of the start order of a custom service if the start of any of its component or service check needs other services to be started.
+If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application MUST explicitly invoke Kerberos authentication calls (i.e., kinit invocations) in its Service Definition scripts.
 
-* Custom service MAY specify a role command order (via `role_command_order.json` file) in the service definition
-* Custom service MUST not influence the relative command order between components that are not included in the service definition
+For more information about Kerberos descriptors see the [Kerberos Descriptor documentation](https://github.com/apache/ambari/blob/trunk/ambari-server/docs/security/kerberos/kerberos_descriptor.md) or for general Kerberos information see the [Automated Kerberization wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Automated+Kerberizaton).
 
-### Kerberos
-If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application SHOULD provide a "Kerberos descriptor" metadata file (`kerberos.json`) in its service definition.  This is optional, but if this is omitted, it puts the burden on the end user for performing Kerberos principal generation, Kerberos keytab generation and distribution, etc.
-
-If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application MUST explicitly invoke Kerberos authentication calls (i.e., `kinit` invocations) in its Service Definition scripts.  
-
-## Monitoring
-### Metrics Monitoring
-An Application MAY expose its application-level metrics via Ambari REST API by defining `metrics.json` file in its Service Definition.
+####Metrics Monitoring
+An Application MAY expose its application-level metrics via Ambari REST API by defining a [metrics.json](https://github.com/apache/ambari/blob/trunk/ambari-server/src/main/resources/common-services/HDFS/2.1.0.2.0/metrics.json) file in its Service Definition.
 
 An Application MAY provide its own Hadoop Metrics2 Sink implementation or custom code to emit its metrics into Ambari Metrics Collector.
 
-### Alerts
-An Application MAY expose its application-level alerts via Ambari REST API and Ambari Web UI by defining `alerts.json` file in its Service Definition.  
+For more information about the metrics.json format see the [Stack Defined Metrics wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Stack+Defined+Metrics) or for general metrics information see the [Ambari Metrics wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Metrics).
 
-In case an alert definition contain any script-based alerts, it MUST be written in Python and MUST be compatible with Python 2.6 and 2.7.
+####Alerts
+An Application MAY expose its application-level alerts via Ambari REST API and Ambari Web UI by defining an alerts.json file in its Service Definition.
 
-## Views
-An Application MAY provide one or more Views as custom UIs that can be deployed, configured, and accessed via Ambari Web UI.
+In case an alert definition contains any script-based alerts, it MUST be written in Python and MUST be compatible with Python 2.6 and 2.7.
 
-View's UI code MAY be written in any standard web technologies including HTML, CSS, JavaScript, etc.  A View MAY use any JavaScript libraries as the View itself runs in its own sandbox inside an iframe.
+For more information about the alerts.json format see the [Alerts definition documentation](https://github.com/apache/ambari/blob/branch-2.1/ambari-server/docs/api/v1/alert-definitions.md) or for general alerts information see the [Ambari Alerts wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Alerts).
 
-A View SHOULD work against Internet Explorer 10+, Chrome 47+, Safari 9+, and Firefox 43+ and SHOULD make it clear when not all these browsers are supported.
-
-A View SHOULD be compiled and packaged as a JAR file that can be run on both JRE 7 and JRE 8.  It SHOULD be made clear when either JRE 7 or JRE 8 is not supported.
-
-A View MUST specify `view.xml` in the root of the JAR.
-
-A View's name attribute in `view.xml` MUST not be the same as with other Views available.
-
-## Glossary
-<dl>
-  <dt>Application</dt>
-  <dd>A custom Service or a View written to work with Ambari.</dd>
-
-  <dt>Component</dt>
-  <dd>A component is a managed entity.  Typically, it is either a daemon that can be started and stopped, or a client that is invoked at runtime.  The component is installed, configured, upgraded, monitored, and if it is a daemon, it can also be started and stopped.</dd>
-
-  <dt>Cluster</dt>
-  <dd>A cluster is a collection of hosts and deployed services.</dd>
-
-  <dt>Host</dt>
-  <dd>A host is a machine where components are physically deployed.</dd>
-
-  <dt>Host Component</dt>
-  <dd>A host component is a deployed component instance on a specific host.</dd>
-
-  <dt>Service</dt>
-  <dd>A service is a collection of components. Operations against the service translates to operations against individual components.</dd>
-
-  <dt>Service Definition</dt>
-  <dd>A set of declarative files and scripts that encapsulate the management and monitoring requirements of a service.</dd>
-
-  <dt>Stack</dt>
-  <dd>A stack is a collection of services for a specific version.</dd>
-
-  <dt>Stack Definition</dt>
-  <dd>A set of service definitions that collectively define a stack.</dd>
-
-  <dt>View</dt>
-  <dd>A pluggable UI that can be installed, configured, and accessed via Ambari. </dd>
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
-
-## Out of Scope
-The following topics are out of scope for the initial draft specification.
-
-### QuickLinks
-QuickLinks are not customizable in Ambari 2.2.0.0 unless Ambari Web's core code is modified.  [AMBARI-11268](https://issues.apache.org/jira/browse/AMBARI-11268) added the customization capability.
-
-### Upgrade
-What a custom service can expect to do so that it can seamlessly plug-in into the Ambari Rolling Upgrade, Express Upgrade, Patch Upgrade, or some other upgrade functionality.
-
-### Configuration Recommendation / Validation
-This is done via stack advisor, but this exists at the stack level, so there’s no good story around exposing this to applications (though we have a similar situation with role command order).
-
-### Dashboard Customization
-As of Ambari 2.2.1.0, an application-specific, custom dashboard cannot be created unless you modify ambari-web code, though some elements such as widgets are declarative and do not require code changes.
+####Quicklinks
+An Application MAY expose quick links to the Ambari UI by including a quicklinks.json file in its Service Definition.  For more information see the [Quick Links wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Quick+Links).
