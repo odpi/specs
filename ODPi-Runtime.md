@@ -121,6 +121,7 @@ Minimum Versions
 
 Applications on Unix platforms need to understand the base specification of some key components of which they write software. Two of those components are the Java runtime environment and the shell environment.
 
+-   **[TEST_ENVIRONMENT]** **OS:** ODPi Platforms SHOULD be clear what operating systems are supported.
 -   **[TEST_ENVIRONMENT]** **Java:** ODPi Platforms SHOULD provide jars that are JDK 1.7 bytecode compatible, thus allowing them to run in both JRE 7 and JRE 8 runtime environments.  Only
 support for 64-bit environments is required.  ODPi Applications SHOULD work in at least one of JRE 7 or JRE 8, and SHOULD be clear when they don’t support both.
 
@@ -144,16 +145,19 @@ The following environment variables are noted by this spec:
 | **[HADOOP_EC3]** | HADOOP_COMMON_DIR    | Relative Dir  | Apache Hadoop common jars |
 | **[HADOOP_EC4]** | HADOOP_COMMON_LIB_JARS_DIR | Relative Dir | Apache Hadoop common jar dependencies |
 | **[HADOOP_EC5]** | HADOOP_CONF_DIR | Absolute Dir | Location of Apache Hadoop configuration files |
+| **[HADOOP_EC6]** | HADOOP_HOME | Absolute Dir | Apache Hadoop installation directory |
+| **[HADOOP_EC7]** | HADOOP_LOG_DIR | Absolute Dir | Apache Hadoop logs directory |
 | **[HADOOP_EH1]** | HADOOP_HDFS_HOME   | Absolute Dir  | Home directory of the Apache Hadoop HDFS component |
 | **[HADOOP_EH2]** | HDFS_DIR    | Relative Dir  | Apache Hadoop HDFS jars |
 | **[HADOOP_EH3]** | HDFS_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop HDFS jar dependencies |
 | **[HADOOP_EY1]** | HADOOP_YARN_HOME   | Absolute Dir  | Home directory of the Apache Hadoop YARN component |
 | **[HADOOP_EY2]** | YARN_DIR    | Relative Dir  | Apache Hadoop YARN jars |
 | **[HADOOP_EY3]** | YARN_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop YARN jar dependencies |
+| **[HADOOP_EY4]** | YARN_LOG_DIR    | Absolute Dir  | Apache Hadoop Yarn log directory |
 | **[HADOOP_EM1]** | HADOOP_MAPRED_HOME   | Absolute Dir  | Home directory of the Apache Hadoop MapReduce component |
 | **[HADOOP_EM2]** | MAPRED_DIR    | Relative Dir  | Apache Hadoop MapReduce jars |
 | **[HADOOP_EM3]** | MAPRED_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop MapReduce jar dependencies |
-
+| **[HADOOP_EM4]** | HADOOP_MAPRED_LOG_DIR | Absolute Dir | Apache Hadoop Mapreduce log directory |
 
 -   The content of the `*_DIR` directories SHOULD be the same as the ODPi Reference Implementation and the Apache Hadoop distribution of the appropriate platform.  In a future release, this will become a MUST.
 
@@ -174,6 +178,8 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 -   **[HADOOP_EJH2]** An ODPi Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
 -   **[HADOOP_TOOLS]** The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with Apache Hadoop and the reference implementation. The entire directory SHOULD NOT be included in the default hadoop class path.  Individual jars MAY be specified.
+
+-   **[HADOOP_USERS]** ODPi Platform can OPTIONALLY define a set of user ids and group ids that correspond to a set of running services. The list of user and group ids if defined SHOULD be clearly stated. E.g. The user id, hdfs, and group id,hadoop, is used for the HDFS service.
 
 Compliance
 ----------
@@ -273,7 +279,7 @@ custom-to-the-application configuration file, etc) that does not impact the ODPi
 
 -   Applications SHOULD obtain the version of a specific Apache Hadoop component via the appropriate `$_HOME/bin/cmd version` command.
 
--   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use `hadoop fs` commands instead of `hdfs dfs` commands. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
+-   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use `hadoop fs` commands instead of `hdfs dfs` commands. The applications SHOULD use Hadoop FileSystem interface to interact with the distributed file system. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
 
 -   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
 
@@ -287,7 +293,7 @@ Best practices for compatible apps to be portable and operator friendly:
 
 -   Applications SHOULD NOT assume that an Oracle JRE is being used.
 
--   Applciations SHOULD include both Microsoft batch or PowerShell as well as Unix-compatible shell scripts.
+-   Applications SHOULD include both Microsoft batch or PowerShell as well as Unix-compatible shell scripts.
 
 -   Applications SHOULD NOT install their own dependent packages (e.g., Ruby, Python, Apache Web Server) unless absolutely necessary. They SHOULD list them as system requirements and let the operator install them.
 
@@ -296,6 +302,20 @@ Best practices for compatible apps to be portable and operator friendly:
 -   In order to avoid conflicting with other services, applications SHOULD use distributed cache as much as possible to distribute execution objects to compute nodes. Pre-installation SHOULD be avoided as much as possible.
 
 -   Hive allows users to set some configuration values as part of their Hive session, via the *set* command.  Applications SHOULD only depend on setting those values that Hive by default allows users to set.  These values are listed in Appendix B.
+
+-   Applications SHOULD define APIs and behaviors explicitly in the FileSystem class instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class. Defining API specification in the HDFS class is considered optional usage in HCFS distributed file system.
+
+-   ODPi Platforms MAY define optional storage tiers functions that can be implemented by different solutions. 
+
+-   ODPi Platforms SHOULD provide error handling for applications invoking HDFS specific APIs that are not included in the FileSystem Class.
+
+-   ODPi Platforms SHOULD be compatible with POSIX ACL and POSIX permissions.
+
+-   ODPi Platforms SHOULD handle user impersonation permissions accordingly. 
+
+-   ODPi Platform can OPTIONALLY support security mechanism to encrypt RPC data.
+
+-   ODPi Platform can OPTIONALLY support authentication mechanism to verify user access.
 
 Glossary
 ========
