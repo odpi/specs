@@ -226,6 +226,19 @@ The following requirements provide guidance around best practices of integrating
 * **[HCFS_INTEGRATION1]** First piece of Matt's doc goes here
 * **[HCFS_INTEGRATION2]** Second piece of Matt's doc goes here
 
+-   Applications SHOULD define APIs and behaviors explicitly in the FileSystem class instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class. Defining API specification in the HDFS class is considered optional usage in HCFS distributed file system.
+
+-   ODPi Platforms MAY define optional storage tiers functions that can be implemented by different solutions. 
+
+-   ODPi Platforms SHOULD provide error handling for applications invoking HDFS specific APIs that are not included in the FileSystem Class.
+
+-   ODPi Platforms SHOULD be compatible with POSIX ACL and POSIX permissions.
+
+-   ODPi Platforms SHOULD handle user impersonation permissions accordingly. 
+
+-   ODPi Platform can OPTIONALLY support security mechanism to encrypt RPC data.
+
+-   ODPi Platform can OPTIONALLY support authentication mechanism to verify user access.
 #### Requirements Relevant to HCFS Covered Elsewhere
 It is important for HCFS implementations to be able to seamlessly integrate with tools covered by Operations Specification. Note that from a standpoint of an Operations Specification HCFS implementation is yet another instance of a generic service. All of the provisions laid out by Operations Specification will apply to an HCFS implementation when it comes to installation, configuration, monitoring, upgrades and decomissioning. 
 
@@ -295,19 +308,7 @@ Best practices for compatible apps to be portable and operator friendly:
 
 -   Hive allows users to set some configuration values as part of their Hive session, via the *set* command.  Applications SHOULD only depend on setting those values that Hive by default allows users to set.  These values are listed in Appendix B.
 
--   Applications SHOULD define APIs and behaviors explicitly in the FileSystem class instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class. Defining API specification in the HDFS class is considered optional usage in HCFS distributed file system.
 
--   ODPi Platforms MAY define optional storage tiers functions that can be implemented by different solutions. 
-
--   ODPi Platforms SHOULD provide error handling for applications invoking HDFS specific APIs that are not included in the FileSystem Class.
-
--   ODPi Platforms SHOULD be compatible with POSIX ACL and POSIX permissions.
-
--   ODPi Platforms SHOULD handle user impersonation permissions accordingly. 
-
--   ODPi Platform can OPTIONALLY support security mechanism to encrypt RPC data.
-
--   ODPi Platform can OPTIONALLY support authentication mechanism to verify user access.
 
 Glossary
 ========
