@@ -31,12 +31,12 @@ The goals of the ODPi Runtime Specification are:
 
 3.  **For Platform Vendors:** Compliance guidelines that enable Applications to run successfully on their Platform. But the guidelines must allow Platform Vendors to patch their End-Users in an expeditious manner, to deal with emergencies.
 
-The methodology used in ODPi Runtime Specification is defining the interface(s) between Services on an Platform (such as HDFS) and Applications that achieves the above goals. This interface in turn can be used by Software Vendors to properly build their software, and will be used as the basis of a compliance test suite that can be used by Platform Vendors to test compliance.
+The methodology used in ODPi Runtime Specification is defining the interface(s) between Services on an Platform (such as HDFS) and Applications that achieves the above goals. These interface(s) in turn can be used by Software Vendors to properly build their software, and will be used as the basis of a compliance test suite that can be used by Platform Vendors to test compliance.
 
 Technical Context
 =================
 
-At this time the ODPi Runtime Specification is strongly based on the source code of the underlying Apache projects.  Part of compliance is specified as shipping a Platform built from a specific line of Apache Hadoop, namely 2.7.  It is expected that the Apache Hadoop version the spec is based on will evolve as both Apache Hadoop and this specification evolve.
+At this time the ODPi Runtime Specification is strongly based on the exact behaviour of the underlying Apache projects.  Part of compliance is specified as shipping a Platform built from a specific line of Apache Hadoop, namely 2.7.  It is expected that the Apache Hadoop version the spec is based on will evolve as both Apache Hadoop and this specification evolve.
 
 Even with a source code based specification, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops Applications from calling private interfaces). These degrees of freedom can interfere with the objectives of the ODPi Runtime Specification. The goal of this spec is to close enough of those freedoms to achieve those objectives.
 
