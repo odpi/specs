@@ -223,8 +223,12 @@ ODPi Platforms MAY include alternative filesystem implementations compatible wit
 The following requirements provide guidance around best practices of integrating HCFS implementations with the rest of ODPi Platforms:
 
 * **[HCFS_CLI]** Hadoop CLI tools MAY have different output when working with HCFS implementations 
-* **[HCFS_INTEGRATION1]** First piece of Matt's doc goes here
-* **[HCFS_INTEGRATION2]** Second piece of Matt's doc goes here
+* **[HCFS_INTEGRATION1]** [*Terminology*](HCFS-Installation.md#terminology)
+* **[HCFS_INTEGRATION2]** [*Implementation*](HCFS-Installation.md#implementation)
+* **[HCFS_INTEGRATION3]** [*Testing*](HCFS-Installation.md#testing)
+* **[HCFS_INTEGRATION4]** [*Installation*](HCFS-Installation.md#installation)
+* **[HCFS_INTEGRATION5]** [*Integration with Ambari*](HCFS-Installation.md#integration-with-ambari)
+* **[HCFS_INTEGRATION6]** [*Troubleshooting*](HCFS-Installation.md#troubleshooting)
 
 -   Applications SHOULD define APIs and behaviors explicitly in the FileSystem class instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class. Defining API specification in the HDFS class is considered optional usage in HCFS distributed file system.
 
