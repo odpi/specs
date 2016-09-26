@@ -1,5 +1,3 @@
-ODPi Technical Working Group
-
 ODPi Runtime Specification: 2.0
 
 Date of Publication:
@@ -12,7 +10,7 @@ Status: Draft
 Abstract
 ========
 
-Specifications covering ODPi Platforms based upon Apache Hadoop and Apache Hive. Compatibility guidelines for applications running on ODPi Platforms.
+Specifications covering Platforms based upon Apache Hadoop and Apache Hive. Compatibility guidelines for Applications running on Platforms.
 
 Included Projects
 =================
@@ -25,25 +23,24 @@ Maintenance releases indicate bug fix releases connected to the indicated minor 
 Objective
 =========
 
-Objectives of the ODPi TWG is to achieve the following:
+The goals of the ODPi Runtime Specification are:
 
-1.  **For consumers:** ability to run any “ODPi-compatible” software on any “ODPi-compliant” platform and have it work.
+1.  **For End-Users:** Ability to run any Applications on any Platform and have it work.
 
-2.  **For ISVs:** compatibility guidelines that allow them to “test once, run everywhere.”
+2.  **For Software Vendors :** Compatibility guidelines that enable them to ensure thier Applications are interoperable across any Platform.
 
-3.  **For Hadoop platform providers:** compliance guidelines that enable ODPi-compatible software to run successfully on their solutions. But the guidelines must allow providers to patch their customers in an expeditious manner, to deal with emergencies.
+3.  **For Platform Vendors:** Compliance guidelines that enable Applications to run successfully on their Platform. But the guidelines must allow Platform Vendors to patch their End-Users in an expeditious manner, to deal with emergencies.
 
-The goal of this document is to define the interface between ODPi-compliant Apache Hadoop Runtime Services (such as HDFS) and ODPi-compatible applications that achieves the above goal. This interface in turn can be used by ISVs to properly build their software, and will be used as the basis of a compliance test suite that can be used by ODPi-compliant platform providers to test compliance.
+The methodology used in ODPi Runtime Specification is defining the interface(s) between Services on an Platform (such as HDFS) and Applications that achieves the above goals. This interface in turn can be used by Software Vendors to properly build their software, and will be used as the basis of a compliance test suite that can be used by Platform Vendors to test compliance.
 
 Technical Context
 =================
 
-At this time the ODPi specification is strongly based on the source-code of the underlying Apache projects.  Part of compliance is specified as shipping a platform built from a specific line of Apache Hadoop, namely 2.7.  It is expected that the Apache Hadoop version the spec is based on will evolve as both Apache Hadoop and this specification evolve.
+At this time the ODPi Runtime Specification is strongly based on the source code of the underlying Apache projects.  Part of compliance is specified as shipping a Platform built from a specific line of Apache Hadoop, namely 2.7.  It is expected that the Apache Hadoop version the spec is based on will evolve as both Apache Hadoop and this specification evolve.
 
-Even with a source code based specification, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops applications from calling private interfaces). These degrees of freedom interfere with the goal of “test once, run everywhere” (TONE). The goal of this spec is to close enough of those freedoms to achieve TONE.
+Even with a source code based specification, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops Applications from calling private interfaces). These degrees of freedom can interfere with the objectives of the ODPi Runtime Specification. The goal of this spec is to close enough of those freedoms to achieve those objectives.
 
 The source code approach is not followed in the same way for Apache Hive.  Instead a set of interfaces that are deemed to be important for applications and users are specified to be fully compatible with Apache Hive 1.2.
-
 
 Specification Format
 ====================
@@ -52,26 +49,26 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Each entry will have a designation (free text in square brackets) in order to pinpoint which parts of the specification are in violation during certification.
 
-The designation [TEST_ENVIRONMENT] is reserved for entries that are defining constraints on the environment in which ODPi-compliant Hadoop platforms are expected to run. The output of the reference implementation validation testsuite is expected to capture enough information to identify whether the test execution environment conforms to the specification.
+The designation [TEST_ENVIRONMENT] is reserved for entries that are defining constraints on the environment in which Platforms are expected to run. The output of the reference implementation validation testsuite is expected to capture enough information to identify whether the test execution environment conforms to the specification.
 
 Build Specifications
 ===========================
 
-To help achieve TONE, ODPi-compliant platforms MUST conform to the following build specifications.
+Platforms MUST conform to the following build specifications.
 
 Version Specifications
 -----------------------------
 
--   **[HADOOP_VERSION]** For this version of the specification, ODPi Platforms MUST include a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
+-   **[HADOOP_VERSION]** For this version of the ODPi Runtime Specification, Platforms MUST include a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
 
--   The Apache components in an ODPi reference release MUST have their source be 100% committed to an Apache source tree.
+-   The Apache components in a Platforms MUST have their source be 100% committed to an Apache source tree.
 
 Patch Specifications
 ---------------------------
 
-While ODPi can be more prescriptive when it comes to the source-code and release-timing of major and minor releases of Apache components, platform providers need more flexibility in dealing with patch releases.  In particular, to deal with urgent security or availability problems for their customers, providers need to be able to do just about anything to triage an emergency situation.  Even after an emergency is dealt with, some customers and/or vendors are very conservative about change-management and providers need flexibility to work with such customers.
+While ODPi can be more prescriptive when it comes to the source code and release timing of major and minor releases of Apache components, Platform Vendors need more flexibility in dealing with patch releases.  In particular, to deal with urgent security or availability problems for their customers, Platform Vendors need to be able to do just about anything to triage an emergency situation.  Even after an emergency is dealt with, some customers, Software Vendors and/or Platform Vendors are very conservative about change-management and providers need flexibility to work with such customers.
 
--   **[ODPi_PATCH1]** ODPi platform providers have full flexibility to release fixes to customers who are facing urgent security or availability issues.  Once operations are restored to normal, however, these emergency fixes MUST eventually be replaced with more permanent patches that comply with the specifications listed here.
+-   **[ODPi_PATCH1]** Platforms have full flexibility to release fixes to customers who are facing urgent security or availability issues.  Once operations are restored to normal, however, these emergency fixes MUST eventually be replaced with more permanent patches that comply with the specifications listed here.
 
 -   **[ODPi_PATCH2]** Patches to Apache components MUST have the source available to the Apache community, posted via the project-specific bug-tracking system (like JIRA).  The vendor SHOULD make reasonable efforts to get the patch committed.
 
@@ -83,7 +80,7 @@ While ODPi can be more prescriptive when it comes to the source-code and release
 Minimum Native build specifications
 -----------------------------------
 
-The native libraries of Hadoop have historically been a particular point of pain for ISVs. The specifications in this subsection should reduce that pain. These options guarantee a minimum set of basic functionalities that MUST be available for each of these components, including Apache Hadoop native operating system resources required for enabling Kerberos, many Java/OS performance and functionality enhancements, and the GZip and Snappy codec compression libraries. ODPi Platforms MAY enable other features such as file system encryption, however they are considered optional and not part of the base specification.
+The native libraries of Hadoop have historically been a particular point of pain for Software Vendors. The specifications in this subsection should reduce that pain. These options guarantee a minimum set of basic functionalities that MUST be available for each of these components, including Apache Hadoop native operating system resources required for enabling Kerberos, many Java/OS performance and functionality enhancements, and the GZip and Snappy codec compression libraries. Platforms MAY enable other features such as file system encryption, however they are considered optional and not part of the base specification.
 
 ### Common
 
@@ -120,10 +117,9 @@ Minimum Versions
 
 Applications on Unix platforms need to understand the base specification of some key components of which they write software. Two of those components are the Java runtime environment and the shell environment.
 
--   **[TEST_ENVIRONMENT]** **Java:** ODPi Platforms SHOULD provide jars that are JDK 1.7 bytecode compatible, thus allowing them to run in both JRE 7 and JRE 8 runtime environments.  Only
-support for 64-bit environments is required.  ODPi Applications SHOULD work in at least one of JRE 7 or JRE 8, and SHOULD be clear when they don’t support both.
+-   **[TEST_ENVIRONMENT]** **Java:**  Platforms SHOULD provide jars that are JDK 1.7 bytecode compatible, thus allowing them to run in both JRE 7 and JRE 8 runtime environments.  64-bit environments MUST be supported. Applications SHOULD work in at least one of JRE 7 or JRE 8, and SHOULD be clear when they don’t support both.
 
--   **[TEST_ENVIRONMENT]**  **Shell scripts:** On Unix and Unix-like systems, ODPi Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, ODPi platforms and Applications SHOULD use Microsoft batch or PowerShell.
+-   **[TEST_ENVIRONMENT]**  **Shell scripts:** On Unix and Unix-like systems, Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, Platforms and Applications SHOULD use Microsoft batch or PowerShell.
 
 
 Environment Variables
@@ -131,7 +127,7 @@ Environment Variables
 
 Apache Hadoop uses several critical environment variables to determine the Java class path and location of configuration information.  As a result, they become the glue that holds together not only Hadoop itself but also anything that connects to it. (See [*this document*](https://github.com/apache/hadoop/blob/0bc15cb6e60dc60885234e01dec1c7cb4557a926/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example) for related Apache Hadoop documentation.)
 
-In order to fulfill the goals of this specification, the discovery and content of several key environment variables are covered. This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files) in an ODPi Platform consistent way.
+In order to fulfill the goals of this specification, the discovery and content of several key environment variables are covered. This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files) in a Platform consistent way.
 
 The following environment variables are noted by this spec:
 
@@ -154,7 +150,7 @@ The following environment variables are noted by this spec:
 | **[HADOOP_EM3]** | MAPRED_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop MapReduce jar dependencies |
 
 
--   The content of the `*_DIR` directories SHOULD be the same as the ODPi Reference Implementation and the Apache Hadoop distribution of the appropriate platform.  In a future release, this will become a MUST.
+-   The content of the `*_DIR` directories SHOULD be the same as the ODPi Reference Implementation and the binary packages made available by the upstream projects.  In a future release, this will become a MUST.
 
 -   **[HADOOP_ENVVAR]** All previously named environment variables mentioned in this section MUST be either explicitly set or readable via running the appropriate bin command with the `envvars` parameter.  In the situation where these variables are not explicitly set, the appropriate commands MUST be available on the path.    For example, `hadoop envvars` should provide output similar to the following:
 
@@ -168,76 +164,75 @@ JAVA_HOME='/usr/local/jdk1.8.0_45'
 HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 ```
 
--   **[HADOOP_EJH2]** An ODPi Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
+-   **[HADOOP_EJH2]** A Platform MUST either explicitly set `JAVA_HOME` or configure it in `hadoop-env.sh` and `yarn-env.sh`. In a future specification, `yarn-env.sh` will be removed.
 
--   **[HADOOP_EJH2]** An ODPi Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to Apache Hadoop’s configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
+-   **[HADOOP_EJH2]** A Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to the Platform's configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
--   **[HADOOP_TOOLS]** The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with Apache Hadoop and the reference implementation. The entire directory SHOULD NOT be included in the default hadoop class path.  Individual jars MAY be specified.
+-   **[HADOOP_TOOLS]** The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with ODPi Reference Implementation or the binary packages made available by the upstream projects. The entire directory SHOULD NOT be included in the default Hadoop class path.  Individual jars MAY be specified.
 
 Compliance
 ----------
 
 ### Hadoop Compliance
 
--   **[HADOOP_SUBPROJS]** ODPi Platforms MUST have all of the base Apache Hadoop components installed.
+-   **[HADOOP_SUBPROJS]** Platforms MUST have all of the base Apache Hadoop components installed.
 
--   **[HADOOP_BIGTOP]** ODPi Platforms MUST pass the Apache Big Top 1.0.0 Hadoop smoke tests.
+-   **[HADOOP_BIGTOP]** Platforms MUST pass the Apache Big Top 1.0.0 Hadoop smoke tests.
 
--   **[TEST_ENVIRONMENT]** ODPi Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
+-   **[TEST_ENVIRONMENT]** Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
--   **[HADOOP_PLATVER]** ODPi Platforms MUST modify the version string output by Hadoop components, such as those displayed in log files, or returned via public API's such that they contain `-(vendor string)` or `_(vendor string)` where `(vendor string)` matches the regular expression [A-Za-z_0-9]+ and appropriately identifies the ODPi Platform vendor in the output.
+-   **[HADOOP_PLATVER]** Platforms MUST modify the version string output by Hadoop components, such as those displayed in log files, or returned via public API's such that they contain `-(vendor string)` or `_(vendor string)` where `(vendor string)` matches the regular expression [A-Za-z_0-9]+ and appropriately identifies the Platform Vendor in the output.
 
--   An ODPi Platform MUST keep the same basic directory layout with regards to directory and filenames as the equivalent Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.  For example, if Apache Hadoop YARN's package distribution contains a libexec directory with content, then that libexec directory with the equivalent content must be preset.  Additionally:
+-   A Platform MUST keep the same basic directory layout with regards to directory and filenames as the equivalent upstream Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.  For example, if Apache Hadoop YARN's package distribution contains a libexec directory with content, then that libexec directory with the equivalent content must be preset.  Additionally:
 
-    -   **[HADOOP_DIRSTRUCT_COMMON]** Contents of HADOOP_COMMON_HOME should match the reference implementation. 
-    -   **[HADOOP_DIRSTRUCT_HDFS]** Contents of HADOOP_HDFS_HOME should match the reference implementation.
-    -   **[HADOOP_DIRSTRUCT_MAPREDUCE]** Contents of HADOOP_MAPRED_HOME should match the reference implementation.
-    -   **[HADOOP_DIRSTRUCT_YARN]** Contents of HADOOP_YARN_HOME should match the reference implementation.
+    -   **[HADOOP_DIRSTRUCT_COMMON]** Contents of HADOOP_COMMON_HOME SHOULD match the ODPi Reference Implementation and the binary packages made available by the upstream projects. 
+    -   **[HADOOP_DIRSTRUCT_HDFS]** Contents of HADOOP_HDFS_HOME SHOULD match the ODPi Reference Implementation and the binary packages made available by the upstream projects.
+    -   **[HADOOP_DIRSTRUCT_MAPREDUCE]** Contents of HADOOP_MAPRED_HOME SHOULD match the ODPi Reference Implementation and the binary packages made available by the upstream projects.
+    -   **[HADOOP_DIRSTRUCT_YARN]** Contents of HADOOP_YARN_HOME SHOULD match the ODPi Reference Implementation and the binary packages made available by the upstream projects.
 
-    -   **[HADOOP_BINCONTENT]**`HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` MUST contain the same binaries and executables that they contain in the ODPi Reference Implementation and the Apache Hadoop distribution of the appropriate platform, with exceptions granted for bug fixes.  Therefore, there SHOULD NOT be any additional content in order to avoid potential future conflicts.  In future versions of this spec this will become a MUST NOT.
+    -   **[HADOOP_BINCONTENT]**`HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` MUST contain the same binaries and executables that they contain in the ODPi Reference Implementation and the binary packages made available by the upstream projects, with exceptions granted for bug fixes.  Therefore, there SHOULD NOT be any additional content in order to avoid potential future conflicts.  In future versions of this spec this will become a MUST NOT.
 
-    -   **[HADOOP_LIBJARSCONTENT]** `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables that they contain in the ODPi Reference Implementation and the Apache Hadoop distribution. They MAY be modified to be either fix bugs or have enhanced features.  There SHOULD NOT be any additional content in order to avoid potential future conflicts.  In future versions of this spec this will become a MUST NOT.
+    -   **[HADOOP_LIBJARSCONTENT]** `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables that they contain in the ODPi Reference Implementation and the binary packages made available by the upstream projects. They MAY be modified to be either fix bugs or have enhanced features.  There SHOULD NOT be any additional content in order to avoid potential future conflicts.  In future versions of this spec this will become a MUST NOT.
 
 -   **[HADOOP_GETCONF]** It MUST be possible to determine key Hadoop configuration values by using `${HADOOP_HDFS_HOME}/bin/hdfs getconf` so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
 
 -   **[HADOOP_COMPRESSION]** The native compression codecs for gzip and snappy MUST be available.
 
--   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good ODPi Platform implementation SHOULD NOT get in the way: at most, the implementation SHOULD only care about the version of Java and Bash, and nothing else.
+-   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good Platform implementation SHOULD NOT get in the way: at most, the implementation SHOULD only care about the version of Java and Bash, and nothing else.
 
--   ODPi Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are listed in Appendix A.
+-   Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are listed in Appendix A.
 
 Requirements we’d like to push upstream from a compatibility perspective:
 
 -   Don’t assume GNU userland -- POSIX please -- to increase cross-platform compatibility.
 
-Best practices for ODPi Platforms:
+Best practices for Platforms:
 
--   ODPi Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
+-   Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
 -   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
 
 ### Hive Compliance
 
-Apache Hive 1.2 is taken as the reference version for this version of ODPi specification.  This does not mean that ODPi Platforms must include Apache Hive 1.2.  Rather it means that Apache Hive 1.2 is the reference that all ODPi Platforms will be tested against.
+Apache Hive 1.2 is taken as the **Hive Reference Version** for this version of ODPi Runtime Specification.  This does not mean that Platforms must include Apache Hive 1.2.  Rather it means that Apache Hive 1.2 is the reference that all Platforms will be tested against.
 
-* **[HIVE_SQL]** ODPi Platforms MUST provide SQL that is compatible with the reference version of Hive's SQL.  All valid statements in the reference version should produce the same results in the ODPi Platform.  The ODPi Platform MAY include additional SQL that is not supported in the reference version of Hive, subject to other requirements in this document.
-* **[HIVE_JDBC]** ODPi Platforms MUST include access via JDBC and support all of the same JDBC functionality as the reference version of Hive.  All methods implemented in the reference version's JDBC client must be implemented and have the same signature in the ODPi Platform.  The ODPi Platform MAY implement additional JDBC methods that are not supported in the reference version of Hive, subject to other requirements of this document.
-* **[HIVE_CLI]** ODPi Platforms MAY include the `bin/hive` command line interface.  If the platform includes the CLI it MUST accept all of the same arguments as the reference version.
-* **[HIVE_BEELINE]** ODPi Platforms MUST include the `bin/beeline` command line script.  The platform MUST accept all of the same arguments as the reference version.
-* **[HIVE_THRIFT]** ODPi Platforms MAY allow applications to connect to the Hive Metastore Thrift server via the thrift interface.  If the platform allows this it MUST accept all of the same thrift method calls as the reference version.
-* **[HIVE_HCATALOG]** ODPi Platforms MAY support HCatalog.  If they do they MUST support the `HCatInputFormat`, `HCatOutputFormat`, `HCatReader`, and `HCatWriter` APIs and they MUST be binary compatible with the reference version.
+* **[HIVE_SQL]** Platforms MUST provide SQL that is compatible with the reference version of Hive's SQL.  All valid statements in the reference version should produce the same results in the Platform.  The Platform MAY include additional SQL that is not supported in the reference version of Hive, subject to other requirements in this document.
+* **[HIVE_JDBC]** Platforms MUST include access via JDBC and support all of the same JDBC functionality as the reference version of Hive.  All methods implemented in the reference version's JDBC client must be implemented and have the same signature in the Platform.  The Platform MAY implement additional JDBC methods that are not supported in the reference version of Hive, subject to other requirements of this document.
+* **[HIVE_CLI]** Platforms MAY include the `bin/hive` command line interface.  If the Platform includes the CLI it MUST accept all of the same arguments as the reference version.
+* **[HIVE_BEELINE]** Platforms MUST include the `bin/beeline` command line script.  The Platform MUST accept all of the same arguments as the reference version.
+* **[HIVE_THRIFT]** Platforms MAY allow applications to connect to the Hive Metastore Thrift server via the thrift interface.  If the Platform allows this it MUST accept all of the same thrift method calls as the Hive Reference Version.
+* **[HIVE_HCATALOG]** Platforms MAY support HCatalog.  If they do they MUST support the `HCatInputFormat`, `HCatOutputFormat`, `HCatReader`, and `HCatWriter` APIs and they MUST be binary compatible with the Hive Reference Versio.
 
 #### Requirements Relevant to Hive Covered Elsewhere
-It is important for applications to be able to find the Hive ODBC/JDBC endpoint on a cluster.  Discoverability of services in the ODPi Platform is covered in the Operations Specification, in the section titled Discoverability.
+It is important for applications to be able to find the Hive ODBC/JDBC endpoint on a cluster.  Discoverability of services in the Platform is covered in the Operations Specification, in the section titled Discoverability.
 
 
 Compatibility
 -------------
 
-ODPi Compatible Applications must follow these guidelines:
+Applications must follow these guidelines:
 
--   Applications that need a different version of Java MUST NOT change the ODPi Platform’s `JAVA_HOME` setting. Instead, they SHOULD set it appropriately for their specific code in an appropriate way (either own startup scripts,
-custom-to-the-application configuration file, etc) that does not impact the ODPi Platform.
+-   Applications that need a different version of Java MUST NOT change the Platform’s `JAVA_HOME` setting. Instead, they SHOULD set it appropriately for their specific code in an appropriate way (either own startup scripts, custom-to-the-application configuration file, etc) that does not impact the Platform.
 
 -   Applications SHOULD get the Java version via `${JAVA_HOME}/bin/java` -version or via Java system property detection.
 
@@ -277,32 +272,30 @@ Best practices for compatible apps to be portable and operator friendly:
 
 -   Applications SHOULD NOT install their own dependent packages (e.g., Ruby, Python, Apache Web Server) unless absolutely necessary. They SHOULD list them as system requirements and let the operator install them.
 
--   Similarly, applications SHOULD NOT ship with “fat jars” that include Hadoop Java libraries. They SHOULD pick them up from their runtime environment.
+-   Similarly, Applications SHOULD NOT ship with “fat jars” that include Hadoop Java libraries. They SHOULD pick them up from their runtime environment.
 
--   In order to avoid conflicting with other services, applications SHOULD use distributed cache as much as possible to distribute execution objects to compute nodes. Pre-installation SHOULD be avoided as much as possible.
+-   In order to avoid conflicting with other services, Applications SHOULD use distributed cache as much as possible to distribute execution objects to compute nodes. Pre-installation SHOULD be avoided as much as possible.
 
 -   Hive allows users to set some configuration values as part of their Hive session, via the *set* command.  Applications SHOULD only depend on setting those values that Hive by default allows users to set.  These values are listed in Appendix B.
 
 Glossary
 ========
 
--   **Service** - A *service* refers to a software package that is installable within the Hadoop stack. A service can be comprised of one or more *components* (such as a NameNode, DataNode, etc.) or may be as simple as a single library.
+-   **Service** - Software package that is installable within the Hadoop stack. A service can be comprised of one or more *components* (such as a NameNode, DataNode, etc.) or may be as simple as a single library.
 
 -   **Component** - A *service* is comprised of one or more components. For example, HDFS has three components: NameNode, Secondary NameNode, and DataNode. A single component may be installed across multiple nodes in the cluster, such as in the case of the HDFS data node.
 
--   **Distribution** - A collection of components.
+-   **Platform** - A product or service offering that consists of Apache Hadoop™, and optionally includes additional open source and/or commercial components that work with Apache Hadoop™.
 
--   **ISV vendor** - Individual or company that created an ISV application.
+-   **Platform Vendor** - An organization, either a commercial vendor or an open source project, that either produces a packaged version of the Platform or supports a service offering around the Platform aimed at End User consumption.
 
--   **ISV application** - Non-ODPi application or process that runs on top of or beside an ODPi platform.
+-   **Application** - A product that is intended to interoperate with a Platform.
 
--   **ODPi Platform** - A distribution of software that includes all of the required components and is compliant with this specification.
+-   **Software Vendor** - An organization, either a commercial vendor or an open source project, that has a product that works with a Platform.
 
--   **ODPi Runtime** - ODPi specification and platforms geared towards holistic management.
+-   **ODPi Interoperable Application** - An Application that has been verified by the Software Vendor and ODPi to be ODPi Interoperable, verified by completeing the compliance process outlined at https://github.com/odpi/self-certification-reports/blob/master/COMPLIANCE_PROCESS.md#odpi-interoperable.
 
--   **ODPi Core** - ODPi specification and platforms geared towards components outside of any management requirements.
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
+-   **End Users** - Users of a Platform and/or Application.
 
 Appendix A, Hadoop Configuration Values Not Shared
 ==================================================
