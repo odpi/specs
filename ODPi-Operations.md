@@ -155,8 +155,9 @@ Ambari supports installation of services via RPM and debian packages only. It is
 </os>
 ```
 
-Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
-[TODO - need to provide clear instructions on how to add repo URLs]
+    * Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
+
+[TODO - need to provide clear instructions on how to add repo URLs post install]
 [Note: service level repositories will be supported in 2.4.2]
 
 ####Service Definition Requirements
