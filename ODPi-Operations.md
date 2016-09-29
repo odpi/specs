@@ -185,7 +185,7 @@ A service can inherit through the stack but may also inherit directly from commo
 
 When including the following services: HDFS, MAPRED, YARN, HIVE and ZOOKEEPER into a stack, they SHOULD be inherited from the common-services directory defined in Ambari.  In addition, any services, which have definitions in common-services, SHOULD inherit from their common-services definition.
 
-For more information see the [Service Inheritance wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Service+Inheritance).
+For more information see the [Service Inheritance wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Service+Inheritance) or the [Stack Inheritance wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Stack+Inheritance).
 
 ####Creating Stack Versions
 A Hadoop Management Tool when packaging a stack for Ambari should follow the guidelines for [defining stacks](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services) and should make sure to include all mandatory requirements including the [stack properties](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services#DefiningaCustomStackandServices-StackProperties).
