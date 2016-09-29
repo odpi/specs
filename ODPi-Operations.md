@@ -142,8 +142,9 @@ Ambari supports installation of services via RPM and debian packages only. It is
 
 * Custom services MUST make the packages available via YUM, Zypper, or Apt repositories
 * Custom services MUST make the repository URL available to Ambari in one of the following ways:
-** Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the stacks/<name>/<version>/repos/repoinfo.xml.  Repository URLs would need to be added for each operating system required by the cluster.
+    * Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the ```stacks/<name>/<version>/repos/repoinfo.xml```.  Repository URLs would need to be added for each operating system required by the cluster.
 
+```
 <os family="redhat6">
   <!-- Leave all the existing repos -->
   <repo>
@@ -152,6 +153,7 @@ Ambari supports installation of services via RPM and debian packages only. It is
     <reponame>YOUR_REPO_NAME</reponame>
   </repo>
 </os>
+```
 
 Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
 [TODO - need to provide clear instructions on how to add repo URLs]
@@ -169,11 +171,14 @@ In addition to the service definition requirements in the common section above:
 ####Inheritance
 Inheritance in Ambari reduces duplication between different versions of Stacks, Extensions and Services.  Stacks, Extensions and Services all use the same mechanism to declare their inheritance.  In their corresponding metainfo.xml, a [Stack](https://cwiki.apache.org/confluence/display/AMBARI/How-To+Define+Stacks+and+Services#How-ToDefineStacksandServices-Stack-VersionDescriptor) or [Extension](https://cwiki.apache.org/confluence/display/AMBARI/Extensions#Extensions-ExtensionInheritance) may extend a previous version:
 
+```
 <metainfo>
     <extends>1.0</extends>
+```
 
 A service can inherit through the stack but may also inherit directly from common-services:
 
+```
 <metainfo>
   <schemaVersion>2.0</schemaVersion>
   <services>
@@ -181,7 +186,7 @@ A service can inherit through the stack but may also inherit directly from commo
       <name>ZOOKEEPER</name>
       <version>3.4.5.2.0</version>
       <extends>common-services/ZOOKEEPER/3.4.5</extends>
-
+```
 
 When including the following services: HDFS, MAPRED, YARN, HIVE and ZOOKEEPER into a stack, they SHOULD be inherited from the common-services directory defined in Ambari.  In addition, any services, which have definitions in common-services, SHOULD inherit from their common-services definition.
 
