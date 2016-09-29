@@ -141,8 +141,10 @@ In addition to the common runtime environment, any application can assume the fo
 Ambari supports installation of services via RPM and debian packages only. It is expected that the packages are available at runtime via a well-known repository solution such as YUM, Zypper or Apt (depending on the cluster’s operating system).
 
 * Custom services MUST make the packages available via YUM, Zypper, or Apt repositories
-* Custom services MUST make the repository URL available to Ambari in one of the following ways:
-    * Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the ```stacks/<name>/<version>/repos/repoinfo.xml```.  Repository URLs would need to be added for each operating system required by the cluster.
+* Custom services MUST make the repository URL available to Ambari
+
+Repository URLs may be made available to Ambari using one of the following manners:
+* Prior to installation of the cluster, custom repositories URLs MAY be added to the list of repository URLs in the ```stacks/<name>/<version>/repos/repoinfo.xml```.  Repository URLs would need to be added for each operating system required by the cluster.
 
 ```
 <os family="redhat6">
@@ -155,7 +157,7 @@ Ambari supports installation of services via RPM and debian packages only. It is
 </os>
 ```
 
-    * Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
+* Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
 
 [TODO - need to provide clear instructions on how to add repo URLs post install]
 [Note: service level repositories will be supported in 2.4.2]
