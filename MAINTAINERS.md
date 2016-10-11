@@ -42,3 +42,24 @@ ODPi Maintainers are required to have at least one commit to an active ODPi repo
 
 | Name          | Email                 | GitHub ID    |
 | ------------- |:---------------------:| ------------:|
+| Raj Desai	| rddesai@us.ibm.com | rajddesai | 
+| Raja Aluri	| raja@hortonworks.com | | 
+| Benjamin Markham	| ben.markham@xiilab.com | | 
+| Daesu Chung	| d.chung@xiilab.com | | 
+| Konstantin Boudnik	| lf@boudnik.org | | 
+| Allen Wittenauer	| allenwittenauer@yahoo.com | aw-was-here| 
+| James Tanner	| tanner.jc@gmail.com | jctanner| 
+| Roman Shaposhnik	| rvs@apache.org | rvs  | 
+| Shinichiro MOCHIZUKI	| shin.mochizuki@toshiba.co.jp | | 
+| Masayoshi KURITA	| masayoshi.kurita@toshiba.co.jp | | 
+| Craig Rubendall	| Craig.Rubendall@sas.com | CraigRubendall | 
+| Tanping Wang	| wangta@us.ibm.com | | 
+| Alan Gates	| gates@hortonworks.com | alanfgates| 
+| Pradeep Roy	| roypr@us.ibm.com | | 
+| Yusaku Sako	| yusaku@hortonworks.com | u39kun| 
+| Tim Thorpe	| tthorpe@ca.ibm.com | tthorpeIBM | 
+| Sumit Mohanty	| smohanty@hortonworks.com | | 
+| Linda Cham	| lcham@us.ibm.com | | 
+| Clint Edwards	| Clint.Edwards@sas.com| | 
+| Paul Kent	| Paul.Kent@sas.com| | 
+| Scott Gray | scottgray1@gmail.com | scgray |
