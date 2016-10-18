@@ -218,30 +218,31 @@ Best practices for Platforms:
 
 ### HCFS (Hadoop-compatible filesystem) Compliance
 
-ODPi Platforms MAY include alternative filesystem implementations compatible with Apache Hadoop (HCFS). HCFS implementations MAY be delivered as standalone products by either ODPi Platform vendors or 3d parties. These products MAY be open source or they MAY be propriatery. Regardless of the delivery mechanism, ODPi Platform vendors have the ultimate responsibility around integrating HCFS implementations with the rest of the ODPi platform by following the guidelines provided below:
-- ODPi Platform MUST ship HCFS implementation JAR as part of the ODPi Platform. HCFS implementation JAR is a compiled Java JAR that provides the interface, or “glue layer” between the HCFS implementation and the ODPi Platform. The requirements for the classes shipped as part of HCFS implementation JAR are laid out in the HCFS implementation guidelines below. Placing this JAR in Hadoop’s classpath is a typical mechanism for allowing ODPi Platform to use an HCFS implementation. This MAY be achieved by:
+ODPi Platforms MAY include alternative filesystem implementations compatible with Apache Hadoop (HCFS). Such HCFS Filesystem Products MAY be delivered as standalone products by either ODPi Platform vendors or 3d parties. These products MAY be open source or they MAY be proprietary. Regardless of the delivery mechanism, ODPi Platform vendors have the ultimate responsibility around integrating supported HCFS Filesystem Products with the rest of the ODPi platform by following the guidelines provided below:
+- ODPi Platform MUST ship HCFS Interface JAR as part of the ODPi Platform. HCFS Interface JAR is a compiled Java JAR that provides the interface, or “glue layer” between the HCFS Filesystem Product and the ODPi Platform. The requirements for the classes shipped as part of HCFS Interface JAR are specified by the Apache Hadoop documentation, and summarized in the guidelines below. Placing HCFS Interface JAR in Hadoop’s classpath is a typical mechanism for allowing ODPi Platform to use an HCFS Filesystem Product. This MAY be achieved by:
    * either placing the JAR in the default location of `HADOOP_CLASSPATH`, under `$HADOOP_HOME/lib/`
-   * or by extending the `HADOOP_CLASSPATH` environment variable value to include the path to some other location where the HCFS implementation JAR has been deployed.  This may be defined in the `hadoop-env.sh` file, or by any other means for managing environment variables.
+   * or by extending the `HADOOP_CLASSPATH` environment variable value to include the path to some other location where the HCFS Interface JAR has been deployed.  This may be defined in the `hadoop-env.sh` file, or by any other means for managing environment variables.
 
-- ODPi Platforms MAY ship multiple HCFS implementations, in which case each will have its own separate HCFS implementation JAR.
+- ODPi Platforms MAY ship multiple HCFS Filesystem Products, in which case each will have its own separate HCFS Interface JAR.
 
-- ODPi Platform MUST define a scheme name for all HCFS implementation that they ship. A scheme name is a unique, one-word name for each file system. A scheme name is used in the URI “scheme:” prefix, and the related configuration parameter names. The following names are already in use and SHOULD be considered reserved: 
+- ODPi Platform MUST define a scheme name for all HCFS Filesystem Products that they support. A scheme name is a unique, one-word name for each file system. A scheme name is used in the URI “scheme:” prefix, and the related configuration parameter names. The following names are already in use and SHOULD be considered reserved: 
    * `hdfs` (Apache Hadoop HDFS implementation), 
-   * `s3a` (Amazon)
-   * `wasb` (Windows Azure)
+   * `s3a`, `s3native` (Amazon S3)
+   * `wasb`, `adl` (Windows Azure)
    * `swift` (OpenStack)
 
-- ODPi Platform MAY provide a way to install, configure, monitor, upgrade and decommission HCFS implementation in a manner compatible with ODPi Operations Specification.Operations Specification considers HCFS implementations as 3d-party services that are typically delivered in a standalone stack. A stack containing HCFS implementation MAY derive from an HDFS-based stack. The configuration code shipped as part of the HCFS specific stack MUST provide an automated way to:
+- ODPi Platform MAY provide a way to install, configure, monitor, upgrade and decommission HCFS Filesystem Products in a manner compatible with ODPi Operations Specification. Operations Specification considers HCFS Filesystem Products as 3d-party services that are typically delivered in a standalone stack. A stack containing HCFS Filesystem Product MAY derive from an Apache Hadoop HDFS-based stack. The configuration code shipped as part of the HCFS specific stack MUST provide an automated way to:
    * add any required repositories containing the HCFS implementation JAR
    * adjust the HADOOP_CLASSPATH definition
    * and change or add configuration parameters as needed for the particular HCFS
 
-- ODPi Platform vendors MUST NOT make HCFS implementation be the only storage option for an ODPi platform. Apache Hadoop HDFS MUST still be available as a viable choice. 
+- ODPi Platform vendors MUST NOT make HCFS Filesystem Product be the only storage option for an ODPi platform. Apache Hadoop HDFS MUST still be available as a viable choice. 
+
 - ODPi Platforms MAY define optional storage tiers functions that can be implemented by different solutions. 
 
 - ODPi Platforms SHOULD provide error handling for applications invoking HDFS specific APIs that are not included in the AbstractFileSystem or FileSystem classes.
 
-- ODPi Platforms SHOULD be compatible with POSIX ACL and POSIX permissions. It is recommended that HCFS implementations follow HDFS in how they treat group ID for the newly created files: inhereting the group from the parent directory (this means following the "BSD rule" instead of the "System V rule" for group ownership of new files).
+- ODPi Platforms SHOULD be compatible with POSIX ACL and POSIX permissions. It is recommended that HCFS implementations follow HDFS in how they treat group ID for the newly created files: inheriting the group from the parent directory (this means following the "BSD rule" instead of the "System V rule" for group ownership of new files).
 
 - ODPi Platforms SHOULD handle user impersonation permissions accordingly. 
 
@@ -251,22 +252,22 @@ ODPi Platforms MAY include alternative filesystem implementations compatible wit
 
 - ODPi Platform CLI tools MAY have different output when working with HCFS implementations
 
-- Applications SHOULD define APIs and behaviors explicitly in the FileSystem class instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class. Defining API specification in the HDFS class is considered optional usage in HCFS distributed file system.
+- Applications SHOULD invoke filesystem client APIs and behaviors explicitly from the FileSystem and FileContext classes instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class and AbstractFileSystem class (the latter is used by the FileContext client APIs). Implementing API specifications from the HDFS class is considered optional usage in HCFS Interface JAR.
 
-ODPi Platform providers MAY include results of compliance testing with HCFS implementations in the submission presented to ODPi. These results MUST at least include execution of tests created in accordance with guidelines provided by "Testing with the Filesystem specification" section of the Hadoop FileSystem API Definition. ISV vendors SHOULD NOT be expected to provide test results with HCFS implementations when certifying their ODPi interoperability.
+ODPi Platform providers MAY include results of compliance testing with supported HCFS Filesystem Products in the submission presented to ODPi. These results MUST at least include execution of tests created in accordance with guidelines provided by "Testing with the Filesystem specification" section of the Hadoop FileSystem API Definition. ISV vendors SHOULD NOT be expected to provide test results with HCFS Filesystem Products when certifying their ODPi interoperability.
 
-As part of test results ODPi Platform providers SHOULD submit results of the HCFS implementation Unit Testing as per the following specification: https://wiki.apache.org/hadoop/HCFS/Progress
+As part of test results ODPi Platform providers SHOULD submit results of the HCFS Interface JAR Unit Testing as per the following specification: https://wiki.apache.org/hadoop/HCFS/Progress
 
 Finally, ODPi Platform providers are encouraged and MAY submit ad-hoc test results based on:
   * executing ad-hoc filesystem manipulation primitives (e.g. mkdir, rm, copyFromLocal, copyToLocal, etc.)
   * Hadoop distcp utility
   * queries via Apache Hive, Pig and Spark using the HCFS implementation as a source and destination of data
 
-#### HCFS implementation guidelines
+#### HCFS Interface implementation guidelines
 
-HCFS implementations MUST follow the guidelines laid out in the Hadoop FileSystem API Definition available as part of Apache Hadoop release and also available [*online*](https://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/filesystem/index.html). In addition to the formal Hadoop FileSystem API Definition a good overview of the HCFS plug-in interface is provided in the [*Apache wiki*](https://wiki.apache.org/hadoop/HCFS)
+HCFS Interface MUST follow the guidelines laid out in the Hadoop FileSystem API Definition available as part of Apache Hadoop release and also available [*online*](https://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/filesystem/index.html). In addition to the formal Hadoop FileSystem API Definition a good overview of the HCFS plug-in interface is provided in the [*Apache wiki*](https://wiki.apache.org/hadoop/HCFS)
 
-The HCFS implementation JAR MUST provide an implementation of these two abstract classes:
+The HCFS Interface JAR JAR MUST provide an implementation of these two abstract classes:
 * `org.apache.hadoop.fs.FileSystem`
 * `org.apache.hadoop.fs.AbstractFileSystem`
 
@@ -281,21 +282,21 @@ The JAR MUST also declare the FileSystem implementation class as a service, by i
 in which the HCFS FileSystem implementation class is named.  (For an example, see [AWS S3 FileSystem implementation](https://github.com/apache/hadoop/blob/trunk/hadoop-tools/hadoop-aws/src/main/resources/META-INF/services/org.apache.hadoop.fs.FileSystem))
 
 There is no constraint on the naming of the AbstractFileSystem implementation class, but by convention it also SHOULD be in the 
-package `org.apache.hadoop.fs.<hcfsname>`.  It SHOULD NOT be named in the `META-INF/services` file.
+package `org.apache.hadoop.fs.<hcfsname>`.  It MUST NOT be named in the `META-INF/services` file.
 
-An HCFS implementation MUST satisfy all of the API contracts outlined in the [*Hadoop FileSystem API Definition*](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/filesystem/index.html)
+An HCFS Interface MUST satisfy all of the API contracts outlined in the [*Hadoop FileSystem API Definition*](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/filesystem/index.html)
 
 All behavior semantics of the HDFS implementation SHOULD be imitated insofar as the file system underlying the HCFS is compatible with 
-such behavior.  If the HCFS is capable of providing locality information, it SHOULD support the API for 
+such behavior.  If the HCFS Filesystem Product is capable of providing locality information, it SHOULD support the API for 
 telling applications such as Apache Tez and Apache Spark which TaskTracker is closest to the 
-data (`FileSystem:getFileBlockLocations()`).  Where HDFS-native APIs cannot be implemented, then the HCFS SHOULD return values 
+data (`FileSystem:getFileBlockLocations()`).  Where HDFS-native APIs cannot be implemented, then the HCFS Interface SHOULD return values 
 which are compatible with the rest of the Hadoop stack. As an example, while getBlockSize() is not a value which a blockless 
 filesystem can actually return, a value suitable for block-partitioning algorithms should be returned, such as 256M, 512M or 
 similar.
 
-Almost any file system can be interfaced to the Hadoop stack via the HCFS interface, and can therefore be used for basic I/O and 
-mass storage, alongside HDFS.  They are still HCFS implementations, but additional features (consistency, atomicity, and durability) 
-MUST be provided in order for the file system to serve as primary storage replacing HDFS in its role as primary storage and working
+Almost any file system can be interfaced to the Hadoop stack via the HCFS Interface, and can therefore be used for basic I/O and 
+mass storage, alongside HDFS.  They are still considered HCFS, but additional features (consistency, atomicity, and durability) 
+MUST be provided in order for the HCFS Filesystem Product to serve as primary storage replacing HDFS in its role as primary storage and working
 space for MapReduce, Tez, and HBase. The difference is discussed in detail in the section titled [*Object Stores vs Filesystems*](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/filesystem/introduction.html#Object_Stores_vs._Filesystems)
 
 As explained there, the key properties of consistency, atomicity, and durability, are missing from many filesystem-like storage 
@@ -303,9 +304,10 @@ platforms, including Amazon S3 and OpenStack Swift.  These are often referred to
 that this distinction by name is not necessarily correct.  In particular, some Blob Store-based file systems *do* support the 
 necessary features and can be substituted for HDFS.  For example, on the Microsoft Azure HDInsights platform, the WASB file 
 system (“Windows Azure Storage - Blob”) supports all features necessary to act as primary storage and working space for 
-MapReduce, Tez, and HBase, and is successfully substituted for HDFS on the HDInsights platform. Regardless of whether an HCFS
-implementation provides a drop-in replacement for HDFS it MUST support all of the ODPi Core components without degradation in
-functionality.
+MapReduce, Tez, and HBase, and is successfully substituted for HDFS on the HDInsights platform. If an ODPi Platform supports an 
+HCFS Filesystem Product as a drop-in replacement for HDFS, then it MUST support all of the ODPi Core components without degradation 
+in functionality. If an ODPi Platform supports an HCFS Filesystem Product only for use with Application input/output, then 
+it must support Applications' use of FileContext APIs without degradation in functionality. 
 
 After being correctly installed and configured an HCFS filesystem SHOULD be available via a specific URI. For example,
 in order to access an HCFS filesystem registered under the name `hcfsname` one may use the following command line syntax:
@@ -334,8 +336,8 @@ look like this:
 </property>
 ```
 
-If the HCFS is intended to replace HDFS as primary storage and workspace for MapReduce, Tez, and HBase, `fs.defaultFS`
-property MUST also be set. An older alias for this propery `fs.default.name` is now considered deprecated and SHOULD NOT
+If the HCFS Filesystem Product is intended to replace HDFS as primary storage and workspace for MapReduce, Tez, and HBase, 
+`fs.defaultFS` property MUST also be set. An older alias for this propery `fs.default.name` is now considered deprecated and SHOULD NOT
 be used.  The value of the `fs.defaultFS` property is expected to be `hcfsname://localservice`
 For example, making an already configured AWS S3 file system be the default MAY be done by the following settings in core-site.xml:
 ```
@@ -349,10 +351,10 @@ appropriate to the HCFS, at the server level. The value of `localservice` may be
 implementations.
 
 Since the Hadoop configuration parameter set is extensible, arbitrary additional parameters, specific to the HCFS, MAY be defined.
-These can then be accessed from the HCFS implementation JAR using the general Hadoop configuration APIs.  In this manner, the HCFS
+These can then be accessed from the HCFS Interface JAR using the general Hadoop configuration APIs.  In this manner, the HCFS
 can be configured via parameters like any other Hadoop facility.  By convention, any such HCFS-specific configuration parameters
 should include the HCFS scheme name as an element of the parameter name. For example, setting the following properties specific
-to AWS S3 HCFS implementation in core-site.xml will allos access to private S3 buckets:
+to AWS S3 HCFS implementation in core-site.xml will allow access to private S3 buckets:
 ```
 <property>
   <name>fs.s3a.access.key</name>
