@@ -81,7 +81,7 @@ If the component is a daemon/process then a Hadoop Management tool
 * MAY support customer commands
 
 ###Hadoop Management Tool Stack
-The Hadoop Management tool MUST either ship a stack with the management tool or provide a mechanism for users to acquire a stack.   The stack MUST include services that are part of ODPi and zero or more custom service definitions.
+The Hadoop Management tool MUST either ship a stack with the management tool or provide a mechanism for users to acquire a stack.   The stack MUST include all the services which are included in the ODPi runtime spec and MAY contain one or more custom services.
 
 ###Secured Deployment
 A Hadoop Management tool MUST support deployment of secured services using Kerberos. The tool MAY support the deployment of the secured environment such as the availability of KDC server. Once the secured environment is made available to the management too it MUST support creation of keytabs, distribution or the keytabs, and the regeneration of the keytabs.
@@ -121,11 +121,15 @@ A Hadoop Management tool MUST support configuration of the services to generate 
 
 #####Ambari Stack
 
-An Ambari stack is a stack as defined in the general section of the specification (a collection of services for a specific version which includes a common release/delivery mechanism).  Ambari only supports installing a single stack.  If you want to install additional services they must be added to the stack or installed as an extension.
+An Ambari stack is a stack as defined in the general section of the specification (a collection of services for a specific version which includes a common release/delivery mechanism).  Ambari only supports installing a single stack.
+
+Any services which are not shipped in the stack should be installed as an extension.
 
 #####Extension
 
 An [extension](https://cwiki.apache.org/confluence/display/AMBARI/Extensions) is a collection of services for a specific version which includes a common release/delivery mechanism.  An extension can only be installed if a specific stack (or specific version of a stack) will be installed with the extension or has already been installed.
+
+From Ambari 2.4 and onwards, third party custom services should be packaged as extensions instead of being added directly into a stack version.
 
 #####Management Pack
 
