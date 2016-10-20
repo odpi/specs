@@ -61,7 +61,7 @@ Version Specifications
 
 -   **[HADOOP_VERSION]** For this version of the ODPi Runtime Specification, Platforms MUST include a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
 
--   The Apache components in a Platforms MUST have their source be 100% committed to an Apache source tree.
+-   The Apache components in a Platform MUST have their source be 100% committed to an Apache source tree.
 
 Patch Specifications
 ---------------------------
