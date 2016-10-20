@@ -150,7 +150,7 @@ The following environment variables are noted by this spec:
 | **[HADOOP_EM3]** | MAPRED_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop MapReduce jar dependencies |
 
 
--   The content of the `*_DIR` directories SHOULD be the same as the ODPi Reference Implementation and the binary packages made available by the upstream projects.  In a future release, this will become a MUST.
+-   The content of the `*_DIR` directories SHOULD be the same as the Reference Platform.  In a future release, this will become a MUST.
 
 -   **[HADOOP_ENVVAR]** All previously named environment variables mentioned in this section MUST be either explicitly set or readable via running the appropriate bin command with the `envvars` parameter.  In the situation where these variables are not explicitly set, the appropriate commands MUST be available on the path.    For example, `hadoop envvars` should provide output similar to the following:
 
@@ -168,7 +168,7 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 
 -   **[HADOOP_EJH2]** A Platform MUST set the `HADOOP_CONF_DIR` environment variable to point to the Platform's configuration directory if config files aren’t being stored in `*_HOME/etc/hadoop`.
 
--   **[HADOOP_TOOLS]** The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with ODPi Reference Implementation or the binary packages made available by the upstream projects. The entire directory SHOULD NOT be included in the default Hadoop class path.  Individual jars MAY be specified.
+-   **[HADOOP_TOOLS]** The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with the Reference Platform. The entire directory SHOULD NOT be included in the default Hadoop class path.  Individual jars MAY be specified.
 
 Compliance
 ----------
@@ -185,14 +185,14 @@ Compliance
 
 -   A Platform MUST keep the same basic directory layout with regards to directory and filenames as the equivalent upstream Apache component. Changes to that directory layout MUST be enabled by the component itself with the appropriate configurations for that layout configured.  For example, if Apache Hadoop YARN's package distribution contains a libexec directory with content, then that libexec directory with the equivalent content must be preset.  Additionally:
 
-    -   **[HADOOP_DIRSTRUCT_COMMON]** Contents of HADOOP_COMMON_HOME SHOULD match the ODPi Reference Implementation and the binary packages made available by the upstream projects. 
-    -   **[HADOOP_DIRSTRUCT_HDFS]** Contents of HADOOP_HDFS_HOME SHOULD match the ODPi Reference Implementation and the binary packages made available by the upstream projects.
-    -   **[HADOOP_DIRSTRUCT_MAPREDUCE]** Contents of HADOOP_MAPRED_HOME SHOULD match the ODPi Reference Implementation and the binary packages made available by the upstream projects.
-    -   **[HADOOP_DIRSTRUCT_YARN]** Contents of HADOOP_YARN_HOME SHOULD match the ODPi Reference Implementation and the binary packages made available by the upstream projects.
+    -   **[HADOOP_DIRSTRUCT_COMMON]** Contents of HADOOP_COMMON_HOME SHOULD match the Reference Platform. 
+    -   **[HADOOP_DIRSTRUCT_HDFS]** Contents of HADOOP_HDFS_HOME SHOULD match the Reference Platform.
+    -   **[HADOOP_DIRSTRUCT_MAPREDUCE]** Contents of HADOOP_MAPRED_HOME SHOULD match the Reference Platform.
+    -   **[HADOOP_DIRSTRUCT_YARN]** Contents of HADOOP_YARN_HOME SHOULD match the Reference Platform.
 
-    -   **[HADOOP_BINCONTENT]**`HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` MUST contain the same binaries and executables that they contain in the ODPi Reference Implementation and the binary packages made available by the upstream projects, with exceptions granted for bug fixes.  Therefore, there SHOULD NOT be any additional content in order to avoid potential future conflicts.  In future versions of this spec this will become a MUST NOT.
+    -   **[HADOOP_BINCONTENT]**`HADOOP_COMMON_HOME/bin`, `HADOOP_HDFS_HOME/bin`, `HADOOP_MAPRED_HOME/bin`, and `HADOOP_YARN_HOME/bin` MUST contain the same binaries and executables that they contain in the Reference Platform, with exceptions granted for bug fixes.  Therefore, there SHOULD NOT be any additional content in order to avoid potential future conflicts.  In future versions of this spec this will become a MUST NOT.
 
-    -   **[HADOOP_LIBJARSCONTENT]** `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables that they contain in the ODPi Reference Implementation and the binary packages made available by the upstream projects. They MAY be modified to be either fix bugs or have enhanced features.  There SHOULD NOT be any additional content in order to avoid potential future conflicts.  In future versions of this spec this will become a MUST NOT.
+    -   **[HADOOP_LIBJARSCONTENT]** `HADOOP_COMMON_LIB_JARS_DIR`, `HDFS_LIB_JARS_DIR`, `MAPRED_LIB_JARS_DIR`, and `YARN_LIB_JARS_DIR` MUST contain the same binaries and executables that they contain in the Reference Platform. They MAY be modified to be either fix bugs or have enhanced features.  There SHOULD NOT be any additional content in order to avoid potential future conflicts.  In future versions of this spec this will become a MUST NOT.
 
 -   **[HADOOP_GETCONF]** It MUST be possible to determine key Hadoop configuration values by using `${HADOOP_HDFS_HOME}/bin/hdfs getconf` so that directly reading the XML via Hadoop’s Configuration object SHOULD NOT be required.
 
@@ -294,6 +294,8 @@ Glossary
 -   **Software Vendor** - An organization, either a commercial vendor or an open source project, that has a product that works with a Platform.
 
 -   **ODPi Interoperable Application** - An Application that has been verified by the Software Vendor and ODPi to be ODPi Interoperable, verified by completeing the compliance process outlined at https://github.com/odpi/self-certification-reports/blob/master/COMPLIANCE_PROCESS.md#odpi-interoperable.
+
+-   **Reference Platform** - A Platform Vendor neutral, open source Plaform that is composed of projects outlined in the *Included Projects* in this document, leverages the binary packages made available by the associated Apache project, and passes all acceptance tests for this version of the ODPi Runtime Specification.
 
 -   **End Users** - Users of a Platform and/or Application.
 
