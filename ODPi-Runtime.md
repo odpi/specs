@@ -273,7 +273,7 @@ Best practices for compatible apps to be portable and operator friendly:
 
 -   Applications SHOULD NOT assume that an Oracle JRE is being used.
 
--   Applciations SHOULD include both Microsoft batch or PowerShell as well as Unix-compatible shell scripts.
+-   Applications SHOULD include both Microsoft batch or PowerShell as well as Unix-compatible shell scripts.
 
 -   Applications SHOULD NOT install their own dependent packages (e.g., Ruby, Python, Apache Web Server) unless absolutely necessary. They SHOULD list them as system requirements and let the operator install them.
 
