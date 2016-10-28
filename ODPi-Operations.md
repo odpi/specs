@@ -123,23 +123,29 @@ A Hadoop Management tool MUST support configuration of the services to generate 
 
 An Ambari stack is a stack as defined in the general section of the specification (a collection of services for a specific version which includes a common release/delivery mechanism).  Ambari only supports installing a single stack.
 
-Any services which are not shipped in the stack should be installed as an extension.
+Any services which are not shipped in the stack SHOULD be installed as an extension.  In this first release of the operations specification, installing custom services by modifying the stack is allowed.
+
+Generally the Platform Vendor ships a stack with the Ambari release including all of their services.
 
 #####Extension
 
-An [extension](https://cwiki.apache.org/confluence/display/AMBARI/Extensions) is a collection of services for a specific version which includes a common release/delivery mechanism.  An extension can only be installed if a specific stack (or specific version of a stack) will be installed with the extension or has already been installed.
+An extension is a collection of services for a specific version which includes a common release/delivery mechanism.  An extension can only be installed if a specific stack (or specific version of a stack) will be installed with the extension or has already been installed.
 
-From Ambari 2.4 and onwards, third party custom services should be packaged as extensions instead of being added directly into a stack version.
+ISV custom services SHOULD be packaged as extensions instead of being added directly into a stack version.  In this first release of the operations specification, installing custom services by modifying the stack is allowed.
 
 #####Management Pack
 
-A [management pack](https://cwiki.apache.org/confluence/display/AMBARI/Management+Packs) is a collection of services packaged as a tarball.  A management pack can be used to ship an Ambari stack, extensions or to add custom services to an Ambari stack.
+A management pack is a collection of services packaged as a tarball.  A management pack can be used to ship an Ambari stack, extensions or to add custom services to an Ambari stack.
 
 ####Runtime Environment Specification
 In addition to the common runtime environment, any application can assume the following for the runtime environment on each node of the cluster:
 * Python 2.6 or 2.7 is REQUIRED
 * JAVA_HOME MUST be explicitly provided to Ambari (or Ambari can be used to setup Java)
 * JAVA_HOME MUST be the same on all hosts
+
+####Detailed Ambari Information
+
+More details on stacks, extensions, services and management packs can be found in the [Apache Ambari Stack Definition PDF document](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf)
 
 ####Packaging and Repository URLs
 Ambari supports installation of services via RPM and debian packages only. It is expected that the packages are available at runtime via a well-known repository solution such as YUM, Zypper or Apt (depending on the cluster’s operating system).
@@ -163,11 +169,8 @@ Repository URLs may be made available to Ambari in one of the following ways:
 
 * Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
 
-[TODO - need to provide clear instructions on how to add repo URLs post install]
-[Note: service level repositories will be supported in 2.4.2]
-
 ####Service Definition Requirements
-For Ambari to recognize a custom service definition it needs to be developed per [Ambari 2.4.0 specification](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster.
+For Ambari to recognize a custom service definition it needs to be developed per [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster.
 
 In addition to the service definition requirements in the common section above:
 
@@ -176,7 +179,7 @@ In addition to the service definition requirements in the common section above:
 * The Python scripts MUST be compatible with both Python 2.6 and 2.7
 
 ####Inheritance
-Inheritance in Ambari reduces duplication between different versions of Stacks, Extensions and Services.  Stacks, Extensions and Services all use the same mechanism to declare their inheritance.  In their corresponding metainfo.xml, a [Stack](https://cwiki.apache.org/confluence/display/AMBARI/How-To+Define+Stacks+and+Services#How-ToDefineStacksandServices-Stack-VersionDescriptor) or [Extension](https://cwiki.apache.org/confluence/display/AMBARI/Extensions#Extensions-ExtensionInheritance) may extend a previous version:
+Inheritance in Ambari reduces duplication between different versions of Stacks, Extensions and Services.  Stacks, Extensions and Services all use the same mechanism to declare their inheritance.  In their corresponding metainfo.xml, a Stack or Extension may extend a previous version:
 
 ```
 <metainfo>
@@ -197,39 +200,39 @@ A service can inherit through the stack but may also inherit directly from commo
 
 When including the following services: HDFS, MAPRED, YARN, HIVE and ZOOKEEPER into a stack, they SHOULD be inherited from the common-services directory defined in Ambari.  In addition, any services, which have definitions in common-services, SHOULD inherit from their common-services definition.
 
-For more information see the [Service Inheritance wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Service+Inheritance) or the [Stack Inheritance wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Stack+Inheritance).
+For more information see the Service Inheritance or the Stack Inheritance sections of the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Creating Stack Versions
-A Hadoop Management Tool when packaging a stack for Ambari should follow the guidelines for [defining stacks](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services) and should make sure to include all mandatory requirements including the [stack properties](https://cwiki.apache.org/confluence/display/AMBARI/Defining+a+Custom+Stack+and+Services#DefiningaCustomStackandServices-StackProperties).
+A Hadoop Management Tool when packaging a stack for Ambari should follow the guidelines for defining stacks as specified in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf) and should make sure to include all mandatory requirements including the stack properties.
 
 ####Recommended Application Packaging
-Each individual Application SHOULD be created as one or more extensions and SHOULD be packaged as a single management pack.
+Each individual Application SHOULD be created as one or more extensions and SHOULD be packaged as a single management pack.  In this first release of the operations specification, installing custom services by modifying the stack is allowed.
 
-For more information see the [Packaging and Installing Custom Services wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Packaging+and+Installing+Custom+Services).
+For more information on packaging applications as extensions using management packs see the Packaging Custom Services section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Defining Custom Services
-Each custom service definition MUST be created following the [Ambari guidelines for custom services](https://cwiki.apache.org/confluence/display/AMBARI/Custom+Services).
+Each custom service definition MUST be created following the guidelines for custom services in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Kerberos
 If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application SHOULD provide a "Kerberos descriptor" metadata file (kerberos.json) in its service definition. This is optional, but if this is omitted, it puts the burden on the end user for performing Kerberos principal generation, Kerberos keytab generation and distribution, etc.
 
 If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application MUST explicitly invoke Kerberos authentication calls (i.e., kinit invocations) in its Service Definition scripts.
 
-For more information about Kerberos descriptors see the [Kerberos Descriptor documentation](https://github.com/apache/ambari/blob/trunk/ambari-server/docs/security/kerberos/kerberos_descriptor.md) or for general Kerberos information see the [Automated Kerberization wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Automated+Kerberizaton).
+For more information about Kerberos see the Kerberos section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Metrics Monitoring
-An Application MAY expose its application-level metrics via Ambari REST API by defining a [metrics.json](https://github.com/apache/ambari/blob/trunk/ambari-server/src/main/resources/common-services/HDFS/2.1.0.2.0/metrics.json) file in its Service Definition.
+An Application MAY expose its application-level metrics via Ambari REST API by defining a metrics.json file in its Service Definition.
 
 An Application MAY provide its own Hadoop Metrics2 Sink implementation or custom code to emit its metrics into Ambari Metrics Collector.
 
-For more information about the metrics.json format see the [Stack Defined Metrics wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Stack+Defined+Metrics) or for general metrics information see the [Ambari Metrics wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Metrics).
+For more information about Metrics see the Metrics section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Alerts
 An Application MAY expose its application-level alerts via Ambari REST API and Ambari Web UI by defining an alerts.json file in its Service Definition.
 
 In case an alert definition contains any script-based alerts, it MUST be written in Python and MUST be compatible with Python 2.6 and 2.7.
 
-For more information about the alerts.json format see the [Alerts definition documentation](https://github.com/apache/ambari/blob/branch-2.1/ambari-server/docs/api/v1/alert-definitions.md) or for general alerts information see the [Ambari Alerts wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Alerts).
+For more information about Alerts see the Alerts section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Quicklinks
-An Application MAY expose quick links to the Ambari UI by including a quicklinks.json file in its Service Definition.  For more information see the [Quick Links wiki page](https://cwiki.apache.org/confluence/display/AMBARI/Quick+Links).
+An Application MAY expose quick links to the Ambari UI by including a quicklinks.json file in its Service Definition.  For more information see the Quick Links section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
