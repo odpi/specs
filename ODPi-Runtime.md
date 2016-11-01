@@ -15,8 +15,8 @@ Specifications covering Platforms based upon Apache Hadoop and Apache Hive. Comp
 Included Projects
 =================
 This specification covers:
-* Apache Hadoop 2.7, including all maintenance releases.
-* Apache Hive.
+* Apache Hadoop® 2.7, including all maintenance releases.
+* Apache Hive®.
 
 Maintenance releases indicate bug fix releases connected to the indicated minor release.  For example, at the time of this writing the Hadoop 2.7 line has two maintenance releases, 2.7.1 and 2.7.2.  Thus versions 2.7.0, 2.7.1, and 2.7.2 all satisfy this specification.
 
@@ -36,11 +36,11 @@ The methodology used in ODPi Runtime Specification is defining the interface(s) 
 Technical Context
 =================
 
-At this time the ODPi Runtime Specification is strongly based on the exact behaviour of the underlying Apache projects.  Part of compliance is specified as shipping a Platform built from a specific line of Apache Hadoop, namely 2.7.  It is expected that the Apache Hadoop version the spec is based on will evolve as both Apache Hadoop and this specification evolve.
+At this time the ODPi Runtime Specification is strongly based on the exact behaviour of the underlying Apache projects.  Part of compliance is specified as shipping a Platform built from a specific line of Hadoop, namely 2.7.  It is expected that the Hadoop version the spec is based on will evolve as both Hadoop and this specification evolve.
 
 Even with a source code based specification, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops Applications from calling private interfaces). These degrees of freedom can interfere with the objectives of the ODPi Runtime Specification. The goal of this spec is to close enough of those freedoms to achieve those objectives.
 
-The source code approach is not followed in the same way for Apache Hive.  Instead a set of interfaces that are deemed to be important for applications and users are specified to be fully compatible with Apache Hive 1.2.
+The source code approach is not followed in the same way for Hive.  Instead a set of interfaces that are deemed to be important for applications and users are specified to be fully compatible with Hive 1.2.
 
 Specification Format
 ====================
@@ -59,7 +59,7 @@ Platforms MUST conform to the following build specifications.
 Version Specifications
 -----------------------------
 
--   **[HADOOP_VERSION]** For this version of the ODPi Runtime Specification, Platforms MUST include a descendent of the Apache Hadoop 2.7 branch.  Future versions MAY increase the base Apache Hadoop version.
+-   **[HADOOP_VERSION]** For this version of the ODPi Runtime Specification, Platforms MUST include a descendent of the Hadoop 2.7 branch.  Future versions MAY increase the base Hadoop version.
 
 -   The Apache components in a Platform MUST have their source be 100% committed to an Apache source tree.
 
@@ -72,7 +72,7 @@ While ODPi can be more prescriptive when it comes to the source code and release
 
 -   **[ODPi_PATCH2]** Patches to Apache components MUST have the source available to the Apache community, posted via the project-specific bug-tracking system (like JIRA).  The vendor SHOULD make reasonable efforts to get the patch committed.
 
--   **[ODPi_PATCH3]** Patches to Apache components MUST be to deal with major security, availability, compatibility, or correctness issues.  Patches MUST be 100% backward compatible (as defined by Apache Hadoop's compatibility guidelines) and MUST NOT be used to add features of any kind.
+-   **[ODPi_PATCH3]** Patches to Apache components MUST be to deal with major security, availability, compatibility, or correctness issues.  Patches MUST be 100% backward compatible (as defined by Hadoop's compatibility guidelines) and MUST NOT be used to add features of any kind.
 
 - ODPi MUST itself issue official patch releases to the reference release to deal with very major security, availability, or correctness issues.
 
@@ -80,7 +80,7 @@ While ODPi can be more prescriptive when it comes to the source code and release
 Minimum Native build specifications
 -----------------------------------
 
-The native libraries of Hadoop have historically been a particular point of pain for Software Vendors. The specifications in this subsection should reduce that pain. These options guarantee a minimum set of basic functionalities that MUST be available for each of these components, including Apache Hadoop native operating system resources required for enabling Kerberos, many Java/OS performance and functionality enhancements, and the GZip and Snappy codec compression libraries. Platforms MAY enable other features such as file system encryption, however they are considered optional and not part of the base specification.
+The native libraries of Hadoop have historically been a particular point of pain for Software Vendors. The specifications in this subsection should reduce that pain. These options guarantee a minimum set of basic functionalities that MUST be available for each of these components, including Hadoop native operating system resources required for enabling Kerberos, many Java/OS performance and functionality enhancements, and the GZip and Snappy codec compression libraries. Platforms MAY enable other features such as file system encryption, however they are considered optional and not part of the base specification.
 
 ### Common
 
@@ -125,29 +125,29 @@ Applications on Unix platforms need to understand the base specification of some
 Environment Variables
 ---------------------
 
-Apache Hadoop uses several critical environment variables to determine the Java class path and location of configuration information.  As a result, they become the glue that holds together not only Hadoop itself but also anything that connects to it. (See [*this document*](https://github.com/apache/hadoop/blob/0bc15cb6e60dc60885234e01dec1c7cb4557a926/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example) for related Apache Hadoop documentation.)
+Hadoop uses several critical environment variables to determine the Java class path and location of configuration information.  As a result, they become the glue that holds together not only Hadoop itself but also anything that connects to it. (See [*this document*](https://github.com/apache/hadoop/blob/0bc15cb6e60dc60885234e01dec1c7cb4557a926/hadoop-common-project/hadoop-common/src/main/bin/hadoop-layout.sh.example) for related Hadoop documentation.)
 
-In order to fulfill the goals of this specification, the discovery and content of several key environment variables are covered. This enables applications the capability to locate where the various Apache Hadoop components are located (user-level binaries and Java JAR files) in a Platform consistent way.
+In order to fulfill the goals of this specification, the discovery and content of several key environment variables are covered. This enables applications the capability to locate where the various Hadoop components are located (user-level binaries and Java JAR files) in a Platform consistent way.
 
 The following environment variables are noted by this spec:
 
 | Test Designation | Environment Variable | Type | Description |
 |:-----------------|:---------------------|:-----|:------------|
 | **[HADOOP_EJH1]** | JAVA_HOME            | Absolute Dir  | Location of Java |
-| **[HADOOP_EC1]** | HADOOP_TOOLS_PATH | Class Path | Supplemental Apache Hadoop jars for extra functionality |
-| **[HADOOP_EC2]** | HADOOP_COMMON_HOME   | Absolute Dir  | Home directory of the Apache Hadoop 'common' component |
-| **[HADOOP_EC3]** | HADOOP_COMMON_DIR    | Relative Dir  | Apache Hadoop common jars |
-| **[HADOOP_EC4]** | HADOOP_COMMON_LIB_JARS_DIR | Relative Dir | Apache Hadoop common jar dependencies |
-| **[HADOOP_EC5]** | HADOOP_CONF_DIR | Absolute Dir | Location of Apache Hadoop configuration files |
-| **[HADOOP_EH1]** | HADOOP_HDFS_HOME   | Absolute Dir  | Home directory of the Apache Hadoop HDFS component |
-| **[HADOOP_EH2]** | HDFS_DIR    | Relative Dir  | Apache Hadoop HDFS jars |
-| **[HADOOP_EH3]** | HDFS_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop HDFS jar dependencies |
-| **[HADOOP_EY1]** | HADOOP_YARN_HOME   | Absolute Dir  | Home directory of the Apache Hadoop YARN component |
-| **[HADOOP_EY2]** | YARN_DIR    | Relative Dir  | Apache Hadoop YARN jars |
-| **[HADOOP_EY3]** | YARN_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop YARN jar dependencies |
-| **[HADOOP_EM1]** | HADOOP_MAPRED_HOME   | Absolute Dir  | Home directory of the Apache Hadoop MapReduce component |
-| **[HADOOP_EM2]** | MAPRED_DIR    | Relative Dir  | Apache Hadoop MapReduce jars |
-| **[HADOOP_EM3]** | MAPRED_LIB_JARS_DIR | Relative Dir | Additional Apache Hadoop MapReduce jar dependencies |
+| **[HADOOP_EC1]** | HADOOP_TOOLS_PATH | Class Path | Supplemental Hadoop jars for extra functionality |
+| **[HADOOP_EC2]** | HADOOP_COMMON_HOME   | Absolute Dir  | Home directory of the Hadoop 'common' component |
+| **[HADOOP_EC3]** | HADOOP_COMMON_DIR    | Relative Dir  | Hadoop common jars |
+| **[HADOOP_EC4]** | HADOOP_COMMON_LIB_JARS_DIR | Relative Dir | Hadoop common jar dependencies |
+| **[HADOOP_EC5]** | HADOOP_CONF_DIR | Absolute Dir | Location of Hadoop configuration files |
+| **[HADOOP_EH1]** | HADOOP_HDFS_HOME   | Absolute Dir  | Home directory of the Hadoop HDFS component |
+| **[HADOOP_EH2]** | HDFS_DIR    | Relative Dir  | Hadoop HDFS jars |
+| **[HADOOP_EH3]** | HDFS_LIB_JARS_DIR | Relative Dir | Additional Hadoop HDFS jar dependencies |
+| **[HADOOP_EY1]** | HADOOP_YARN_HOME   | Absolute Dir  | Home directory of the Hadoop YARN component |
+| **[HADOOP_EY2]** | YARN_DIR    | Relative Dir  | Hadoop YARN jars |
+| **[HADOOP_EY3]** | YARN_LIB_JARS_DIR | Relative Dir | Additional Hadoop YARN jar dependencies |
+| **[HADOOP_EM1]** | HADOOP_MAPRED_HOME   | Absolute Dir  | Home directory of the Hadoop MapReduce component |
+| **[HADOOP_EM2]** | MAPRED_DIR    | Relative Dir  | Hadoop MapReduce jars |
+| **[HADOOP_EM3]** | MAPRED_LIB_JARS_DIR | Relative Dir | Additional Hadoop MapReduce jar dependencies |
 
 
 -   The content of the `*_DIR` directories SHOULD be the same as the Reference Platform.  In a future release, this will become a MUST.
@@ -175,11 +175,11 @@ Compliance
 
 ### Hadoop Compliance
 
--   **[HADOOP_SUBPROJS]** Platforms MUST have all of the base Apache Hadoop components installed.
+-   **[HADOOP_SUBPROJS]** Platforms MUST have all of the base  Hadoop components installed.
 
--   **[HADOOP_BIGTOP]** Platforms MUST pass the Apache Big Top 1.0.0 Hadoop smoke tests.
+-   **[HADOOP_BIGTOP]** Platforms MUST pass the Apache Big Top® 1.0.0 Hadoop smoke tests.
 
--   **[TEST_ENVIRONMENT]** Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Apache Hadoop ABI") or a REST API. See the [Apache Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
+-   **[TEST_ENVIRONMENT]** Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Hadoop ABI") or a REST API. See the [Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
 -   **[HADOOP_PLATVER]** Platforms MUST modify the version string output by Hadoop components, such as those displayed in log files, or returned via public API's such that they contain `-(vendor string)` or `_(vendor string)` where `(vendor string)` matches the regular expression [A-Za-z_0-9]+ and appropriately identifies the Platform Vendor in the output.
 
@@ -200,7 +200,7 @@ Compliance
 
 -   A common application-architecture is one where there’s a fair bit of stuff running on the “Client Host” -- a Web server, all kinds of app logic, maybe even a database. They interact with Hadoop using client-libraries and cluster-config files installed locally on the client host. These apps tend to have a lot of requirements in terms of the packages installed locally. A good Platform implementation SHOULD NOT get in the way: at most, the implementation SHOULD only care about the version of Java and Bash, and nothing else.
 
--   Platforms SHOULD publish all modified (i.e., not-default) Apache Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are listed in Appendix A.
+-   Platforms SHOULD publish all modified (i.e., not-default) Hadoop configuration entries, regardless of client, server, etc applicability to all nodes unless it is known to be node hardware specific, private to a service, security-sensitive, or otherwise problematic.  The list of variables that SHOULD NOT be shared are listed in Appendix A.
 
 Requirements we’d like to push upstream from a compatibility perspective:
 
@@ -208,13 +208,13 @@ Requirements we’d like to push upstream from a compatibility perspective:
 
 Best practices for Platforms:
 
--   Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Apache Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
+-   Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
 -   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
 
 ### Hive Compliance
 
-Apache Hive 1.2 is taken as the **Hive Reference Version** for this version of ODPi Runtime Specification.  This does not mean that Platforms must include Apache Hive 1.2.  Rather it means that Apache Hive 1.2 is the reference that all Platforms will be tested against.
+Hive 1.2 is taken as the **Hive Reference Version** for this version of ODPi Runtime Specification.  This does not mean that Platforms must include Hive 1.2.  Rather it means that Hive 1.2 is the reference that all Platforms will be tested against.
 
 * **[HIVE_SQL]** Platforms MUST provide SQL that is compatible with the reference version of Hive's SQL.  All valid statements in the reference version should produce the same results in the Platform.  The Platform MAY include additional SQL that is not supported in the reference version of Hive, subject to other requirements in this document.
 * **[HIVE_JDBC]** Platforms MUST include access via JDBC and support all of the same JDBC functionality as the reference version of Hive.  All methods implemented in the reference version's JDBC client must be implemented and have the same signature in the Platform.  The Platform MAY implement additional JDBC methods that are not supported in the reference version of Hive, subject to other requirements of this document.
@@ -252,11 +252,11 @@ Applications must follow these guidelines:
 
 -   Applications SHOULD obtain the Java classpath via the `${HADOOP_COMMON_HOME}/bin/hadoop classpath` command with the understanding that users and platforms may add or upgrade objects in that classpath.
 
--   Applications SHOULD obtain the version of a specific Apache Hadoop component via the appropriate `$_HOME/bin/cmd version` command.
+-   Applications SHOULD obtain the version of a specific Hadoop component via the appropriate `$_HOME/bin/cmd version` command.
 
 -   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use `hadoop fs` commands instead of `hdfs dfs` commands. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
 
--   Applications SHOULD either launch via the Apache Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
+-   Applications SHOULD either launch via the Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
 
 -   Applications SHOULD use JDBC, ODBC, or SQL to determine the structure of Hive metadata rather than directly querying Hive's metastore thrift interface whenever possible.
 
@@ -270,7 +270,7 @@ Best practices for compatible apps to be portable and operator friendly:
 
 -   Applications SHOULD include both Microsoft batch or PowerShell as well as Unix-compatible shell scripts.
 
--   Applications SHOULD NOT install their own dependent packages (e.g., Ruby, Python, Apache Web Server) unless absolutely necessary. They SHOULD list them as system requirements and let the operator install them.
+-   Applications SHOULD NOT install their own dependent packages (e.g., Ruby, Python, Apache HTTP Server) unless absolutely necessary. They SHOULD list them as system requirements and let the operator install them.
 
 -   Similarly, Applications SHOULD NOT ship with “fat jars” that include Hadoop Java libraries. They SHOULD pick them up from their runtime environment.
 
@@ -285,7 +285,7 @@ Glossary
 
 -   **Component** - A *service* is comprised of one or more components. For example, HDFS has three components: NameNode, Secondary NameNode, and DataNode. A single component may be installed across multiple nodes in the cluster, such as in the case of the HDFS data node.
 
--   **Platform** - A product or service offering that consists of Apache Hadoop™, and optionally includes additional open source and/or commercial components that work with Apache Hadoop™.
+-   **Platform** - A product or service offering that consists of Hadoop, and optionally includes additional open source and/or commercial components that work with Hadoop.
 
 -   **Platform Vendor** - An organization, either a commercial vendor or an open source project, that either produces a packaged version of the Platform or supports a service offering around the Platform aimed at End User consumption.
 
