@@ -295,7 +295,7 @@ Glossary
 
 -   **ODPi Interoperable Application** - An Application that has been verified by the Software Vendor and ODPi to be ODPi Interoperable, verified by completeing the compliance process outlined at https://github.com/odpi/self-certification-reports/blob/master/COMPLIANCE_PROCESS.md#odpi-interoperable.
 
--   **Reference Platform** - A Platform Vendor neutral, open source Plaform that is composed of projects outlined in the *Included Projects* in this document, leverages the binary packages made available by the associated Apache project, and passes all acceptance tests for this version of the ODPi Runtime Specification.
+-   **Reference Platform** - A Platform Vendor neutral, open source Plaform that is composed of projects outlined in the *Included Projects* in this document, leverages the source code made available by the associated Apache project, and passes all acceptance tests for this version of the ODPi Runtime Specification.
 
 -   **End Users** - Users of a Platform and/or Application.
 
