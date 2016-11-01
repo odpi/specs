@@ -38,7 +38,7 @@ Technical Context
 
 At this time the ODPi Runtime Specification is strongly based on the exact behaviour of the underlying Apache projects.  Part of compliance is specified as shipping a Platform built from a specific line of Hadoop, namely 2.7.  It is expected that the Hadoop version the spec is based on will evolve as both Hadoop and this specification evolve.
 
-Even with a source code based specification, the Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops Applications from calling private interfaces). These degrees of freedom can interfere with the objectives of the ODPi Runtime Specification. The goal of this spec is to close enough of those freedoms to achieve those objectives.
+The Hadoop implementation leaves many degrees of freedom in how Hadoop is deployed and configured--and also how it is used (e.g., nothing stops Applications from calling private interfaces). These degrees of freedom can interfere with the objectives of the ODPi Runtime Specification. The goal of this spec is to close enough of those freedoms to achieve those objectives.
 
 The source code approach is not followed in the same way for Hive.  Instead a set of interfaces that are deemed to be important for applications and users are specified to be fully compatible with Hive 1.2.
 
