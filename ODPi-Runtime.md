@@ -16,7 +16,7 @@ Included Projects
 =================
 This specification covers:
 * Apache Hadoop® 2.7, including all maintenance releases.
-* Apache Hive®.
+* Apache Hive™.
 
 Maintenance releases indicate bug fix releases connected to the indicated minor release.  For example, at the time of this writing the Hadoop 2.7 line has two maintenance releases, 2.7.1 and 2.7.2.  Thus versions 2.7.0, 2.7.1, and 2.7.2 all satisfy this specification.
 
@@ -177,7 +177,7 @@ Compliance
 
 -   **[HADOOP_SUBPROJS]** Platforms MUST have all of the base  Hadoop components installed.
 
--   **[HADOOP_BIGTOP]** Platforms MUST pass the Apache Big Top® 1.0.0 Hadoop smoke tests.
+-   **[HADOOP_BIGTOP]** Platforms MUST pass the Apache Big Top™ 1.0.0 Hadoop smoke tests.
 
 -   **[TEST_ENVIRONMENT]** Platforms MUST NOT change public APIs, where an API is defined as either a Java API (aka "Hadoop ABI") or a REST API. See the [Hadoop Compatibility guidelines](http://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/Compatibility.html#Java_Binary_compatibility_for_end-user_applications_i.e._Apache_Hadoop_ABI) for more information.
 
