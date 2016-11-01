@@ -145,7 +145,7 @@ In addition to the common runtime environment, any application can assume the fo
 
 ####Detailed Ambari Information
 
-More details on stacks, extensions, services and management packs can be found in the [Apache Ambari Stack Definition PDF document](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf)
+More details on stacks, extensions, services and management packs can be found in the [Apache Ambari Stack Definition PDF document](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf)
 
 ####Packaging and Repository URLs
 Ambari supports installation of services via RPM and debian packages only. It is expected that the packages are available at runtime via a well-known repository solution such as YUM, Zypper or Apt (depending on the cluster’s operating system).
@@ -170,7 +170,7 @@ Repository URLs may be made available to Ambari in one of the following ways:
 * Post installation of the cluster, Ambari REST APIs MAY be used to add additional repository URLs
 
 ####Service Definition Requirements
-For Ambari to recognize a custom service definition it needs to be developed per [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster.
+For Ambari to recognize a custom service definition it needs to be developed per [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf). Once installed, Ambari will consume the service definition and present it as an option while deploying the cluster or adding a new service to the cluster.
 
 In addition to the service definition requirements in the common section above:
 
@@ -200,39 +200,39 @@ A service can inherit through the stack but may also inherit directly from commo
 
 When including the following services: HDFS, MAPRED, YARN, HIVE and ZOOKEEPER into a stack, they SHOULD be inherited from the common-services directory defined in Ambari.  In addition, any services, which have definitions in common-services, SHOULD inherit from their common-services definition.
 
-For more information see the Service Inheritance or the Stack Inheritance sections of the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
+For more information see the Service Inheritance or the Stack Inheritance sections of the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Creating Stack Versions
-A Hadoop Management Tool when packaging a stack for Ambari should follow the guidelines for defining stacks as specified in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf) and should make sure to include all mandatory requirements including the stack properties.
+A Hadoop Management Tool when packaging a stack for Ambari should follow the guidelines for defining stacks as specified in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf) and should make sure to include all mandatory requirements including the stack properties.
 
 ####Recommended Application Packaging
 Each individual Application SHOULD be created as one or more extensions and SHOULD be packaged as a single management pack.  In this first release of the operations specification, installing custom services by modifying the stack is allowed.
 
-For more information on packaging applications as extensions using management packs see the Packaging Custom Services section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
+For more information on packaging applications as extensions using management packs see the Packaging Custom Services section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Defining Custom Services
-Each custom service definition MUST be created following the guidelines for custom services in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
+Each custom service definition MUST be created following the guidelines for custom services in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Kerberos
 If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application SHOULD provide a "Kerberos descriptor" metadata file (kerberos.json) in its service definition. This is optional, but if this is omitted, it puts the burden on the end user for performing Kerberos principal generation, Kerberos keytab generation and distribution, etc.
 
 If an Application needs to communicate with other services or Applications that require Kerberos authentication, the Application MUST explicitly invoke Kerberos authentication calls (i.e., kinit invocations) in its Service Definition scripts.
 
-For more information about Kerberos see the Kerberos section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
+For more information about Kerberos see the Kerberos section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Metrics Monitoring
 An Application MAY expose its application-level metrics via Ambari REST API by defining a metrics.json file in its Service Definition.
 
 An Application MAY provide its own Hadoop Metrics2 Sink implementation or custom code to emit its metrics into Ambari Metrics Collector.
 
-For more information about Metrics see the Metrics section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
+For more information about Metrics see the Metrics section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Alerts
 An Application MAY expose its application-level alerts via Ambari REST API and Ambari Web UI by defining an alerts.json file in its Service Definition.
 
 In case an alert definition contains any script-based alerts, it MUST be written in Python and MUST be compatible with Python 2.6 and 2.7.
 
-For more information about Alerts see the Alerts section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
+For more information about Alerts see the Alerts section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
 
 ####Quicklinks
-An Application MAY expose quick links to the Ambari UI by including a quicklinks.json file in its Service Definition.  For more information see the Quick Links section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/tree/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
+An Application MAY expose quick links to the Ambari UI by including a quicklinks.json file in its Service Definition.  For more information see the Quick Links section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
