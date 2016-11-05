@@ -16,6 +16,7 @@ Included Projects
 =================
 This specification covers:
 * Apache Hadoop® 2.7, including all maintenance releases.
+* Apache Hadoop® 2.7, compatible filesystems (HCFS).
 * Apache Hive™.
 
 Maintenance releases indicate bug fix releases connected to the indicated minor release.  For example, at the time of this writing the Hadoop 2.7 line has two maintenance releases, 2.7.1 and 2.7.2.  Thus versions 2.7.0, 2.7.1, and 2.7.2 all satisfy this specification.
@@ -117,6 +118,7 @@ Minimum Versions
 
 Applications on Unix platforms need to understand the base specification of some key components of which they write software. Two of those components are the Java runtime environment and the shell environment.
 
+-   **[TEST_ENVIRONMENT]** **OS:** ODPi Platforms SHOULD be clear what operating systems are supported.
 -   **[TEST_ENVIRONMENT]** **Java:**  Platforms SHOULD provide jars that are JDK 1.7 bytecode compatible, thus allowing them to run in both JRE 7 and JRE 8 runtime environments.  64-bit environments MUST be supported. Applications SHOULD work in at least one of JRE 7 or JRE 8, and SHOULD be clear when they don’t support both.
 
 -   **[TEST_ENVIRONMENT]**  **Shell scripts:** On Unix and Unix-like systems, Platforms and Applications SHOULD use either POSIX sh or GNU bash with the appropriate bang path configured for that operating system. GNU bash usage SHOULD NOT require any version of GNU bash later than 3.2.  On Windows, Platforms and Applications SHOULD use Microsoft batch or PowerShell.
@@ -170,6 +172,8 @@ HADOOP_TOOLS_PATH='/opt/hadoop/share/hadoop/tools/lib'
 
 -   **[HADOOP_TOOLS]** The location of the tools jars and other miscellaneous jars SHOULD be set to the `HADOOP_TOOLS_PATH` environment variable.  This is used as input for setting Java class paths, therefore this MUST be an absolute path. It MAY contain additional content above and beyond what ships with the Reference Platform. The entire directory SHOULD NOT be included in the default Hadoop class path.  Individual jars MAY be specified.
 
+-   **[HADOOP_USERS]** ODPi Platform can OPTIONALLY define a set of user ids and group ids that correspond to a set of running services. The list of user and group ids if defined SHOULD be clearly stated. E.g. The user id, hdfs, and group id,hadoop, is used for the HDFS service.
+
 Compliance
 ----------
 
@@ -211,6 +215,199 @@ Best practices for Platforms:
 -   Platforms SHOULD avoid using randomized ports when possible. For example, the NodeManager RPC port SHOULD NOT use the default ‘0’ (or random) value. Using randomized ports may make firewall setup extremely difficult as well as makes some parts of Hadoop function incorrectly.  Be aware that users MAY change these port numbers, including back to randomization.
 
 -   Future versions of this specification MAY require other components to set the environment variable *component*_HOME to the location in which the component is installed and *component*_CONF_DIR to the directory in which the component's configuration can be found, unless the configuration directory is located in *component*_HOME/conf.
+
+### HCFS (Hadoop-compatible filesystem) Compliance
+
+ODPi Platforms MAY include alternative filesystem implementations compatible with Apache Hadoop (HCFS). Such HCFS Filesystem Products MAY be delivered as standalone products by either ODPi Platform vendors or 3d parties. These products MAY be open source or they MAY be proprietary. Regardless of the delivery mechanism, ODPi Platform vendors have the ultimate responsibility around integrating supported HCFS Filesystem Products with the rest of the ODPi platform by following the guidelines provided below:
+- ODPi Platform MUST ship HCFS Interface JAR as part of the ODPi Platform. HCFS Interface JAR is a compiled Java JAR that provides the interface, or “glue layer” between the HCFS Filesystem Product and the ODPi Platform. The requirements for the classes shipped as part of HCFS Interface JAR are specified by the Apache Hadoop documentation, and summarized in the guidelines below. Placing HCFS Interface JAR in Hadoop’s classpath is a typical mechanism for allowing ODPi Platform to use an HCFS Filesystem Product. This MAY be achieved by:
+   * either placing the JAR in the default location of `HADOOP_CLASSPATH`, under `$HADOOP_HOME/lib/`
+   * or by extending the `HADOOP_CLASSPATH` environment variable value to include the path to some other location where the HCFS Interface JAR has been deployed.  This may be defined in the `hadoop-env.sh` file, or by any other means for managing environment variables.
+
+- ODPi Platforms MAY ship multiple HCFS Filesystem Products, in which case each will have its own separate HCFS Interface JAR.
+
+- ODPi Platform MUST define a scheme name for all HCFS Filesystem Products that they support. A scheme name is a unique, one-word name for each file system. A scheme name is used in the URI “scheme:” prefix, and the related configuration parameter names. The following names are already in use and SHOULD be considered reserved: 
+   * `hdfs` (Apache Hadoop HDFS implementation), 
+   * `s3a`, `s3native` (Amazon S3)
+   * `wasb`, `adl` (Windows Azure)
+   * `swift` (OpenStack)
+
+- ODPi Platform MAY provide a way to install, configure, monitor, upgrade and decommission HCFS Filesystem Products in a manner compatible with ODPi Operations Specification. Operations Specification considers HCFS Filesystem Products as 3d-party services that are typically delivered in a standalone stack. A stack containing HCFS Filesystem Product MAY derive from an Apache Hadoop HDFS-based stack. The configuration code shipped as part of the HCFS specific stack MUST provide an automated way to:
+   * add any required repositories containing the HCFS implementation JAR
+   * adjust the HADOOP_CLASSPATH definition
+   * and change or add configuration parameters as needed for the particular HCFS
+
+- ODPi Platform vendors MUST NOT make HCFS Filesystem Product be the only storage option for an ODPi platform. Apache Hadoop HDFS MUST still be available as a viable choice. 
+
+- ODPi Platforms MAY define optional storage tiers functions that can be implemented by different solutions. 
+
+- ODPi Platforms SHOULD provide error handling for applications invoking HDFS specific APIs that are not included in the AbstractFileSystem or FileSystem classes.
+
+- ODPi Platforms SHOULD be compatible with POSIX ACL and POSIX permissions. It is recommended that HCFS implementations follow HDFS in how they treat group ID for the newly created files: inheriting the group from the parent directory (this means following the "BSD rule" instead of the "System V rule" for group ownership of new files).
+
+- ODPi Platforms SHOULD handle user impersonation permissions accordingly. 
+
+- ODPi Platform MAY support security mechanism to encrypt RPC data.
+
+- ODPi Platform MAY support authentication mechanism to verify user access.
+
+- ODPi Platform CLI tools MAY have different output when working with HCFS implementations
+
+- Applications SHOULD invoke filesystem client APIs and behaviors explicitly from the FileSystem and FileContext classes instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class and AbstractFileSystem class (the latter is used by the FileContext client APIs). Implementing API specifications from the HDFS class is considered optional usage in HCFS Interface JAR.
+
+ODPi Platform providers MAY include results of compliance testing with supported HCFS Filesystem Products in the submission presented to ODPi. These results MUST at least include execution of tests created in accordance with guidelines provided by "Testing with the Filesystem specification" section of the Hadoop FileSystem API Definition. ISV vendors SHOULD NOT be expected to provide test results with HCFS Filesystem Products when certifying their ODPi interoperability.
+
+As part of test results ODPi Platform providers SHOULD submit results of the HCFS Interface JAR Unit Testing as per the following specification: https://wiki.apache.org/hadoop/HCFS/Progress
+
+Finally, ODPi Platform providers are encouraged and MAY submit ad-hoc test results based on:
+  * executing ad-hoc filesystem manipulation primitives (e.g. mkdir, rm, copyFromLocal, copyToLocal, etc.)
+  * Hadoop distcp utility
+  * queries via Apache Hive, Pig and Spark using the HCFS implementation as a source and destination of data
+
+#### HCFS Interface implementation guidelines
+
+HCFS Interface MUST follow the guidelines laid out in the Hadoop FileSystem API Definition available as part of Apache Hadoop release and also available [*online*](https://hadoop.apache.org/docs/r2.7.0/hadoop-project-dist/hadoop-common/filesystem/index.html). In addition to the formal Hadoop FileSystem API Definition a good overview of the HCFS plug-in interface is provided in the [*Apache wiki*](https://wiki.apache.org/hadoop/HCFS)
+
+The HCFS Interface JAR JAR MUST provide an implementation of these two abstract classes:
+* `org.apache.hadoop.fs.FileSystem`
+* `org.apache.hadoop.fs.AbstractFileSystem`
+
+The FileSystem implementation class MUST be named:
+* `org.apache.hadoop.fs.<hcfsname>.<HCFSFileSystemImplName>`
+
+where `<hcfsname>` is substituted with the scheme name, and `<HCFSFileSystemImplName>` is substituted with an appropriate class name.
+
+The JAR MUST also declare the FileSystem implementation class as a service, by including a file 
+* `META-INF/services/org.apache.hadoop.fs.FileSystem`
+
+in which the HCFS FileSystem implementation class is named.  (For an example, see [AWS S3 FileSystem implementation](https://github.com/apache/hadoop/blob/trunk/hadoop-tools/hadoop-aws/src/main/resources/META-INF/services/org.apache.hadoop.fs.FileSystem))
+
+There is no constraint on the naming of the AbstractFileSystem implementation class, but by convention it also SHOULD be in the 
+package `org.apache.hadoop.fs.<hcfsname>`.  It MUST NOT be named in the `META-INF/services` file.
+
+An HCFS Interface MUST satisfy all of the API contracts outlined in the [*Hadoop FileSystem API Definition*](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/filesystem/index.html)
+
+All behavior semantics of the HDFS implementation SHOULD be imitated insofar as the file system underlying the HCFS is compatible with 
+such behavior.  If the HCFS Filesystem Product is capable of providing locality information, it SHOULD support the API for 
+telling applications such as Apache Tez and Apache Spark which TaskTracker is closest to the 
+data (`FileSystem:getFileBlockLocations()`).  Where HDFS-native APIs cannot be implemented, then the HCFS Interface SHOULD return values 
+which are compatible with the rest of the Hadoop stack. As an example, while getBlockSize() is not a value which a blockless 
+filesystem can actually return, a value suitable for block-partitioning algorithms should be returned, such as 256M, 512M or 
+similar.
+
+Almost any file system can be interfaced to the Hadoop stack via the HCFS Interface, and can therefore be used for basic I/O and 
+mass storage, alongside HDFS.  They are still considered HCFS, but additional features (consistency, atomicity, and durability) 
+MUST be provided in order for the HCFS Filesystem Product to serve as primary storage replacing HDFS in its role as primary storage and working
+space for MapReduce, Tez, and HBase. The difference is discussed in detail in the section titled [*Object Stores vs Filesystems*](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/filesystem/introduction.html#Object_Stores_vs._Filesystems)
+
+As explained there, the key properties of consistency, atomicity, and durability, are missing from many filesystem-like storage 
+platforms, including Amazon S3 and OpenStack Swift.  These are often referred to as Object Stores or Blob Stores, but be aware 
+that this distinction by name is not necessarily correct.  In particular, some Blob Store-based file systems *do* support the 
+necessary features and can be substituted for HDFS.  For example, on the Microsoft Azure HDInsights platform, the WASB file 
+system (“Windows Azure Storage - Blob”) supports all features necessary to act as primary storage and working space for 
+MapReduce, Tez, and HBase, and is successfully substituted for HDFS on the HDInsights platform. If an ODPi Platform supports an 
+HCFS Filesystem Product as a drop-in replacement for HDFS, then it MUST support all of the ODPi Core components without degradation 
+in functionality. If an ODPi Platform supports an HCFS Filesystem Product only for use with Application input/output, then 
+it must support Applications' use of FileContext APIs without degradation in functionality. 
+
+After being correctly installed and configured an HCFS filesystem SHOULD be available via a specific URI. For example,
+in order to access an HCFS filesystem registered under the name `hcfsname` one may use the following command line syntax:
+  * `hadoop fs -ls hcfsname://localservice/`
+
+The URI string (`hcfsname://localservice/`) should be adapted to whatever is appropriate for the scheme name and root URI of 
+the particular HCFS.  It is important to include the trailing “/” at the end of the URI; this is to guarantee that the root 
+of the filesystem is accessed.  If omitted, then the user's home directory is accessed.
+
+#### HCFS configuration guidelines
+
+To enable the HCFS, a configuration parameter `fs.AbstractFileSystem.hcfsname.impl` MUST be set. The `fs.hcfsname.impl` 
+parameter is not strictly required (since `META-INF/services` declarations started being used in Hadoop 2.0+).
+However it MAY be expected by some applications and thus SHOULD be defined. Note that `hcfsname` is expected to 
+be replaced with the HCFS scheme name, and a fully qualified class name is provided for the values.
+For example, configuring an AWS S3 file system (which uses `s3a:` as its HCFS scheme name) in core-site.xml will
+look like this:
+```
+<property>
+  <name>fs.s3a.impl</name>
+  <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+</property>
+<property>
+  <name>fs.AbstractFileSystem.s3a.impl</name>
+  <value>org.apache.hadoop.fs.s3a.S3A</value>
+</property>
+```
+
+If the HCFS Filesystem Product is intended to replace HDFS as primary storage and workspace for MapReduce, Tez, and HBase, 
+`fs.defaultFS` property MUST also be set. An older alias for this propery `fs.default.name` is now considered deprecated and SHOULD NOT
+be used.  The value of the `fs.defaultFS` property is expected to be `hcfsname://localservice`
+For example, making an already configured AWS S3 file system be the default MAY be done by the following settings in core-site.xml:
+```
+<property>
+  <name>fs.defaultFS</name>
+  <value>s3a://bucket-name</value>
+</property>
+```
+where again `hcfsname` is replaced with the HCFS scheme name, and `localservice` is replaced with the URI authority element 
+appropriate to the HCFS, at the server level. The value of `localservice` may be just `localhost:port#` for many HCFS 
+implementations.
+
+Since the Hadoop configuration parameter set is extensible, arbitrary additional parameters, specific to the HCFS, MAY be defined.
+These can then be accessed from the HCFS Interface JAR using the general Hadoop configuration APIs.  In this manner, the HCFS
+can be configured via parameters like any other Hadoop facility.  By convention, any such HCFS-specific configuration parameters
+should include the HCFS scheme name as an element of the parameter name. For example, setting the following properties specific
+to AWS S3 HCFS implementation in core-site.xml will allow access to private S3 buckets:
+```
+<property>
+  <name>fs.s3a.access.key</name>
+  <value>################</value>
+</property>
+<property>
+  <name>fs.s3a.secret.key</name>
+  <value>###############</value>
+</property>
+```
+
+#### Troubleshooting
+
+*The error message: "No FileSystem for scheme"*
+
+1. The URI Scheme is incorrect (i.e it is is misspelled or simply wrong).
+2. The implementation JAR is not on the classpath.
+3. The implementation JAR is on the classpath, but a dependency is missing.  Examine the log of the application to see if this 
+problem was detected.
+4. The `META-INF/services/org.apache.hadoop.fs.FileSystem` file is absent from the HCFS implementation JAR
+5. The `fs.AbstractFileSystem.hcfsname.impl` configuration parameter declaration is absent or 
+incorrect.  (Occurs if client uses the FileContext APIs) 
+
+*“ClassNotFoundException” when trying to use an HCFS scheme*
+
+A class is registered as being the implementation of a filesystem scheme, but its implementation JAR or a dependency is not on 
+the classpath.
+
+*Basic command line file system operations failing with permission errors*
+
+This usually means that any security setup, credentials, etc needed to authenticate with the HCFS are not supplied. Unless 
+Kerberos is used for authentication, the specific configuration options to authenticate with an HCFS must be set in the 
+environment/Hadoop configuration. If Kerberos is used, the user must be logged in.
+
+*Submitted jobs failing with permission errors, even though command line operations work*
+
+This can mean that the security credentials are not being set in, or propagated to, the worker nodes in an application.
+
+*Client-side Split calculation during job submission takes a very long time or runs out of memory.*
+
+This can be caused by the returned block size of the file system (as returned in `FileSystem.getStatus()`) being 0 or another 
+low value. A minimum block size of a few tens of MB is necessary for work to be be efficiently divided up, even if the file 
+system has no notion of "block size". We currently recommend a default value of 64 MB.  File systems which simulate a block 
+size usually make this configurable to other values.
+
+*Jobs using the HCFS pause at the end, in Hive and Spark queries, DistCp and elsewhere*
+
+This arises if the HCFS is an object store which only supports directory rename through explicit copy and delete of individual 
+files under the specific path.  The implementors of the HCFS client must try to produce as fast a rename() operation as possible, 
+because it is required to atomically commit operations.  It may also be possible to provide a "direct" committer to write output 
+without renaming.  Any HCFS implementor providing such a committer must ensure that their implementation handles race conditions 
+from speculative execution and failure recovery from network partitioned 
+executors (the “consistency, atomicity, and durability” requirements).
 
 ### Hive Compliance
 
@@ -254,7 +451,7 @@ Applications must follow these guidelines:
 
 -   Applications SHOULD obtain the version of a specific Hadoop component via the appropriate `$_HOME/bin/cmd version` command.
 
--   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use `hadoop fs` commands instead of `hdfs dfs` commands. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
+-   Applications SHOULD NOT assume that HDFS is the currently configured distributed file system. They SHOULD use `hadoop fs` commands instead of `hdfs dfs` commands. The applications SHOULD use Hadoop FileSystem interface to interact with the distributed file system. Future specifications MAY include the ability to use any file system that is compatible with the Hadoop Compatible File System (HCFS) specification.
 
 -   Applications SHOULD either launch via the Hadoop YARN ResourceManager REST API or via `${HADOOP_YARN_HOME}/bin/yarn jar`
 
