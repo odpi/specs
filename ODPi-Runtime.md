@@ -141,16 +141,19 @@ The following environment variables are noted by this spec:
 | **[HADOOP_EC3]** | HADOOP_COMMON_DIR    | Relative Dir  | Hadoop common jars |
 | **[HADOOP_EC4]** | HADOOP_COMMON_LIB_JARS_DIR | Relative Dir | Hadoop common jar dependencies |
 | **[HADOOP_EC5]** | HADOOP_CONF_DIR | Absolute Dir | Location of Hadoop configuration files |
+| **[HADOOP_EC6]** | HADOOP_HOME | Absolute Dir | Apache Hadoop installation directory |
+| **[HADOOP_EC7]** | HADOOP_LOG_DIR | Absolute Dir | Apache Hadoop logs directory |
 | **[HADOOP_EH1]** | HADOOP_HDFS_HOME   | Absolute Dir  | Home directory of the Hadoop HDFS component |
 | **[HADOOP_EH2]** | HDFS_DIR    | Relative Dir  | Hadoop HDFS jars |
 | **[HADOOP_EH3]** | HDFS_LIB_JARS_DIR | Relative Dir | Additional Hadoop HDFS jar dependencies |
 | **[HADOOP_EY1]** | HADOOP_YARN_HOME   | Absolute Dir  | Home directory of the Hadoop YARN component |
 | **[HADOOP_EY2]** | YARN_DIR    | Relative Dir  | Hadoop YARN jars |
 | **[HADOOP_EY3]** | YARN_LIB_JARS_DIR | Relative Dir | Additional Hadoop YARN jar dependencies |
+| **[HADOOP_EY4]** | YARN_LOG_DIR    | Absolute Dir  | Apache Hadoop Yarn log directory |
 | **[HADOOP_EM1]** | HADOOP_MAPRED_HOME   | Absolute Dir  | Home directory of the Hadoop MapReduce component |
 | **[HADOOP_EM2]** | MAPRED_DIR    | Relative Dir  | Hadoop MapReduce jars |
 | **[HADOOP_EM3]** | MAPRED_LIB_JARS_DIR | Relative Dir | Additional Hadoop MapReduce jar dependencies |
-
+| **[HADOOP_EM4]** | HADOOP_MAPRED_LOG_DIR | Absolute Dir | Apache Hadoop Mapreduce log directory |
 
 -   The content of the `*_DIR` directories SHOULD be the same as the Reference Platform.  In a future release, this will become a MUST.
 
