@@ -252,6 +252,9 @@ ODPi Platforms MAY include alternative filesystem implementations compatible wit
 
 - ODPi Platform CLI tools MAY have different output when working with HCFS implementations
 
+- For command line interfaces (CLI), the Hadoop FileSystem interface SHOULD be used to interact with the distributed file system. Hadoop fs command line interface (CLI) MAY have commands that are not required in the HCFS compatible file system.  The HCFS compatible file system MAY have their own set of command line interfaces to do similar functions. 
+Only HCFS API SHOULD be compatible with the HCFS compatible file system. Hadoop fs command line interfaces MAY produce output structures that are different under the HCFS compatible file systems.
+
 - Applications SHOULD invoke filesystem client APIs and behaviors explicitly from the FileSystem and FileContext classes instead of the HDFS class. A file system will be HCFS compatible if all the APIs are implemented from the FileSystem class and AbstractFileSystem class (the latter is used by the FileContext client APIs). Implementing API specifications from the HDFS class is considered optional usage in HCFS Interface JAR.
 
 ODPi Platform providers MAY include results of compliance testing with supported HCFS Filesystem Products in the submission presented to ODPi. These results MUST at least include execution of tests created in accordance with guidelines provided by "Testing with the Filesystem specification" section of the Hadoop FileSystem API Definition. ISV vendors SHOULD NOT be expected to provide test results with HCFS Filesystem Products when certifying their ODPi interoperability.
