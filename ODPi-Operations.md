@@ -152,6 +152,10 @@ More details on stacks, extensions, services and management packs can be found i
 ####Packaging and Repository URLs
 Ambari supports installation of services via RPM and debian packages only. It is expected that the packages are available at runtime via a well-known repository solution such as YUM, Zypper or Apt (depending on the cluster’s operating system).
 
+* Custom services MAY provide their own installation mechanism but then it is the users responsibility to install those services on all cluster nodes
+
+If using Ambari installation of services:
+
 * Custom services MUST make the packages available via YUM, Zypper, or Apt repositories
 * Custom services MUST make the repository URL available to Ambari
 
