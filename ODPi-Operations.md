@@ -117,7 +117,7 @@ A Hadoop Management tool MUST support configuration of the services to generate 
 
 ### Ambari
 
-The following section specifies the details for what is required for ISVs releasing custom services compatible with Ambari.  The compatibility guidelines are specifically written for the Ambari 2.4 release.
+The following section specifies the details for what is required for ISVs releasing custom services compatible with Ambari.  The compatibility guidelines are specifically written for the Ambari 2.5 release.
 
 #### Glossary
 
