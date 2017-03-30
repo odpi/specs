@@ -73,6 +73,7 @@ A Hadoop Management tool MUST have well-defined life-cycle support that the cust
 
 A Hadoop Management tool 
 * MUST support Install and Configure operations for all components
+* MUST support an Upgrade and Downgrade mechanism that all components can participate in
 
 If the component is a daemon/process then a Hadoop Management tool 
 * MUST support Start, Stop, and ability to query status (up or down). 
@@ -112,6 +113,9 @@ A Hadoop Management tool MUST support configurations of services to emit metrics
 
 ### Alerts
 A Hadoop Management tool MUST support configuration of the services to generate alerts and MUST support mechanism to notify users when alerts are generated. It MAY support maintaining alert history for a reasonable time.
+
+### Backwards Compatibility
+A Hadoop Management tool SHOULD attempt to maintain backwards compatibility for custom services.  A Hadoop Management tool is said to be backwards compatible IF any custom service defined for a previous version of the Hadoop Management tool, which has been certified as ODPi Operations compliant, is functional with the newer version.
 
 ## Management Tool Specific
 
@@ -242,3 +246,8 @@ For more information about Alerts see the Alerts section in the [Apache Ambari S
 
 #### Quicklinks
 An Application MAY expose quick links to the Ambari UI by including a quicklinks.json file in its Service Definition.  For more information see the Quick Links section in the [Apache Ambari Stack Definition](https://github.com/apache/ambari/raw/branch-2.4/contrib/docs/Apache_Ambari_Stack_Definition.pdf).
+
+#### Backwards compatibility
+Custom services created for Ambari 2.4 should be functional with Ambari 2.5 with one exception.  The python scripts which handle the life-cycle operations may attempt to use functions in the Ambari utility python scripts.  There are several Ambari utility scripts which have broken backwards compatibility.  For example:
+
+* ambari-common/src/main/python/resource_management/libraries/functions/copy_tarball.py function copy_to_hdfs
